@@ -1,103 +1,86 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>울로콜리 악보 제작소</title>
-    <style>
-        body { background-color: #F8F8F5; color: #333; font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
-        
-        /* 전체 컨테이너: 모바일에서 화면이 작아지면 통째로 축소됨 */
-        .page-wrapper {
-            width: 100%;
-            overflow-x: hidden;
-            display: flex;
-            justify-content: center;
-            padding: 20px 0;
-        }
+<style>
+    /* 1. 기본 배경 및 폰트 */
+    body { background-color: #F8F8F5; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
 
-        /* 악보 전용 종이: PC 기준 너비 고정 */
+    /* 2. 전체를 감싸는 틀: 모바일 축소의 핵심 */
+    .viewport-wrapper {
+        width: 100%;
+        overflow-x: hidden; /* 가로 스크롤 방지 */
+        display: flex;
+        justify-content: center;
+        background-color: #F8F8F5;
+    }
+
+    /* 3. 실제 악보가 그려지는 '종이' (800px 고정) */
+    .sheet-paper {
+        width: 800px; 
+        min-height: 100vh;
+        background-color: white;
+        padding: 40px 20px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.05);
+        transform-origin: top center; /* 축소 기준점 */
+        position: relative;
+    }
+
+    /* 4. 모바일용 자동 축소 엔진 */
+    @media (max-width: 800px) {
         .sheet-paper {
-            width: 850px; /* A4 너비와 유사하게 고정 */
-            background: white;
-            padding: 40px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transform-origin: top left; /* 축소 기준점 */
+            /* 화면 너비에 맞춰서 800px 종이를 통째로 줄임 */
+            transform: scale(calc(window.innerWidth / 800)); 
+            /* 위 계산이 복잡하면 아래처럼 고정 비율을 써도 됩니다 */
+            transform: scale(0.45); /* 아이폰 일반 기준 약 0.4~0.5 */
+            margin-top: -200px; /* 축소로 인한 상단 빈공간 제거 (수치 조절 필요) */
         }
+    }
 
-        /* 모바일 대응: 화면이 850px보다 작아지면 종이를 통째로 줄임 */
-        @media (max-width: 850px) {
-            .sheet-paper {
-                transform: scale(calc(100vw / 900)); /* 화면 너비에 맞춰 자동 축소 */
-                margin-left: 5px;
-            }
-            .page-wrapper { height: auto; display: block; }
-        }
+    /* 5. 악보 한 줄의 정밀한 구조 */
+    .score-row {
+        position: relative;
+        width: 100%;
+        margin-bottom: 4rem; /* 줄 간격 */
+    }
 
-        /* 악보 한 줄 (가사 + 코드) */
-        .score-line {
-            position: relative;
-            margin-bottom: 40px;
-            border-bottom: 1px solid #f0f0f0;
-            padding-bottom: 10px;
-            display: flex;
-            flex-direction: column;
-        }
+    /* 가사 입력창: 종이 너비(800px)를 꽉 채움 */
+    .lyrics-input {
+        width: 100%;
+        font-size: 1.25rem;
+        border: none;
+        border-bottom: 1px solid #eee;
+        outline: none;
+        letter-spacing: 0.1em;
+        padding-bottom: 10px;
+        background: transparent;
+    }
 
-        /* 코드 레이어: 가사 바로 위에 고정 */
-        .chord-layer {
-            display: flex;
-            height: 25px;
-            margin-bottom: 5px;
-        }
+    /* 코드 레이어: 가사 바로 위에 60개 칸 유지 */
+    .chord-grid {
+        display: grid;
+        grid-template-columns: repeat(60, 1fr);
+        position: absolute;
+        top: -1.8rem;
+        width: 100%;
+        height: 1.8rem;
+    }
 
-        /* 코드 한 조각: 너비를 %로 고정하여 위치가 절대 안 변함 */
-        .chord-unit {
-            width: 1.666%; /* 100% / 60칸 */
-            font-size: 14px;
-            font-weight: 800;
-            color: #2F5233;
-            text-align: center;
-            position: relative;
-        }
+    /* 코드 한 칸 */
+    .chord-cell {
+        border-left: 1px solid rgba(0,0,0,0.03);
+        height: 100%;
+        position: relative;
+    }
 
-        /* 가사 레이어 */
-        .lyrics-layer {
-            font-size: 18px;
-            letter-spacing: 0.05em;
-            line-height: 1.5;
-            white-space: pre;
-            color: #333;
-        }
-
-        /* 입력창 스타일 (제작 모드) */
-        .edit-input {
-            width: 100%;
-            font-size: 18px;
-            border: none;
-            background: #fdfdfd;
-            outline: none;
-        }
-        
-        /* 코드가 들어가는 지점 표시 */
-        .chord-unit:hover { background: #f0fdf4; border-radius: 3px; cursor: pointer; }
-    </style>
-</head>
-<body>
-    <div class="page-wrapper">
-        <div class="sheet-paper" id="sheet-paper">
-            <h1 style="text-align: center; color: #2F5233;">로이 킴 - 잘 지내자, 우리</h1>
-            
-            <div class="score-line">
-                <div class="chord-layer">
-                    <div class="chord-unit" style="margin-left: 15%;">G</div>
-                    <div class="chord-unit" style="margin-left: 20%;">D</div>
-                    <div class="chord-unit" style="margin-left: 25%;">Em</div>
-                </div>
-                <div class="lyrics-layer">마음을 다 보여줬던 너와는 다르게 난 사랑에 겁을 잔뜩 먹은 나</div>
-            </div>
-
-            </div>
-    </div>
-</body>
-</html>
+    /* 실제 표시되는 코드 글자 */
+    .chord-badge {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform: translateX(-50%);
+        background: #2F5233;
+        color: white;
+        font-size: 11px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+</style>
