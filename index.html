@@ -1,86 +1,165 @@
-<style>
-    /* 1. 기본 배경 및 폰트 */
-    body { background-color: #F8F8F5; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>울로콜리 악보 제작소</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --sheet-width: 800px; --primary-color: #2F5233; }
 
-    /* 2. 전체를 감싸는 틀: 모바일 축소의 핵심 */
-    .viewport-wrapper {
-        width: 100%;
-        overflow-x: hidden; /* 가로 스크롤 방지 */
-        display: flex;
-        justify-content: center;
-        background-color: #F8F8F5;
-    }
-
-    /* 3. 실제 악보가 그려지는 '종이' (800px 고정) */
-    .sheet-paper {
-        width: 800px; 
-        min-height: 100vh;
-        background-color: white;
-        padding: 40px 20px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.05);
-        transform-origin: top center; /* 축소 기준점 */
-        position: relative;
-    }
-
-    /* 4. 모바일용 자동 축소 엔진 */
-    @media (max-width: 800px) {
-        .sheet-paper {
-            /* 화면 너비에 맞춰서 800px 종이를 통째로 줄임 */
-            transform: scale(calc(window.innerWidth / 800)); 
-            /* 위 계산이 복잡하면 아래처럼 고정 비율을 써도 됩니다 */
-            transform: scale(0.45); /* 아이폰 일반 기준 약 0.4~0.5 */
-            margin-top: -200px; /* 축소로 인한 상단 빈공간 제거 (수치 조절 필요) */
+        body { 
+            background-color: #F8F8F5; 
+            color: #333; 
+            font-family: 'Pretendard', sans-serif; 
+            margin: 0; 
+            padding: 0;
+            overflow-x: hidden; /* 가로 스크롤 방지 */
         }
-    }
 
-    /* 5. 악보 한 줄의 정밀한 구조 */
-    .score-row {
-        position: relative;
-        width: 100%;
-        margin-bottom: 4rem; /* 줄 간격 */
-    }
+        /* [핵심] 모바일에서 종이를 통째로 축소시키는 래퍼 */
+        .viewport-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
 
-    /* 가사 입력창: 종이 너비(800px)를 꽉 채움 */
-    .lyrics-input {
-        width: 100%;
-        font-size: 1.25rem;
-        border: none;
-        border-bottom: 1px solid #eee;
-        outline: none;
-        letter-spacing: 0.1em;
-        padding-bottom: 10px;
-        background: transparent;
-    }
+        /* 실제 악보 종이 (800px 고정) */
+        .sheet-paper {
+            width: var(--sheet-width);
+            background: white;
+            padding: 50px 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transform-origin: top center;
+            box-sizing: border-box;
+            position: relative;
+            flex-shrink: 0;
+        }
 
-    /* 코드 레이어: 가사 바로 위에 60개 칸 유지 */
-    .chord-grid {
-        display: grid;
-        grid-template-columns: repeat(60, 1fr);
-        position: absolute;
-        top: -1.8rem;
-        width: 100%;
-        height: 1.8rem;
-    }
+        /* 모바일용 자동 축소 엔진: 화면 너비에 맞춰 scale 조절 */
+        @media (max-width: 800px) {
+            .viewport-container {
+                /* 화면 너비 비율만큼 축소 (JS로 더 정교하게 처리 가능) */
+                height: calc(100vh * (800 / 100vw)); 
+            }
+            .sheet-paper {
+                transform: scale(calc(100vw / 800));
+                margin-top: 0;
+            }
+        }
 
-    /* 코드 한 칸 */
-    .chord-cell {
-        border-left: 1px solid rgba(0,0,0,0.03);
-        height: 100%;
-        position: relative;
-    }
+        .header { text-align: center; margin-bottom: 50px; }
+        .title-input { 
+            font-family: 'Gaegu', cursive; font-size: 2.5rem; 
+            border: none; text-align: center; width: 100%; outline: none;
+            color: var(--primary-color);
+        }
 
-    /* 실제 표시되는 코드 글자 */
-    .chord-badge {
-        position: absolute;
-        top: 0;
-        left: 0;
-        transform: translateX(-50%);
-        background: #2F5233;
-        color: white;
-        font-size: 11px;
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-weight: bold;
-        white-space: nowrap;
-    }
-</style>
+        /* 악보 한 줄 */
+        .score-row {
+            position: relative;
+            margin-bottom: 4rem;
+            width: 100%;
+        }
+
+        /* 코드 그리드 (60칸 고정) */
+        .chord-grid {
+            display: grid;
+            grid-template-columns: repeat(60, 1fr);
+            position: absolute;
+            top: -1.8rem;
+            width: 100%;
+            height: 1.8rem;
+            pointer-events: none;
+        }
+
+        .chord-cell { border-left: 1px solid rgba(0,0,0,0.03); height: 100%; position: relative; }
+
+        /* 가사 입력창 */
+        .lyrics-input {
+            width: 100%;
+            font-size: 1.25rem;
+            border: none;
+            border-bottom: 1px solid #eee;
+            outline: none;
+            letter-spacing: 0.1em;
+            padding-bottom: 8px;
+            background: transparent;
+            white-space: pre;
+        }
+
+        /* 저장된 코드 배지 */
+        .chord-badge {
+            position: absolute;
+            top: 0; left: 0;
+            transform: translateX(-50%);
+            background: var(--primary-color);
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            pointer-events: auto;
+        }
+
+        .btn-save {
+            position: fixed; bottom: 30px; right: 30px;
+            background: var(--primary-color); color: white;
+            border: none; padding: 15px 25px; border-radius: 50px;
+            font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="viewport-container">
+        <div class="sheet-paper">
+            <div class="header">
+                <input type="text" class="title-input" placeholder="곡 제목을 입력하세요" value="로이 킴 - 잘 지내자, 우리">
+            </div>
+
+            <div id="score-container">
+                <div class="score-row">
+                    <div class="chord-grid">
+                        <div class="chord-cell" style="grid-column: 10;"><span class="chord-badge">G</span></div>
+                        <div class="chord-cell" style="grid-column: 25;"><span class="chord-badge">D</span></div>
+                    </div>
+                    <input type="text" class="lyrics-input" value="마음을 다 보여줬던 너와는 다르게 난 사랑에 겁을 잔뜩 먹은 나">
+                </div>
+                
+                </div>
+        </div>
+    </div>
+
+    <button class="btn-save" onclick="saveToForest()">🥦 숲에 심기</button>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            // [여기에 한울님의 파이어베이스 설정값을 복사해서 넣으세요!]
+            apiKey: "...",
+            authDomain: "...",
+            projectId: "...",
+            storageBucket: "...",
+            messagingSenderId: "...",
+            appId: "..."
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.saveToForest = async () => {
+            // 저장 로직 작성
+            alert("숲에 성공적으로 심었습니다! 🌱");
+        };
+    </script>
+</body>
+</html>
