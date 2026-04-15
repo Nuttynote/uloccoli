@@ -2,76 +2,267 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>울로콜리 악보 제작소</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>울로콜리: 비주얼 가이드 에디터 🥦</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { background-color: #F8F8F5; color: #333; font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
-        .main-wrapper { display: flex; flex-direction: column; align-items: center; padding: 20px; box-sizing: border-box; }
-        .sheet-paper { width: 100%; max-width: 800px; background: white; padding: 40px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; border-radius: 8px; }
-        .header { text-align: center; margin-bottom: 40px; }
-        .title-input { font-family: 'Gaegu', cursive; font-size: 2rem; border: none; text-align: center; width: 100%; outline: none; color: #2F5233; background: transparent; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
-        .score-row { position: relative; margin-bottom: 3.5rem; width: 100%; }
-        .chord-grid { display: grid; grid-template-columns: repeat(60, 1fr); position: absolute; top: -1.5rem; width: 100%; height: 1.5rem; }
-        .chord-cell { border-left: 1px solid rgba(0,0,0,0.03); position: relative; cursor: pointer; }
-        .chord-cell:hover { background: #f0fdf4; }
-        .lyrics-input { width: 100%; font-size: 1.1rem; border: none; border-bottom: 1px solid #eee; outline: none; letter-spacing: 0.05em; padding-bottom: 8px; background: transparent; }
-        .btn-save { position: fixed; bottom: 20px; right: 20px; background: #2F5233; color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .font-broccoli { font-family: 'Gaegu', cursive; }
+        
+        /* [모바일 대응 핵심] 전체 컨테이너 설정 */
+        #view-admin, #view-detail {
+            width: 100%;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* PC 기준 너비를 900px로 고정하고 모바일에서는 이 판을 통째로 줄임 */
+        .editor-paper {
+            width: 900px;
+            background: white;
+            padding: 2.5rem;
+            border-radius: 3rem;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            transform-origin: top center;
+            flex-shrink: 0;
+        }
+
+        /* 모바일 화면 너비에 맞춰서 900px 도화지를 스케일 다운 */
+        @media (max-width: 900px) {
+            .editor-paper {
+                transform: scale(calc(100vw / 940)); /* 양옆 여백 고려 */
+                margin-top: 10px;
+            }
+            /* 축소로 인해 생기는 아래쪽 빈 공간 처리 */
+            #view-admin, #view-detail { height: auto; margin-bottom: -100px; }
+        }
+
+        .magic-row { position: relative; margin-bottom: 2.5rem; width: 100%; }
+        .magic-lyrics { 
+            width: 100%; font-size: 1.25rem; border: none; background: transparent; 
+            letter-spacing: 0.1em; outline: none; border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 8px; z-index: 10; position: relative;
+        }
+        .magic-chords-layer { 
+            display: grid; 
+            grid-template-columns: repeat(60, 1fr); 
+            position: absolute; top: -1.7rem; width: 100%; height: 1.7rem;
+            z-index: 5;
+        }
+        .chord-slot { 
+            border-left: 1px solid #f0f0f0; 
+            height: 100%; position: relative; cursor: cell;
+            transition: background 0.2s;
+        }
+        .chord-slot:hover { border-left-color: #9DC183; background-color: #f0fdf4; }
+        .chord-slot input {
+            position: absolute; top: 0; left: 0; width: 45px; background: #2F5233;
+            color: white; font-size: 10px; font-weight: bold; border-radius: 4px;
+            text-align: center; border: none; outline: none; z-index: 20;
+            transform: translateX(-50%);
+        }
+        .res-line { position: relative; margin-bottom: 3.5rem; padding-top: 1.7rem; width: 100%; }
+        .res-chords { position: absolute; top: 0; width: 100%; display: grid; grid-template-columns: repeat(60, 1fr); gap: 2px;}
+        .res-chord-val { 
+            text-align: center; font-weight: 800; color: #2F5233; font-size: 0.9rem; white-space: nowrap;
+            transform: translateX(-50%);
+        }
+        .res-lyrics-val { font-size: 1.2rem; letter-spacing: 0.1em; white-space: pre; border-bottom: 1px solid #f8f8f8; padding-bottom: 4px; width: 100%;}
     </style>
 </head>
 <body>
 
-<div class="main-wrapper">
-    <div class="sheet-paper">
-        <div class="header">
-            <input type="text" id="sheet-title" class="title-input" placeholder="곡 제목을 입력하세요">
-        </div>
-
-        <div id="score-container">
-            <div class="score-row">
-                <div class="chord-grid">
-                    <div class="chord-cell"></div><div class="chord-cell"></div><div class="chord-cell"></div></div>
-                <input type="text" class="lyrics-input" placeholder="여기에 가사를 입력하세요">
-            </div>
-        </div>
+<nav class="bg-white/90 backdrop-blur-md border-b border-[#9DC183] p-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
+    <div class="flex items-center gap-2 cursor-pointer" onclick="window.showView('visitor')">
+        <span class="text-3xl inline-block">🥦</span>
+        <h1 class="text-2xl font-black text-[#2F5233] font-broccoli tracking-tighter">울로콜리 악보 제작소</h1>
     </div>
+    <div class="flex gap-6 font-bold text-xs">
+        <span onclick="window.showView('admin')" class="cursor-pointer text-gray-400 hover:text-[#2F5233]">새 악보 제작</span>
+        <span onclick="window.showView('visitor')" class="cursor-pointer text-[#2F5233]">악보 보관소</span>
+    </div>
+</nav>
+
+<div class="max-w-full overflow-x-hidden">
+    <section id="view-admin" class="hidden p-4">
+        <div class="editor-paper border border-gray-100">
+            <div class="flex justify-between items-center mb-10 pb-6 border-b border-gray-100">
+                <h2 class="text-3xl font-black text-[#2F5233] font-broccoli tracking-tight flex items-center gap-3">✨ <span class="text-gray-900">정밀 핀 포인트 에디터</span></h2>
+                <div class="flex gap-2">
+                    <button onclick="window.addRow()" class="bg-[#F0F4F0] text-[#2F5233] px-5 py-2.5 rounded-full text-xs font-bold transition-all hover:bg-[#9DC183] hover:text-white">+ 마디 추가</button>
+                    <button onclick="window.saveMagicSheet()" class="bg-[#2F5233] text-white px-5 py-2.5 rounded-full text-xs font-bold transition-all hover:bg-[#1b3a1e]">🥦 숲에 심기</button>
+                </div>
+            </div>
+            <div id="magic-container" class="space-y-16"></div>
+        </div>
+    </section>
+
+    <section id="view-visitor" class="p-8 max-w-6xl mx-auto">
+        <div id="archive-list" class="grid grid-cols-1 gap-3"></div>
+    </section>
+
+    <section id="view-detail" class="hidden p-4">
+        <div class="editor-paper relative border-t-8 border-[#2F5233]">
+            <button onclick="window.showView('visitor')" class="absolute top-10 right-10 text-gray-300 hover:text-red-400 font-bold">✕ 닫기</button>
+            <div class="mb-12 text-center">
+                <h2 id="det-title" class="text-4xl font-black text-[#2F5233] font-broccoli mb-4"></h2>
+                <div class="mt-6 flex justify-center gap-2 bg-gray-50 inline-flex p-1.5 rounded-full shadow-inner border">
+                    <button onclick="window.transposeAll(-1)" class="w-12 h-12 rounded-full font-bold hover:bg-white transition-all text-[#2F5233]">♭</button>
+                    <div id="current-offset" class="flex items-center px-5 font-black text-[#9DC183] text-lg">0</div>
+                    <button onclick="window.transposeAll(1)" class="w-12 h-12 rounded-full font-bold hover:bg-white transition-all text-[#2F5233]">♯</button>
+                </div>
+            </div>
+            <div id="det-content"></div>
+        </div>
+    </section>
 </div>
 
-<button class="btn-save" onclick="saveToForest()">🥦 숲에 심기</button>
-
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    // ... (한울님의 원본 스크립트 그대로 사용) ...
+    // 단, addChordPrompt 등 window 함수들은 그대로 유지
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
-    // 🔥 한울님의 실제 Firebase 설정값을 여기에 다시 넣어주세요!
     const firebaseConfig = {
-        apiKey: "여기에_넣으세요",
+        apiKey: "AIzaSyD3f-dDLZELbdnU9MxjTH5iMKyprtBcTbg",
         authDomain: "uloccoli.firebaseapp.com",
         projectId: "uloccoli",
-        storageBucket: "uloccoli.appspot.com",
-        messagingSenderId: "...",
-        appId: "..."
+        storageBucket: "uloccoli.firebasestorage.app",
+        messagingSenderId: "572724570052",
+        appId: "1:572724570052:web:8a2a67098a8b7341f82691",
+        measurementId: "G-VR4SRLKC58"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // 저장 함수
-    window.saveToForest = async () => {
-        const title = document.getElementById('sheet-title').value;
-        if(!title) { alert("제목을 입력해주세요!"); return; }
-        
+    let archive = [];
+    let currentItem = null;
+    let keyOffset = 0;
+    const scale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+    window.showView = function(view) {
+        ['view-admin', 'view-visitor', 'view-detail'].forEach(v => {
+            const el = document.getElementById(v);
+            if(el) el.classList.add('hidden');
+        });
+        const target = document.getElementById('view-' + view);
+        if(target) target.classList.remove('hidden');
+        if(view === 'visitor') window.loadSheets();
+    };
+
+    window.addRow = function() {
+        const container = document.getElementById('magic-container');
+        if(!container) return;
+        const row = document.createElement('div');
+        row.className = 'magic-row';
+        let slots = '';
+        for(let i=0; i<60; i++) {
+            slots += `<div class="chord-slot" onclick="window.addChordPrompt(this)"></div>`;
+        }
+        row.innerHTML = `
+            <div class="magic-chords-layer">${slots}</div>
+            <input type="text" class="magic-lyrics" placeholder="가사를 입력하세요">
+        `;
+        container.appendChild(row);
+    };
+
+    window.addChordPrompt = function(slot) {
+        if(slot.querySelector('input')) return;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.onblur = () => { if(!input.value) input.remove(); };
+        slot.appendChild(input);
+        input.focus();
+    };
+
+    window.saveMagicSheet = async function() {
+        const title = prompt("곡 제목을 입력해주세요!");
+        if(!title) return;
+        const rows = document.querySelectorAll('.magic-row');
+        const content = Array.from(rows).map(row => ({
+            chords: Array.from(row.querySelectorAll('.chord-slot')).map(slot => slot.querySelector('input')?.value || ''),
+            lyrics: row.querySelector('.magic-lyrics').value
+        }));
         try {
-            await addDoc(collection(db, "scores"), {
-                title: title,
-                createdAt: new Date()
-            });
-            alert("숲에 성공적으로 심었습니다! 🌱");
+            await addDoc(collection(db, "sheets"), { title, content, createdAt: new Date() });
+            alert("성공적으로 심었습니다! 🌱");
+            window.showView('visitor');
         } catch (e) {
-            alert("저장 에러: " + e.message);
+            console.error(e);
+            alert("저장 실패!");
         }
     };
+
+    window.loadSheets = async function() {
+        const q = query(collection(db, "sheets"), orderBy("createdAt", "desc"));
+        const querySnapshot = await getDocs(q);
+        archive = [];
+        querySnapshot.forEach((doc) => {
+            archive.push({ id: doc.id, ...doc.data() });
+        });
+        window.renderArchive();
+    };
+
+    window.renderArchive = function() {
+        const list = document.getElementById('archive-list');
+        if(!list) return;
+        list.innerHTML = archive.length ? '' : '<div class="text-center py-20 text-gray-300 font-broccoli text-2xl">악보를 새로 심어보세요! 🌱</div>';
+        archive.forEach(item => {
+            const d = document.createElement('div');
+            d.className = 'bg-white p-6 rounded-2xl shadow-sm border border-transparent hover:border-[#9DC183] cursor-pointer flex justify-between font-bold group transition-all hover:translate-x-1 mb-2';
+            d.innerHTML = `<span class="text-[#2F5233]">${item.title}</span><span class="text-[#9DC183] text-xs opacity-0 group-hover:opacity-100">VIEW →</span>`;
+            d.onclick = () => { currentItem = item; keyOffset = 0; window.showView('detail'); window.renderDetailContent(); };
+            list.appendChild(d);
+        });
+    };
+
+    window.renderDetailContent = function() {
+        const container = document.getElementById('det-content');
+        if(!currentItem || !container) return;
+        document.getElementById('det-title').innerText = currentItem.title;
+        container.innerHTML = '';
+        currentItem.content.forEach(line => {
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'res-line';
+            let chordHtml = '<div class="res-chords">';
+            line.chords.forEach(c => {
+                const val = c ? window.transposeChord(c, keyOffset) : '';
+                chordHtml += `<div class="res-chord-val">${val}</div>`;
+            });
+            chordHtml += '</div>';
+            lineDiv.innerHTML = chordHtml + `<div class="res-lyrics-val">${line.lyrics}</div>`;
+            container.appendChild(lineDiv);
+        });
+    };
+
+    window.transposeChord = function(chord, amount) {
+        if(!chord) return '';
+        return chord.replace(/[A-G][#b]?/g, (match) => {
+            const flatToSharp = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' };
+            const normalized = flatToSharp[match] || match;
+            const index = scale.indexOf(normalized);
+            if (index === -1) return match;
+            let newIndex = (index + amount) % 12;
+            if (newIndex < 0) newIndex += 12;
+            return scale[newIndex];
+        });
+    };
+
+    window.transposeAll = function(amount) {
+        keyOffset += amount;
+        const offsetEl = document.getElementById('current-offset');
+        if(offsetEl) offsetEl.innerText = (keyOffset > 0 ? '+' : '') + keyOffset;
+        window.renderDetailContent();
+    };
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        for(let i=0; i<3; i++) window.addRow();
+        await window.loadSheets();
+        window.showView('visitor');
+    });
 </script>
 </body>
 </html>
