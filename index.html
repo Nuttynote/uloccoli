@@ -6,135 +6,79 @@
     <title>울로콜리🥦</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
-   <style>
-    /* 전체 배경 및 폰트 설정 */
-    body { 
-        background-color: #F8F8F5; 
-        color: #333; 
-        font-family: 'Pretendard', sans-serif; 
-        margin: 0; 
-        padding: 10px; /* 모바일 양옆 여백 */
-    }
-    
+  <style>
+    body { background-color: #F8F8F5; color: #333; font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
     .font-broccoli { font-family: 'Gaegu', cursive; }
 
-    /* 메인 컨테이너: 모바일에서 양옆이 잘리지 않게 설정 */
-    .container {
-        width: 100%;
-        max-width: 900px;
-        margin: 0 auto;
-        box-sizing: border-box;
-    }
+    /* 메인 컨테이너: 여백을 없애서 최대한 넓게 활용 */
+    .container { width: 100%; max-width: 900px; margin: 0 auto; padding: 10px; box-sizing: border-box; }
 
-    /* 제작 모드 줄 설정 */
-    .magic-row { 
+    /* 제작 및 결과물 공통 줄 설정 */
+    .magic-row, .res-line { 
         position: relative; 
         margin-bottom: 2.5rem; 
-        width: 100%;
-        overflow-x: auto; /* 가사 길면 옆으로 스크롤 가능하게 */
+        width: 100%; 
+        /* 핵심: 화면 밖으로 절대 나가지 않게 함 */
+        overflow: visible; 
     }
 
-    .magic-lyrics { 
+    /* 가사 설정: 화면 너비에 따라 글자 크기가 변함 (4vw = 화면 너비의 4%) */
+    .magic-lyrics, .res-lyrics-val { 
         width: 100%; 
-        font-size: 1.1rem; /* 모바일에서 적당한 크기 */
+        font-size: 4vw; /* 모바일에서 화면 폭에 맞춰 작아짐 */
         border: none; 
         background: transparent; 
-        letter-spacing: 0.1em; 
+        letter-spacing: 0.05em; 
         outline: none; 
         border-bottom: 1px solid #e0e0e0;
         padding-bottom: 8px; 
         z-index: 10; 
         position: relative;
-        min-width: 600px; /* 너무 좁아지지 않게 최소 너비 유지 */
+        white-space: pre;
+        display: block;
     }
 
-    /* 코드 레이어: 가로 스크롤 대응 */
-    .magic-chords-layer { 
+    /* PC처럼 큰 화면에서는 글자가 너무 커지지 않게 제한 */
+    @media (min-width: 900px) {
+        .magic-lyrics, .res-lyrics-val { font-size: 1.25rem; }
+        .res-chord-val { font-size: 0.9rem; }
+    }
+
+    /* 60칸 그리드: 모바일에서도 무조건 60칸 유지 */
+    .magic-chords-layer, .res-chords { 
         display: grid; 
         grid-template-columns: repeat(60, 1fr); 
         position: absolute; 
-        top: -1.7rem; 
+        top: -1.2rem; 
         width: 100%; 
-        min-width: 600px; /* 가사와 동일하게 */
-        height: 1.7rem;
+        height: 1.5rem;
         z-index: 5;
     }
 
-    .chord-slot { 
-        border-left: 1px solid #f0f0f0; 
-        height: 100%; 
-        position: relative; 
-        cursor: cell;
-        transition: background 0.2s;
-    }
+    .chord-slot { border-left: 1px solid rgba(240, 240, 240, 0.5); position: relative; }
 
-    .chord-slot:hover { 
-        border-left-color: #9DC183; 
-        background-color: #f0fdf4; 
-    }
-
-    .chord-slot input {
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        width: 40px; 
-        background: #2F5233;
-        color: white; 
-        font-size: 10px; 
-        font-weight: bold; 
-        border-radius: 4px;
-        text-align: center; 
-        border: none; 
-        outline: none; 
-        z-index: 20;
-        transform: translateX(-50%);
-    }
-
-    /* 결과물(보관소) 악보 줄 설정 */
-    .res-line { 
-        position: relative; 
-        margin-bottom: 3.5rem; 
-        padding-top: 1.7rem; 
-        width: 100%;
-        overflow-x: auto; /* 핵심: 모바일에서 글자가 넘치면 옆으로 밀어서 보기 */
-        -webkit-overflow-scrolling: touch; /* 아이폰 스크롤 부드럽게 */
-    }
-
-    .res-chords { 
-        position: absolute; 
-        top: 0; 
-        width: 100%; 
-        min-width: 600px; /* 최소 너비를 확보해서 코드가 겹치지 않게 함 */
-        display: grid; 
-        grid-template-columns: repeat(60, 1fr); 
-        gap: 0px;
-    }
-
+    /* 코드 글자 크기: 화면 너비에 비례해서 아주 작게 조절 */
     .res-chord-val { 
         text-align: center; 
         font-weight: 800; 
         color: #2F5233; 
-        font-size: 0.8rem; /* 모바일에서 살짝 줄임 */
+        font-size: 2.5vw; /* 화면 너비에 맞춰 자동 축소 */
         white-space: nowrap;
         transform: translateX(-50%);
     }
 
-    .res-lyrics-val { 
-        font-size: 1.1rem; 
-        letter-spacing: 0.1em; 
-        white-space: pre; 
-        border-bottom: 1px solid #f8f8f8; 
-        padding-bottom: 4px;
-        min-width: 600px; /* 가사도 최소 너비 유지 */
-        display: block;
+    .chord-slot input {
+        position: absolute; top: 0; left: 0; 
+        width: 8vw; /* 입력창도 화면에 비례 */
+        max-width: 45px;
+        background: #2F5233; color: white; 
+        font-size: 2vw; /* 입력 글자도 화면에 비례 */
+        font-weight: bold; border-radius: 4px;
+        text-align: center; border: none; outline: none; z-index: 20;
+        transform: translateX(-50%);
     }
 
-    /* 모바일 전용 추가 조절 */
-    @media (max-width: 600px) {
-        .res-line { margin-bottom: 2.5rem; }
-        .res-lyrics-val { font-size: 1rem; }
-        h1 { font-size: 1.5rem; } /* 제목 크기 조절 */
-    }
+    .res-line { margin-bottom: 3.5rem; padding-top: 1.2rem; }
 </style>
 </head>
 <body>
