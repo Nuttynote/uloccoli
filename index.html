@@ -2,97 +2,76 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>울로콜리 악보 제작소</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
     <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --sheet-width: 800px; --primary-color: #2F5233; }
-        body { background-color: #F8F8F5; color: #333; font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
-        
-        /* 모바일 대응 스케일링 */
-        .viewport-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: #F8F8F5;
-        }
-
-        .sheet-paper {
-            width: var(--sheet-width);
-            background: white;
-            padding: 50px 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            transform-origin: top center;
-            flex-shrink: 0;
-            box-sizing: border-box;
-        }
-
-        @media (max-width: 800px) {
-            .sheet-paper {
-                transform: scale(calc(100vw / 800));
-            }
-        }
-
-        .header { text-align: center; margin-bottom: 50px; }
-        .title-input { font-family: 'Gaegu', cursive; font-size: 2.5rem; border: none; text-align: center; width: 100%; outline: none; color: var(--primary-color); }
+        body { background-color: #F8F8F5; color: #333; font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
+        .main-wrapper { display: flex; flex-direction: column; align-items: center; padding: 20px; box-sizing: border-box; }
+        .sheet-paper { width: 100%; max-width: 800px; background: white; padding: 40px 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; border-radius: 8px; }
+        .header { text-align: center; margin-bottom: 40px; }
+        .title-input { font-family: 'Gaegu', cursive; font-size: 2rem; border: none; text-align: center; width: 100%; outline: none; color: #2F5233; background: transparent; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
         .score-row { position: relative; margin-bottom: 3.5rem; width: 100%; }
-        .chord-grid { display: grid; grid-template-columns: repeat(60, 1fr); position: absolute; top: -1.8rem; width: 100%; height: 1.8rem; }
-        .chord-cell { border-left: 1px solid rgba(0,0,0,0.03); height: 100%; position: relative; }
-        .lyrics-input { width: 100%; font-size: 1.2rem; border: none; border-bottom: 1px solid #eee; outline: none; letter-spacing: 0.1em; padding-bottom: 8px; background: transparent; }
-        .chord-badge { position: absolute; top: 0; left: 0; transform: translateX(-50%); background: var(--primary-color); color: white; font-size: 11px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
-        .btn-save { position: fixed; bottom: 30px; right: 30px; background: var(--primary-color); color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; z-index: 1000; }
+        .chord-grid { display: grid; grid-template-columns: repeat(60, 1fr); position: absolute; top: -1.5rem; width: 100%; height: 1.5rem; }
+        .chord-cell { border-left: 1px solid rgba(0,0,0,0.03); position: relative; cursor: pointer; }
+        .chord-cell:hover { background: #f0fdf4; }
+        .lyrics-input { width: 100%; font-size: 1.1rem; border: none; border-bottom: 1px solid #eee; outline: none; letter-spacing: 0.05em; padding-bottom: 8px; background: transparent; }
+        .btn-save { position: fixed; bottom: 20px; right: 20px; background: #2F5233; color: white; border: none; padding: 15px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
-    <div class="viewport-container">
-        <div class="sheet-paper">
-            <div class="header">
-                <input type="text" id="sheet-title" class="title-input" placeholder="곡 제목을 입력하세요" value="새로운 악보">
-            </div>
-            <div id="score-container">
-                <div class="score-row">
-                    <div class="chord-grid"><div class="chord-cell" style="grid-column: 5;"><span class="chord-badge">C</span></div></div>
-                    <input type="text" class="lyrics-input" placeholder="가사를 입력하세요">
-                </div>
+<div class="main-wrapper">
+    <div class="sheet-paper">
+        <div class="header">
+            <input type="text" id="sheet-title" class="title-input" placeholder="곡 제목을 입력하세요">
+        </div>
+
+        <div id="score-container">
+            <div class="score-row">
+                <div class="chord-grid">
+                    <div class="chord-cell"></div><div class="chord-cell"></div><div class="chord-cell"></div></div>
+                <input type="text" class="lyrics-input" placeholder="여기에 가사를 입력하세요">
             </div>
         </div>
     </div>
+</div>
 
-    <button class="btn-save" onclick="saveToForest()">🥦 숲에 심기</button>
+<button class="btn-save" onclick="saveToForest()">🥦 숲에 심기</button>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // 🔥 [중요] 여기 아래 내용을 한울님의 Firebase 정보로 채워주세요!
-        const firebaseConfig = {
-            apiKey: "AIzaSy...", 
-            authDomain: "uloccoli.firebaseapp.com",
-            projectId: "uloccoli",
-            storageBucket: "uloccoli.appspot.com",
-            messagingSenderId: "...",
-            appId: "..."
-        };
+    // 🔥 한울님의 실제 Firebase 설정값을 여기에 다시 넣어주세요!
+    const firebaseConfig = {
+        apiKey: "여기에_넣으세요",
+        authDomain: "uloccoli.firebaseapp.com",
+        projectId: "uloccoli",
+        storageBucket: "uloccoli.appspot.com",
+        messagingSenderId: "...",
+        appId: "..."
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        window.saveToForest = async () => {
-            const title = document.getElementById('sheet-title').value;
-            try {
-                await addDoc(collection(db, "scores"), {
-                    title: title,
-                    createdAt: new Date()
-                });
-                alert("숲에 성공적으로 심었습니다! 🌱");
-            } catch (e) {
-                console.error("Error: ", e);
-                alert("저장 실패: " + e.message);
-            }
-        };
-    </script>
+    // 저장 함수
+    window.saveToForest = async () => {
+        const title = document.getElementById('sheet-title').value;
+        if(!title) { alert("제목을 입력해주세요!"); return; }
+        
+        try {
+            await addDoc(collection(db, "scores"), {
+                title: title,
+                createdAt: new Date()
+            });
+            alert("숲에 성공적으로 심었습니다! 🌱");
+        } catch (e) {
+            alert("저장 에러: " + e.message);
+        }
+    };
+</script>
 </body>
 </html>
