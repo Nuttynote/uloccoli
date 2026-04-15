@@ -2,12 +2,37 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>울로콜리: 비주얼 가이드 에디터 🥦</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #F8F8F5; color: #333; font-family: 'Pretendard', sans-serif; }
+        body { background-color: #F8F8F5; color: #333; font-family: 'Pretendard', sans-serif; overflow-x: hidden; }
         .font-broccoli { font-family: 'Gaegu', cursive; }
+        
+        /* [핵심] 모바일에서 통째로 축소해서 가사 잘림 방지 */
+        .mobile-scale-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .responsive-card {
+            width: 900px; /* PC 기준 정밀한 너비 유지 */
+            transform-origin: top center;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 900px) {
+            .responsive-card {
+                /* 모바일 화면 너비에 맞춰서 전체 판을 비율대로 축소 */
+                transform: scale(calc(100vw / 960)); 
+                margin-top: 10px;
+            }
+            .mobile-scale-container { height: auto; margin-bottom: -150px; }
+        }
+
+        /* 원본 스타일 그대로 복구 */
         .magic-row { position: relative; margin-bottom: 2.5rem; }
         .magic-lyrics { 
             width: 100%; font-size: 1.25rem; border: none; background: transparent; 
@@ -15,32 +40,19 @@
             padding-bottom: 8px; z-index: 10; position: relative;
         }
         .magic-chords-layer { 
-            display: grid; 
-            grid-template-columns: repeat(60, 1fr); 
-            position: absolute; top: -1.7rem; width: 100%; height: 1.7rem;
-            z-index: 5;
+            display: grid; grid-template-columns: repeat(60, 1fr); 
+            position: absolute; top: -1.7rem; width: 100%; height: 1.7rem; z-index: 5;
         }
-        .chord-slot { 
-            border-left: 1px solid #f0f0f0; 
-            height: 100%; position: relative; cursor: cell;
-            transition: background 0.2s;
-        }
-        .chord-slot:hover { 
-            border-left-color: #9DC183; 
-            background-color: #f0fdf4; 
-        }
+        .chord-slot { border-left: 1px solid #f0f0f0; height: 100%; position: relative; cursor: cell; transition: background 0.2s; }
+        .chord-slot:hover { border-left-color: #9DC183; background-color: #f0fdf4; }
         .chord-slot input {
             position: absolute; top: 0; left: 0; width: 45px; background: #2F5233;
             color: white; font-size: 10px; font-weight: bold; border-radius: 4px;
-            text-align: center; border: none; outline: none; z-index: 20;
-            transform: translateX(-50%);
+            text-align: center; border: none; outline: none; z-index: 20; transform: translateX(-50%);
         }
-        .res-line { position: relative; margin-bottom: 3.5rem; padding-top: 1.7rem; max-width: 900px; margin-left: auto; margin-right: auto;}
+        .res-line { position: relative; margin-bottom: 3.5rem; padding-top: 1.7rem; }
         .res-chords { position: absolute; top: 0; width: 100%; display: grid; grid-template-columns: repeat(60, 1fr); gap: 2px;}
-        .res-chord-val { 
-            text-align: center; font-weight: 800; color: #2F5233; font-size: 0.9rem; white-space: nowrap;
-            transform: translateX(-50%);
-        }
+        .res-chord-val { text-align: center; font-weight: 800; color: #2F5233; font-size: 0.9rem; white-space: nowrap; transform: translateX(-50%); }
         .res-lyrics-val { font-size: 1.2rem; letter-spacing: 0.1em; white-space: pre; border-bottom: 1px solid #f8f8f8; padding-bottom: 4px;}
     </style>
 </head>
@@ -57,41 +69,44 @@
     </div>
 </nav>
 
-<div class="max-w-6xl mx-auto p-8">
-    <section id="view-admin" class="hidden space-y-8">
-        <div class="bg-white p-10 rounded-[3rem] shadow-xl border border-gray-100">
-            <div class="flex justify-between items-center mb-10 pb-6 border-b border-gray-100">
-                <h2 class="text-3xl font-black text-[#2F5233] font-broccoli tracking-tight flex items-center gap-3">✨ <span class="text-gray-900">정밀 핀 포인트 에디터</span></h2>
-                <div class="flex gap-2">
-                    <button onclick="window.addRow()" class="bg-[#F0F4F0] text-[#2F5233] px-5 py-2.5 rounded-full text-xs font-bold transition-all hover:bg-[#9DC183] hover:text-white">+ 마디 추가</button>
-                    <button onclick="window.saveMagicSheet()" class="bg-[#2F5233] text-white px-5 py-2.5 rounded-full text-xs font-bold transition-all hover:bg-[#1b3a1e]">🥦 숲에 심기</button>
+<div class="mobile-scale-container">
+    <div class="responsive-card p-8">
+        <section id="view-admin" class="hidden space-y-8">
+            <div class="bg-white p-10 rounded-[3rem] shadow-xl border border-gray-100">
+                <div class="flex justify-between items-center mb-10 pb-6 border-b border-gray-100">
+                    <h2 class="text-3xl font-black text-[#2F5233] font-broccoli tracking-tight flex items-center gap-3">✨ <span class="text-gray-900">정밀 핀 포인트 에디터</span></h2>
+                    <div class="flex gap-2">
+                        <button onclick="window.addRow()" class="bg-[#F0F4F0] text-[#2F5233] px-5 py-2.5 rounded-full text-xs font-bold transition-all hover:bg-[#9DC183] hover:text-white">+ 마디 추가</button>
+                        <button onclick="window.saveMagicSheet()" class="bg-[#2F5233] text-white px-5 py-2.5 rounded-full text-xs font-bold transition-all hover:bg-[#1b3a1e]">🥦 숲에 심기</button>
+                    </div>
                 </div>
+                <div id="magic-container" class="space-y-16"></div>
             </div>
-            <div id="magic-container" class="space-y-16"></div>
-        </div>
-    </section>
+        </section>
 
-    <section id="view-visitor" class="space-y-6">
-        <div id="archive-list" class="grid grid-cols-1 gap-3"></div>
-    </section>
-
-    <section id="view-detail" class="hidden">
-        <div class="bg-white p-12 rounded-[3rem] shadow-2xl relative border-t-8 border-[#2F5233]">
-            <button onclick="window.showView('visitor')" class="absolute top-10 right-10 text-gray-300 hover:text-red-400 font-bold">✕ 닫기</button>
-            <div class="mb-12 text-center">
-                <h2 id="det-title" class="text-4xl font-black text-[#2F5233] font-broccoli mb-4"></h2>
-                <div class="mt-6 flex justify-center gap-2 bg-gray-50 inline-flex p-1.5 rounded-full shadow-inner border">
-                    <button onclick="window.transposeAll(-1)" class="w-12 h-12 rounded-full font-bold hover:bg-white transition-all text-[#2F5233]">♭</button>
-                    <div id="current-offset" class="flex items-center px-5 font-black text-[#9DC183] text-lg">0</div>
-                    <button onclick="window.transposeAll(1)" class="w-12 h-12 rounded-full font-bold hover:bg-white transition-all text-[#2F5233]">♯</button>
+        <section id="view-detail" class="hidden">
+            <div class="bg-white p-12 rounded-[3rem] shadow-2xl relative border-t-8 border-[#2F5233]">
+                <button onclick="window.showView('visitor')" class="absolute top-10 right-10 text-gray-300 hover:text-red-400 font-bold">✕ 닫기</button>
+                <div class="mb-12 text-center">
+                    <h2 id="det-title" class="text-4xl font-black text-[#2F5233] font-broccoli mb-4"></h2>
+                    <div class="mt-6 flex justify-center gap-2 bg-gray-50 inline-flex p-1.5 rounded-full shadow-inner border">
+                        <button onclick="window.transposeAll(-1)" class="w-12 h-12 rounded-full font-bold hover:bg-white transition-all text-[#2F5233]">♭</button>
+                        <div id="current-offset" class="flex items-center px-5 font-black text-[#9DC183] text-lg">0</div>
+                        <button onclick="window.transposeAll(1)" class="w-12 h-12 rounded-full font-bold hover:bg-white transition-all text-[#2F5233]">♯</button>
+                    </div>
                 </div>
+                <div id="det-content"></div>
             </div>
-            <div id="det-content"></div>
-        </div>
-    </section>
+        </section>
+    </div>
 </div>
 
+<section id="view-visitor" class="max-w-6xl mx-auto p-8 space-y-6">
+    <div id="archive-list" class="grid grid-cols-1 gap-3"></div>
+</section>
+
 <script type="module">
+    // (Firebase 설정 및 한울님의 자바스크립트 로직 100% 동일)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
@@ -112,8 +127,6 @@
     let currentItem = null;
     let keyOffset = 0;
     const scale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-
-    // --- 주요 기능들을 window 객체에 등록 (HTML 버튼에서 인식 가능하게 함) ---
 
     window.showView = function(view) {
         ['view-admin', 'view-visitor', 'view-detail'].forEach(v => {
@@ -163,7 +176,6 @@
             alert("성공적으로 심었습니다! 🌱");
             window.showView('visitor');
         } catch (e) {
-            console.error(e);
             alert("저장 실패!");
         }
     };
@@ -230,13 +242,9 @@
         window.renderDetailContent();
     };
 
-    // 초기 실행 로직
     window.addEventListener('DOMContentLoaded', async () => {
-        // 1. 에디터 기본 3줄 생성
         for(let i=0; i<3; i++) window.addRow();
-        // 2. 보관소 데이터 로드
         await window.loadSheets();
-        // 3. 첫 화면 설정
         window.showView('visitor');
     });
 </script>
