@@ -1,281 +1,103 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>울로콜리🥦</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    body { background-color: #F8F8F5; color: #333; font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
-    .font-broccoli { font-family: 'Gaegu', cursive; }
+    <title>울로콜리 악보 제작소</title>
+    <style>
+        body { background-color: #F8F8F5; color: #333; font-family: 'Pretendard', sans-serif; margin: 0; padding: 0; }
+        
+        /* 전체 컨테이너: 모바일에서 화면이 작아지면 통째로 축소됨 */
+        .page-wrapper {
+            width: 100%;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+        }
 
-    /* 컨테이너: 화면을 꽉 채워서 넓게 확보 */
-    .container { width: 100%; max-width: 900px; margin: 0 auto; padding: 10px; box-sizing: border-box; }
+        /* 악보 전용 종이: PC 기준 너비 고정 */
+        .sheet-paper {
+            width: 850px; /* A4 너비와 유사하게 고정 */
+            background: white;
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transform-origin: top left; /* 축소 기준점 */
+        }
 
-    /* 악보 줄: 가로로 넘치는 것을 절대 허용 안 함 */
-    .magic-row, .res-line { 
-        position: relative; 
-        margin-bottom: 3rem; 
-        width: 100%; 
-        overflow: visible; 
-    }
+        /* 모바일 대응: 화면이 850px보다 작아지면 종이를 통째로 줄임 */
+        @media (max-width: 850px) {
+            .sheet-paper {
+                transform: scale(calc(100vw / 900)); /* 화면 너비에 맞춰 자동 축소 */
+                margin-left: 5px;
+            }
+            .page-wrapper { height: auto; display: block; }
+        }
 
-    /* 가사: 1vw는 화면 너비의 1%. 3.8vw 정도로 설정하면 한 줄이 쏙 들어옵니다. */
-    .magic-lyrics, .res-lyrics-val { 
-        width: 100%; 
-        font-size: 3.8vw; /* 모바일에서 화면이 작아지면 글씨도 같이 작아짐 */
-        border: none; 
-        background: transparent; 
-        letter-spacing: 0.05em; 
-        outline: none; 
-        border-bottom: 1px solid #e0e0e0;
-        padding-bottom: 8px; 
-        z-index: 10; 
-        position: relative;
-        white-space: pre;
-        display: block;
-    }
+        /* 악보 한 줄 (가사 + 코드) */
+        .score-line {
+            position: relative;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+        }
 
-    /* PC처럼 큰 화면에서는 너무 커지지 않게 고정 크기 제공 */
-    @media (min-width: 900px) {
-        .magic-lyrics, .res-lyrics-val { font-size: 1.25rem; }
-        .res-chord-val { font-size: 0.9rem; }
-    }
+        /* 코드 레이어: 가사 바로 위에 고정 */
+        .chord-layer {
+            display: flex;
+            height: 25px;
+            margin-bottom: 5px;
+        }
 
-    /* 코드 레이어: 무조건 60칸을 화면 너비 안에 다 넣음 */
-    .magic-chords-layer, .res-chords { 
-        display: grid; 
-        grid-template-columns: repeat(60, 1fr); 
-        position: absolute; 
-        top: -1.4rem; 
-        width: 100%; 
-        height: 1.5rem;
-        z-index: 5;
-    }
+        /* 코드 한 조각: 너비를 %로 고정하여 위치가 절대 안 변함 */
+        .chord-unit {
+            width: 1.666%; /* 100% / 60칸 */
+            font-size: 14px;
+            font-weight: 800;
+            color: #2F5233;
+            text-align: center;
+            position: relative;
+        }
 
-    .chord-slot { border-left: 1px solid rgba(240, 240, 240, 0.5); position: relative; }
+        /* 가사 레이어 */
+        .lyrics-layer {
+            font-size: 18px;
+            letter-spacing: 0.05em;
+            line-height: 1.5;
+            white-space: pre;
+            color: #333;
+        }
 
-    /* 코드 텍스트: 가사보다 조금 더 작게 (화면 너비 비례) */
-    .res-chord-val { 
-        text-align: center; 
-        font-weight: 800; 
-        color: #2F5233; 
-        font-size: 2.2vw; 
-        white-space: nowrap;
-        transform: translateX(-50%);
-    }
-
-    /* 입력창도 화면 너비에 맞춰 작아지게 설정 */
-    .chord-slot input {
-        position: absolute; top: 0; left: 0; 
-        width: 7vw; 
-        max-width: 45px;
-        background: #2F5233; color: white; 
-        font-size: 1.8vw; 
-        font-weight: bold; border-radius: 3px;
-        text-align: center; border: none; outline: none; z-index: 20;
-        transform: translateX(-50%);
-    }
-
-    .res-line { margin-bottom: 4rem; padding-top: 1.5rem; }
-</style>
+        /* 입력창 스타일 (제작 모드) */
+        .edit-input {
+            width: 100%;
+            font-size: 18px;
+            border: none;
+            background: #fdfdfd;
+            outline: none;
+        }
+        
+        /* 코드가 들어가는 지점 표시 */
+        .chord-unit:hover { background: #f0fdf4; border-radius: 3px; cursor: pointer; }
+    </style>
 </head>
 <body>
-
-<nav class="bg-white/90 backdrop-blur-md border-b border-[#9DC183] p-4 flex justify-between items-center sticky top-0 z-50 shadow-sm">
-    <div class="flex items-center gap-2 cursor-pointer" onclick="window.showView('visitor')">
-        <span class="text-3xl inline-block">🥦</span>
-        <h1 class="text-2xl font-black text-[#2F5233] font-broccoli tracking-tighter">울로콜리 악보 제작소</h1>
-    </div>
-    <div class="flex gap-6 font-bold text-xs">
-        <span onclick="window.showView('admin')" class="cursor-pointer text-gray-400 hover:text-[#2F5233]">새 악보 제작</span>
-        <span onclick="window.showView('visitor')" class="cursor-pointer text-[#2F5233]">악보 보관소</span>
-    </div>
-</nav>
-
-<div class="max-w-6xl mx-auto p-8">
-    <section id="view-admin" class="hidden space-y-8">
-        <div class="bg-white p-10 rounded-[3rem] shadow-xl border border-gray-100">
-            <div class="flex justify-between items-center mb-10 pb-6 border-b border-gray-100">
-                <h2 class="text-3xl font-black text-[#2F5233] font-broccoli tracking-tight flex items-center gap-3">✨ <span class="text-gray-900">정밀 핀 포인트 에디터</span></h2>
-                <div class="flex gap-2">
-                    <button onclick="window.addRow()" class="bg-[#F0F4F0] text-[#2F5233] px-5 py-2.5 rounded-full text-xs font-bold transition-all hover:bg-[#9DC183] hover:text-white">+ 마디 추가</button>
-                    <button onclick="window.saveMagicSheet()" class="bg-[#2F5233] text-white px-5 py-2.5 rounded-full text-xs font-bold transition-all hover:bg-[#1b3a1e]">🥦 숲에 심기</button>
+    <div class="page-wrapper">
+        <div class="sheet-paper" id="sheet-paper">
+            <h1 style="text-align: center; color: #2F5233;">로이 킴 - 잘 지내자, 우리</h1>
+            
+            <div class="score-line">
+                <div class="chord-layer">
+                    <div class="chord-unit" style="margin-left: 15%;">G</div>
+                    <div class="chord-unit" style="margin-left: 20%;">D</div>
+                    <div class="chord-unit" style="margin-left: 25%;">Em</div>
                 </div>
+                <div class="lyrics-layer">마음을 다 보여줬던 너와는 다르게 난 사랑에 겁을 잔뜩 먹은 나</div>
             </div>
-            <div id="magic-container" class="space-y-16"></div>
-        </div>
-    </section>
 
-    <section id="view-visitor" class="space-y-6">
-        <div id="archive-list" class="grid grid-cols-1 gap-3"></div>
-    </section>
-
-    <section id="view-detail" class="hidden">
-        <div class="bg-white p-12 rounded-[3rem] shadow-2xl relative border-t-8 border-[#2F5233]">
-            <button onclick="window.showView('visitor')" class="absolute top-10 right-10 text-gray-300 hover:text-red-400 font-bold">✕ 닫기</button>
-            <div class="mb-12 text-center">
-                <h2 id="det-title" class="text-4xl font-black text-[#2F5233] font-broccoli mb-4"></h2>
-                <div class="mt-6 flex justify-center gap-2 bg-gray-50 inline-flex p-1.5 rounded-full shadow-inner border">
-                    <button onclick="window.transposeAll(-1)" class="w-12 h-12 rounded-full font-bold hover:bg-white transition-all text-[#2F5233]">♭</button>
-                    <div id="current-offset" class="flex items-center px-5 font-black text-[#9DC183] text-lg">0</div>
-                    <button onclick="window.transposeAll(1)" class="w-12 h-12 rounded-full font-bold hover:bg-white transition-all text-[#2F5233]">♯</button>
-                </div>
             </div>
-            <div id="det-content"></div>
-        </div>
-    </section>
-</div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyD3f-dDLZELbdnU9MxjTH5iMKyprtBcTbg",
-        authDomain: "uloccoli.firebaseapp.com",
-        projectId: "uloccoli",
-        storageBucket: "uloccoli.firebasestorage.app",
-        messagingSenderId: "572724570052",
-        appId: "1:572724570052:web:8a2a67098a8b7341f82691",
-        measurementId: "G-VR4SRLKC58"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let archive = [];
-    let currentItem = null;
-    let keyOffset = 0;
-    const scale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-
-    // --- 주요 기능들을 window 객체에 등록 (HTML 버튼에서 인식 가능하게 함) ---
-
-    window.showView = function(view) {
-        ['view-admin', 'view-visitor', 'view-detail'].forEach(v => {
-            const el = document.getElementById(v);
-            if(el) el.classList.add('hidden');
-        });
-        const target = document.getElementById('view-' + view);
-        if(target) target.classList.remove('hidden');
-        if(view === 'visitor') window.loadSheets();
-    };
-
-    window.addRow = function() {
-        const container = document.getElementById('magic-container');
-        if(!container) return;
-        const row = document.createElement('div');
-        row.className = 'magic-row';
-        let slots = '';
-        for(let i=0; i<60; i++) {
-            slots += `<div class="chord-slot" onclick="window.addChordPrompt(this)"></div>`;
-        }
-        row.innerHTML = `
-            <div class="magic-chords-layer">${slots}</div>
-            <input type="text" class="magic-lyrics" placeholder="가사를 입력하세요">
-        `;
-        container.appendChild(row);
-    };
-
-    window.addChordPrompt = function(slot) {
-        if(slot.querySelector('input')) return;
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.onblur = () => { if(!input.value) input.remove(); };
-        slot.appendChild(input);
-        input.focus();
-    };
-
-    window.saveMagicSheet = async function() {
-        const title = prompt("곡 제목을 입력해주세요!");
-        if(!title) return;
-        const rows = document.querySelectorAll('.magic-row');
-        const content = Array.from(rows).map(row => ({
-            chords: Array.from(row.querySelectorAll('.chord-slot')).map(slot => slot.querySelector('input')?.value || ''),
-            lyrics: row.querySelector('.magic-lyrics').value
-        }));
-        try {
-            await addDoc(collection(db, "sheets"), { title, content, createdAt: new Date() });
-            alert("성공적으로 심었습니다! 🌱");
-            window.showView('visitor');
-        } catch (e) {
-            console.error(e);
-            alert("저장 실패!");
-        }
-    };
-
-    window.loadSheets = async function() {
-        const q = query(collection(db, "sheets"), orderBy("createdAt", "desc"));
-        const querySnapshot = await getDocs(q);
-        archive = [];
-        querySnapshot.forEach((doc) => {
-            archive.push({ id: doc.id, ...doc.data() });
-        });
-        window.renderArchive();
-    };
-
-    window.renderArchive = function() {
-        const list = document.getElementById('archive-list');
-        if(!list) return;
-        list.innerHTML = archive.length ? '' : '<div class="text-center py-20 text-gray-300 font-broccoli text-2xl">악보를 새로 심어보세요! 🌱</div>';
-        archive.forEach(item => {
-            const d = document.createElement('div');
-            d.className = 'bg-white p-6 rounded-2xl shadow-sm border border-transparent hover:border-[#9DC183] cursor-pointer flex justify-between font-bold group transition-all hover:translate-x-1 mb-2';
-            d.innerHTML = `<span class="text-[#2F5233]">${item.title}</span><span class="text-[#9DC183] text-xs opacity-0 group-hover:opacity-100">VIEW →</span>`;
-            d.onclick = () => { currentItem = item; keyOffset = 0; window.showView('detail'); window.renderDetailContent(); };
-            list.appendChild(d);
-        });
-    };
-
-    window.renderDetailContent = function() {
-        const container = document.getElementById('det-content');
-        if(!currentItem || !container) return;
-        document.getElementById('det-title').innerText = currentItem.title;
-        container.innerHTML = '';
-        currentItem.content.forEach(line => {
-            const lineDiv = document.createElement('div');
-            lineDiv.className = 'res-line';
-            let chordHtml = '<div class="res-chords">';
-            line.chords.forEach(c => {
-                const val = c ? window.transposeChord(c, keyOffset) : '';
-                chordHtml += `<div class="res-chord-val">${val}</div>`;
-            });
-            chordHtml += '</div>';
-            lineDiv.innerHTML = chordHtml + `<div class="res-lyrics-val">${line.lyrics}</div>`;
-            container.appendChild(lineDiv);
-        });
-    };
-
-    window.transposeChord = function(chord, amount) {
-        if(!chord) return '';
-        return chord.replace(/[A-G][#b]?/g, (match) => {
-            const flatToSharp = { 'Db': 'C#', 'Eb': 'D#', 'Gb': 'F#', 'Ab': 'G#', 'Bb': 'A#' };
-            const normalized = flatToSharp[match] || match;
-            const index = scale.indexOf(normalized);
-            if (index === -1) return match;
-            let newIndex = (index + amount) % 12;
-            if (newIndex < 0) newIndex += 12;
-            return scale[newIndex];
-        });
-    };
-
-    window.transposeAll = function(amount) {
-        keyOffset += amount;
-        const offsetEl = document.getElementById('current-offset');
-        if(offsetEl) offsetEl.innerText = (keyOffset > 0 ? '+' : '') + keyOffset;
-        window.renderDetailContent();
-    };
-
-    // 초기 실행 로직
-    window.addEventListener('DOMContentLoaded', async () => {
-        // 1. 에디터 기본 3줄 생성
-        for(let i=0; i<3; i++) window.addRow();
-        // 2. 보관소 데이터 로드
-        await window.loadSheets();
-        // 3. 첫 화면 설정
-        window.showView('visitor');
-    });
-</script>
+    </div>
 </body>
 </html>
