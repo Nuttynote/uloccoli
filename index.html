@@ -108,9 +108,23 @@
   .form-select{width:100%;padding:11px 10px;border:1.5px solid var(--bdr);border-radius:10px;font-size:14px;font-family:var(--font);background:var(--card);color:var(--txt)}
   .form-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
 
-  .chord-palette{margin-bottom:20px;padding:16px;background:var(--glow);border:1.5px solid var(--bdr);border-radius:14px}
-  .chord-grid{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
-  .chord-palette-btn{padding:5px 9px;border:1.5px solid var(--bdr);border-radius:6px;background:var(--card);font-size:11.5px;font-family:var(--mono);font-weight:500;color:var(--txt);cursor:pointer;transition:all .15s}
+  .chord-palette{margin-bottom:20px;padding:14px;background:var(--glow);border:1.5px solid var(--bdr);border-radius:14px}
+  .chord-current{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 12px;background:var(--card);border:1.5px solid var(--bdr);border-radius:10px}
+  .chord-current-label{font-size:11px;color:var(--txt-lt);font-weight:500}
+  .chord-current-value{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--chord)}
+  .chord-groups{display:flex;flex-direction:column;gap:4px}
+  .chord-group{background:var(--card);border:1.5px solid var(--bdr);border-radius:8px;overflow:hidden}
+  .chord-group-header{display:flex;align-items:center;padding:6px 12px;cursor:pointer;user-select:none;transition:background .15s;gap:8px}
+  .chord-group-header:hover{background:rgba(46,125,50,.05)}
+  .chord-group-header.open{background:rgba(46,125,50,.08);border-bottom:1px solid var(--bdr)}
+  .chord-group-root{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--chord);min-width:24px}
+  .chord-group-preview{font-size:11px;color:var(--txt-lt);flex:1}
+  .chord-group-arrow{font-size:10px;color:var(--txt-lt);transition:transform .2s}
+  .chord-group-header.open .chord-group-arrow{transform:rotate(90deg)}
+  .chord-group-body{display:none;padding:8px 10px;flex-wrap:wrap;gap:4px}
+  .chord-group-body.open{display:flex}
+  .chord-palette-btn{padding:5px 10px;border:1.5px solid var(--bdr);border-radius:6px;background:var(--bg);font-size:11.5px;font-family:var(--mono);font-weight:500;color:var(--txt);cursor:pointer;transition:all .15s}
+  .chord-palette-btn:hover{border-color:var(--accent-lt)}
   .chord-palette-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
   .custom-chord-row{display:flex;gap:6px}
   .custom-chord-input{flex:1;padding:8px 12px;border:1.5px solid var(--bdr);border-radius:8px;font-size:13px;font-family:var(--mono);background:var(--card);color:var(--txt)}
@@ -246,7 +260,22 @@ async function sbDeleteSong(id){
 const CHROMATIC=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 const FLAT_MAP={Db:"C#",Eb:"D#",Fb:"E",Gb:"F#",Ab:"G#",Bb:"A#",Cb:"B"};
 const CATEGORIES=["전체","감사","사랑","예배","소망","고백"];
-const COMMON_CHORDS=["C","Cm","C7","D","Dm","D7","E","Em","E7","F","Fm","F7","G","Gm","G7","A","Am","A7","B","Bm","B7","D/F#","A/C#","G/B","Csus4","Dsus4","Gsus4","Cadd9","Gadd9","Dadd9","Am7","Em7","Dm7","Cmaj7","Gmaj7","Fmaj7"];
+
+/* 코드를 루트 음별로 그룹화 */
+const CHORD_GROUPS=[
+  {root:"C", chords:["C","Cm","C7","Cmaj7","Cm7","Csus4","Cadd9","Cdim","Caug","C/E","C/G"]},
+  {root:"C#", chords:["C#","C#m","C#7","C#m7","C#maj7"]},
+  {root:"D", chords:["D","Dm","D7","Dmaj7","Dm7","Dsus4","Dadd9","D/F#","D/A"]},
+  {root:"D#", chords:["D#","D#m","D#7","Eb","Ebm","Eb7"]},
+  {root:"E", chords:["E","Em","E7","Emaj7","Em7","Esus4","E/G#","E/B"]},
+  {root:"F", chords:["F","Fm","F7","Fmaj7","Fm7","Fsus4","F/A","F/C"]},
+  {root:"F#", chords:["F#","F#m","F#7","F#m7","Gb","Gbmaj7"]},
+  {root:"G", chords:["G","Gm","G7","Gmaj7","Gm7","Gsus4","Gadd9","G/B","G/D"]},
+  {root:"G#", chords:["G#","G#m","G#7","Ab","Abmaj7","Abm"]},
+  {root:"A", chords:["A","Am","A7","Amaj7","Am7","Asus4","Aadd9","A/C#","A/E"]},
+  {root:"A#", chords:["A#","A#m","Bb","Bbm","Bb7","Bbmaj7"]},
+  {root:"B", chords:["B","Bm","B7","Bmaj7","Bm7","Bsus4","B/D#","B/F#"]},
+];
 
 function normalizeNote(n){return FLAT_MAP[n]||n;}
 function transposeChord(chord,semi){
@@ -356,6 +385,7 @@ const State={
     title:"",artist:"",originalKey:"C",category:"감사",
     selectedChord:"G",customChord:"",preview:false,
     lines:[{lyric:"",chords:[]}],
+    openGroups:new Set(["G"]),  // 기본으로 G 계열 열림
   }
 };
 
@@ -367,6 +397,7 @@ function initEditor(song){
     category:song?.category||"감사",
     selectedChord:"G",customChord:"",preview:false,
     lines:song?.text?deserialize(song.text):[{lyric:"",chords:[]}],
+    openGroups:new Set([song?.originalKey||"G"]),
   };
 }
 
@@ -604,12 +635,30 @@ function renderEditorView(){
       </div>
 
       <div class="chord-palette">
-        <label class="form-label">코드 선택 후 아래 가사 클릭</label>
-        <div class="chord-grid" id="chord-grid">
-          ${COMMON_CHORDS.map(c=>`<button class="chord-palette-btn ${ed.selectedChord===c?"active":""}" data-action="pick-chord" data-chord="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}
+        <div class="chord-current">
+          <span class="chord-current-label">선택된 코드</span>
+          <span class="chord-current-value" id="chord-current-display">${escapeHtml(ed.selectedChord||"없음")}</span>
         </div>
-        <div class="custom-chord-row">
-          <input class="custom-chord-input" value="${escapeHtml(ed.customChord)}" placeholder="직접 입력 (예: Bbm7)" data-action="ed-custom"/>
+        <div class="chord-groups" id="chord-groups">
+          ${CHORD_GROUPS.map(g=>{
+            const isOpen=ed.openGroups.has(g.root);
+            const preview=g.chords.slice(0,4).join(" · ");
+            return `
+              <div class="chord-group">
+                <div class="chord-group-header ${isOpen?"open":""}" data-action="toggle-group" data-root="${escapeHtml(g.root)}">
+                  <span class="chord-group-root">${escapeHtml(g.root)}</span>
+                  <span class="chord-group-preview">${escapeHtml(preview)}...</span>
+                  <span class="chord-group-arrow">▶</span>
+                </div>
+                <div class="chord-group-body ${isOpen?"open":""}" data-group-body="${escapeHtml(g.root)}">
+                  ${g.chords.map(c=>`<button class="chord-palette-btn ${ed.selectedChord===c?"active":""}" data-action="pick-chord" data-chord="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+        <div class="custom-chord-row" style="margin-top:10px">
+          <input class="custom-chord-input" value="${escapeHtml(ed.customChord)}" placeholder="직접 입력 (예: Bbm7sus4)" data-action="ed-custom"/>
           <button class="custom-chord-btn" data-action="ed-custom-submit">선택</button>
         </div>
       </div>
@@ -706,6 +755,19 @@ function updateChordPalette(){
     if(btn.dataset.chord===State.ed.selectedChord) btn.classList.add("active");
     else btn.classList.remove("active");
   });
+  const disp=document.getElementById("chord-current-display");
+  if(disp) disp.textContent=State.ed.selectedChord||"없음";
+}
+
+function toggleChordGroup(root){
+  if(State.ed.openGroups.has(root)) State.ed.openGroups.delete(root);
+  else State.ed.openGroups.add(root);
+  // 해당 그룹의 헤더와 바디만 업데이트 (깜빡임 방지)
+  const header=document.querySelector(`.chord-group-header[data-root="${root}"]`);
+  const body=document.querySelector(`.chord-group-body[data-group-body="${root}"]`);
+  const isOpen=State.ed.openGroups.has(root);
+  if(header) header.classList.toggle("open",isOpen);
+  if(body) body.classList.toggle("open",isOpen);
 }
 function updateCatSelection(){
   document.querySelectorAll(".cat-btn").forEach(btn=>{
@@ -817,6 +879,10 @@ document.addEventListener("click",e=>{
   if(action==="delete-song-from-editor"){if(!requireAdmin()) return;deleteSong(State.editSongId);return;}
   if(action==="save-song"){if(!requireAdmin()) return;saveCurrentSong();return;}
 
+  if(action==="toggle-group"){
+    toggleChordGroup(t.dataset.root);
+    return;
+  }
   if(action==="pick-chord"){
     State.ed.selectedChord=t.dataset.chord;
     updateChordPalette();updateHint();return;
@@ -901,6 +967,27 @@ document.addEventListener("keydown",e=>{
       t.value="";
       updateChordPalette();updateHint();
     }
+    return;
+  }
+  // 가사 입력에서 Enter = 새 줄 추가하고 포커스 이동
+  if(t.dataset.action==="lyric-change"&&e.key==="Enter"&&!e.shiftKey){
+    e.preventDefault();
+    const currentIdx=parseInt(t.dataset.line,10);
+    // 새 빈 줄을 현재 줄 바로 다음에 삽입
+    const newIdx=currentIdx+1;
+    State.ed.lines.splice(newIdx,0,{lyric:"",chords:[]});
+    // DOM도 그 위치에 삽입
+    const wrap=document.getElementById("lines-wrap");
+    if(wrap){
+      // 이후 줄들의 data-line 값이 틀어지므로 재렌더가 필요함
+      wrap.innerHTML=State.ed.lines.map((ln,idx)=>renderLineEditor(ln,idx)).join("");
+      // 새 줄의 input에 포커스
+      requestAnimationFrame(()=>{
+        const newInput=document.querySelector(`[data-action="lyric-change"][data-line="${newIdx}"]`);
+        if(newInput) newInput.focus();
+      });
+    }
+    return;
   }
 });
 
