@@ -44,11 +44,12 @@
   .search-wrap{flex:1;position:relative}
   .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.45;z-index:1}
   .search-input{width:100%;padding:12px 16px 12px 40px;border:1.5px solid var(--bdr);border-radius:12px;font-size:14px;font-family:var(--font);background:var(--card);color:var(--txt)}
-  .admin-toggle{width:44px;height:44px;border:1.5px solid var(--bdr);border-radius:12px;background:var(--card);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
-  .admin-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--glow);border:1.5px solid var(--bdr);border-radius:12px;margin-bottom:12px;animation:fadeIn .3s ease}
+  .admin-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--glow);border:1.5px solid var(--bdr);border-radius:12px;margin-bottom:12px;animation:fadeIn .3s ease;flex-wrap:wrap;gap:8px}
   .admin-label{font-size:13px;font-weight:600;color:var(--accent)}
+  .admin-actions{display:flex;gap:8px;align-items:center}
   .add-btn{padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
+  .logout-btn{padding:8px 14px;background:transparent;color:var(--txt-lt);border:1.5px solid var(--bdr);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer}
 
   /* Categories */
   .cat-wrap{display:flex;gap:7px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px}
@@ -64,8 +65,9 @@
   .card-artist{font-size:12.5px;color:var(--txt-lt);margin-bottom:6px}
   .card-key{font-size:11.5px;color:var(--accent-lt);font-weight:500;font-family:var(--mono)}
   .card-arrow{font-size:18px;color:var(--bdr)}
-  .card-actions{display:flex;align-items:center;gap:8px}
-  .edit-icon-btn{width:32px;height:32px;border:1.5px solid var(--bdr);border-radius:8px;background:var(--card);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .card-actions{display:flex;align-items:center;gap:6px}
+  .card-icon-btn{width:32px;height:32px;border:1.5px solid var(--bdr);border-radius:8px;background:var(--card);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .card-icon-btn.danger:hover{background:var(--danger-lt);border-color:var(--danger);color:var(--danger)}
   .empty{text-align:center;padding:50px 20px;color:var(--txt-lt);font-size:14px}
 
   /* Footer */
@@ -77,9 +79,10 @@
   /* Song view */
   .back-btn{display:inline-flex;align-items:center;padding:9px 16px;background:transparent;border:1.5px solid var(--bdr);border-radius:10px;font-size:13px;color:var(--txt-lt);cursor:pointer;margin-top:20px;margin-bottom:18px}
   .back-btn span{margin-right:6px}
-  .song-header{text-align:center;margin-bottom:20px}
+  .song-header{text-align:center;margin-bottom:20px;position:relative}
   .song-title-big{font-family:var(--serif);font-size:28px;font-weight:900;margin-bottom:4px}
   .song-artist-text{font-size:13px;color:var(--txt-lt)}
+  .song-header-actions{margin-top:12px;display:flex;justify-content:center;gap:8px}
   .transpose-bar{display:flex;flex-direction:column;align-items:center;gap:10px;padding:16px 20px;background:var(--glow);border:1.5px solid var(--bdr);border-radius:14px;margin-bottom:20px}
   .key-row{display:flex;align-items:center;gap:8px}
   .key-label{font-size:12.5px;color:var(--txt-lt)}
@@ -149,6 +152,22 @@
 <div id="app" class="container"></div>
 
 <script>
+/* ═══════════════════════════════════════════════════
+   🥦 울로콜리 관리자 설정
+   ───────────────────────────────────────────────────
+   관리자 접속 방법:
+     https://사이트주소/?admin=비밀번호
+   예:
+     https://ullocoli.com/?admin=ullocoli2026
+   ─────────────────────────────────────────────
+   아래 ADMIN_PASSWORD 값을 본인이 원하는 것으로 변경하세요.
+   이 값과 URL의 ?admin= 값이 같으면 관리자 모드가 활성화됩니다.
+   ⚠️ 주의: HTML 소스 보기로 노출됩니다. 절대적 보안 아님.
+════════════════════════════════════════════════════ */
+const ADMIN_PASSWORD = "ullocoli2026";   // ← 여기만 바꾸면 됩니다
+/* ═══════════════════════════════════════════════════ */
+
+
 /* ═══ CORE DATA & UTILS ═══ */
 const CHROMATIC=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 const FLAT_MAP={Db:"C#",Eb:"D#",Fb:"E",Gb:"F#",Ab:"G#",Bb:"A#",Cb:"B"};
@@ -206,7 +225,40 @@ function deserialize(text){
   });
 }
 
-/* ═══ LOCAL STORAGE ═══ */
+/* ═══ ADMIN AUTH (URL-based) ═══ */
+const ADMIN_SESSION_KEY="ullocoli_admin_session";
+
+function checkAdminAccess(){
+  // 1) Check URL param
+  const params=new URLSearchParams(window.location.search);
+  const urlPassword=params.get("admin");
+  if(urlPassword!==null){
+    if(urlPassword===ADMIN_PASSWORD){
+      // Save session so user stays logged in across page reloads
+      sessionStorage.setItem(ADMIN_SESSION_KEY,"1");
+      // Clean URL so password doesn't show in address bar
+      const cleanUrl=window.location.pathname+window.location.hash;
+      window.history.replaceState({},document.title,cleanUrl);
+      return true;
+    }else{
+      alert("비밀번호가 올바르지 않습니다.");
+      const cleanUrl=window.location.pathname+window.location.hash;
+      window.history.replaceState({},document.title,cleanUrl);
+      return false;
+    }
+  }
+  // 2) Check existing session
+  return sessionStorage.getItem(ADMIN_SESSION_KEY)==="1";
+}
+
+function logoutAdmin(){
+  sessionStorage.removeItem(ADMIN_SESSION_KEY);
+  State.isAdmin=false;
+  State.view="list";
+  render();
+}
+
+/* ═══ LOCAL STORAGE (SONGS) ═══ */
 const STORAGE_KEY="ullocoli_songs_v1";
 const DEFAULT_SONGS=[
   {
@@ -265,14 +317,13 @@ function saveSongs(songs){
 /* ═══ STATE ═══ */
 const State={
   songs:loadSongs(),
-  view:"list",           // list | song | editor
+  view:"list",
   selectedSongId:null,
-  editSongId:null,       // null when creating new
+  editSongId:null,
   search:"",
   activeCat:"전체",
-  showAdmin:false,
+  isAdmin:checkAdminAccess(),
   transpose:0,
-  // editor state
   ed:{
     title:"",artist:"",originalKey:"C",category:"감사",
     selectedChord:"G",customChord:"",preview:false,
@@ -351,12 +402,14 @@ function renderListView(){
           <span class="search-icon">🔍</span>
           <input class="search-input" placeholder="곡 제목으로 검색..." value="${escapeHtml(State.search)}" data-action="search"/>
         </div>
-        <button class="admin-toggle" data-action="toggle-admin">${State.showAdmin?"🔒":"⚙️"}</button>
       </div>
-      ${State.showAdmin?`
+      ${State.isAdmin?`
         <div class="admin-bar">
           <span class="admin-label">🥦 관리자 모드</span>
-          <button class="add-btn" data-action="new-song">+ 새 악보</button>
+          <div class="admin-actions">
+            <button class="add-btn" data-action="new-song">+ 새 악보</button>
+            <button class="logout-btn" data-action="logout">로그아웃</button>
+          </div>
         </div>
       `:""}
       <div class="cat-wrap">
@@ -374,7 +427,10 @@ function renderListView(){
               <div class="card-key">♪ Key: ${escapeHtml(s.originalKey)}</div>
             </div>
             <div class="card-actions">
-              ${State.showAdmin?`<button class="edit-icon-btn" data-action="edit-song" data-id="${escapeHtml(s.id)}">✏️</button>`:""}
+              ${State.isAdmin?`
+                <button class="card-icon-btn" data-action="edit-song" data-id="${escapeHtml(s.id)}" title="편집">✏️</button>
+                <button class="card-icon-btn danger" data-action="delete-song-from-list" data-id="${escapeHtml(s.id)}" title="삭제">🗑️</button>
+              `:""}
               <span class="card-arrow">→</span>
             </div>
           </div>
@@ -396,6 +452,12 @@ function renderSongView(){
       <div class="song-header">
         <h1 class="song-title-big">${escapeHtml(song.title)}</h1>
         <p class="song-artist-text">${escapeHtml(song.artist)} · ${escapeHtml(song.category)}</p>
+        ${State.isAdmin?`
+          <div class="song-header-actions">
+            <button class="logout-btn" data-action="edit-song" data-id="${escapeHtml(song.id)}">✏️ 편집</button>
+            <button class="logout-btn" style="color:var(--danger);border-color:var(--danger-lt)" data-action="delete-song-from-view" data-id="${escapeHtml(song.id)}">🗑️ 삭제</button>
+          </div>
+        `:""}
       </div>
       <div class="transpose-bar">
         <div class="key-row">
@@ -514,7 +576,7 @@ function renderEditorView(){
       <div class="editor-actions">
         <button class="preview-btn" data-action="toggle-preview">${ed.preview?"✏️ 편집":"👁 미리보기"}</button>
         <div class="action-right">
-          ${!isNew?`<button class="delete-btn" data-action="delete-song">삭제</button>`:""}
+          ${!isNew?`<button class="delete-btn" data-action="delete-song-from-editor">삭제</button>`:""}
           <button class="save-btn" data-action="save-song">💾 저장</button>
         </div>
       </div>
@@ -534,7 +596,6 @@ function render(){
   attachInputFocus();
 }
 
-/* Preserve input focus & cursor across re-renders */
 let focusState=null;
 function attachInputFocus(){
   if(!focusState) return;
@@ -548,28 +609,78 @@ function attachInputFocus(){
   focusState=null;
 }
 
+/* ═══ ADMIN-ONLY GUARD ═══ */
+function requireAdmin(){
+  if(!State.isAdmin){
+    alert("관리자만 사용할 수 있는 기능입니다.");
+    return false;
+  }
+  return true;
+}
+
+/* ═══ DELETE HANDLER ═══ */
+function deleteSong(id){
+  const song=State.songs.find(s=>s.id===id);
+  if(!song) return;
+  if(!confirm(`"${song.title}" 악보를 정말 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) return;
+  State.songs=State.songs.filter(s=>s.id!==id);
+  saveSongs(State.songs);
+  if(State.selectedSongId===id){
+    State.selectedSongId=null;
+    State.view="list";
+  }
+  if(State.editSongId===id){
+    State.editSongId=null;
+    State.view="list";
+  }
+  render();
+}
+
 /* ═══ EVENT HANDLING ═══ */
 document.addEventListener("click",e=>{
   const t=e.target.closest("[data-action]");
   if(!t) return;
   const action=t.dataset.action;
 
-  if(action==="toggle-admin"){State.showAdmin=!State.showAdmin;render();return;}
   if(action==="cat"){State.activeCat=t.dataset.cat;render();return;}
+  if(action==="logout"){logoutAdmin();return;}
   if(action==="open-song"){
     State.selectedSongId=t.dataset.id;State.transpose=0;State.view="song";render();return;
   }
   if(action==="back-list"){State.view="list";render();return;}
   if(action==="transpose"){State.transpose+=parseInt(t.dataset.dir,10);render();return;}
   if(action==="transpose-reset"){State.transpose=0;render();return;}
+
+  // ── Admin-only actions ──
   if(action==="new-song"){
+    if(!requireAdmin()) return;
     State.editSongId=null;initEditor(null);State.view="editor";render();return;
   }
   if(action==="edit-song"){
+    if(!requireAdmin()) return;
     e.stopPropagation();
     const song=State.songs.find(s=>s.id===t.dataset.id);
     State.editSongId=t.dataset.id;initEditor(song);State.view="editor";render();return;
   }
+  if(action==="delete-song-from-list"){
+    if(!requireAdmin()) return;
+    e.stopPropagation();
+    deleteSong(t.dataset.id);return;
+  }
+  if(action==="delete-song-from-view"){
+    if(!requireAdmin()) return;
+    deleteSong(t.dataset.id);return;
+  }
+  if(action==="delete-song-from-editor"){
+    if(!requireAdmin()) return;
+    deleteSong(State.editSongId);return;
+  }
+  if(action==="save-song"){
+    if(!requireAdmin()) return;
+    saveCurrentSong();return;
+  }
+
+  // ── Editor interactions ──
   if(action==="pick-chord"){State.ed.selectedChord=t.dataset.chord;render();return;}
   if(action==="ed-custom-submit"){
     if(State.ed.customChord.trim()){
@@ -597,25 +708,16 @@ document.addEventListener("click",e=>{
     render();return;
   }
   if(action==="toggle-preview"){State.ed.preview=!State.ed.preview;render();return;}
-  if(action==="save-song"){saveCurrentSong();return;}
-  if(action==="delete-song"){
-    if(!confirm("정말 삭제하시겠습니까?")) return;
-    State.songs=State.songs.filter(s=>s.id!==State.editSongId);
-    saveSongs(State.songs);
-    State.view="list";State.editSongId=null;render();return;
-  }
 });
 
-/* Mouse hover over lyric cells for chord preview */
+/* Hover effects */
 document.addEventListener("mouseover",e=>{
   const t=e.target.closest('[data-action="click-char"]');
-  if(!t) return;
-  if(State.view!=="editor") return;
+  if(!t||State.view!=="editor") return;
   const lineIdx=parseInt(t.dataset.line,10);
   const pos=parseInt(t.dataset.pos,10);
   if(State.ed.hoveredLineIdx!==lineIdx||State.ed.hoveredPos!==pos){
     State.ed.hoveredLineIdx=lineIdx;State.ed.hoveredPos=pos;
-    // Lightweight re-render without touching focus
     render();
   }
 });
@@ -656,13 +758,11 @@ document.addEventListener("input",e=>{
     const val=t.value;
     const line=State.ed.lines[idx];
     line.lyric=val;
-    // keep only chords whose pos still valid
     line.chords=(line.chords||[]).filter(c=>c.pos<=[...val].length);
     render();return;
   }
 });
 
-/* Change events (for selects) */
 document.addEventListener("change",e=>{
   const t=e.target.closest("[data-action]");
   if(!t) return;
@@ -671,7 +771,6 @@ document.addEventListener("change",e=>{
   if(action==="ed-cat"){State.ed.category=t.value;render();return;}
 });
 
-/* Enter key on custom chord */
 document.addEventListener("keydown",e=>{
   const t=e.target.closest("[data-action]");
   if(!t) return;
@@ -683,7 +782,6 @@ document.addEventListener("keydown",e=>{
   }
 });
 
-/* Save current editor state */
 function saveCurrentSong(){
   const ed=State.ed;
   if(!ed.title.trim()){alert("제목을 입력해주세요");return;}
@@ -697,7 +795,6 @@ function saveCurrentSong(){
   State.view="list";State.editSongId=null;render();
 }
 
-/* Initial render */
 render();
 </script>
 </body>
