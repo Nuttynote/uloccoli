@@ -22,24 +22,24 @@
   @keyframes slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{min-height:100vh;background:var(--bg)}
   body{font-family:var(--font);color:var(--txt);background:linear-gradient(180deg,var(--bg) 0%,#FAFDF7 50%,var(--bg) 100%);min-height:100vh}
   input:focus,select:focus{outline:none;border-color:var(--accent)!important;box-shadow:0 0 0 3px rgba(46,125,50,.12)}
   button{font-family:var(--font)}
   button:hover{filter:brightness(1.06)}
+  button:disabled{opacity:.5;cursor:not-allowed}
 
   .container{max-width:720px;margin:0 auto;padding:0 20px 40px;min-height:100vh}
   .view{animation:slideIn .35s ease}
 
-  /* Header */
   .header{text-align:center;padding:44px 0 28px;animation:fadeIn .6s ease}
   .header-decor{font-size:40px;margin-bottom:6px;animation:float 3s ease-in-out infinite}
   .logo{font-family:var(--serif);font-size:34px;font-weight:900;letter-spacing:-.02em;margin-bottom:2px}
   .tagline{font-family:var(--serif);font-size:14px;color:var(--accent);font-weight:600;letter-spacing:.12em;margin-bottom:6px}
   .subtitle{font-size:12.5px;color:var(--txt-lt);font-weight:300}
 
-  /* Toolbar */
   .toolbar{display:flex;gap:8px;margin-bottom:12px;align-items:center}
   .search-wrap{flex:1;position:relative}
   .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;opacity:.45;z-index:1}
@@ -51,12 +51,10 @@
   .add-btn{padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer}
   .logout-btn{padding:8px 14px;background:transparent;color:var(--txt-lt);border:1.5px solid var(--bdr);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer}
 
-  /* Categories */
   .cat-wrap{display:flex;gap:7px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px}
   .cat-btn{padding:7px 16px;border:1.5px solid var(--bdr);border-radius:20px;background:transparent;color:var(--txt-lt);font-size:12.5px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s}
   .cat-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
 
-  /* Cards */
   .list{display:flex;flex-direction:column;gap:10px}
   .card{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;background:var(--card);border:1.5px solid var(--bdr);border-radius:14px;cursor:pointer;transition:all .2s;animation:fadeIn .4s ease}
   .card:hover{border-color:var(--accent-lt);transform:translateY(-1px)}
@@ -69,14 +67,13 @@
   .card-icon-btn{width:32px;height:32px;border:1.5px solid var(--bdr);border-radius:8px;background:var(--card);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
   .card-icon-btn.danger:hover{background:var(--danger-lt);border-color:var(--danger);color:var(--danger)}
   .empty{text-align:center;padding:50px 20px;color:var(--txt-lt);font-size:14px}
+  .empty-sub{font-size:12.5px;color:var(--txt-lt);margin-top:6px;opacity:.8}
 
-  /* Footer */
   .footer{text-align:center;margin-top:40px;padding:28px 0;border-top:1px solid var(--bdr)}
   .footer-decor{font-size:26px;margin-bottom:6px;opacity:.6}
   .footer-main{font-family:var(--serif);font-size:13px;font-weight:600;margin-bottom:3px}
   .footer-sub{font-size:11.5px;color:var(--txt-lt);font-weight:300}
 
-  /* Song view */
   .back-btn{display:inline-flex;align-items:center;padding:9px 16px;background:transparent;border:1.5px solid var(--bdr);border-radius:10px;font-size:13px;color:var(--txt-lt);cursor:pointer;margin-top:20px;margin-bottom:18px}
   .back-btn span{margin-right:6px}
   .song-header{text-align:center;margin-bottom:20px;position:relative}
@@ -104,7 +101,6 @@
   .pos-lyric-row{display:flex;flex-wrap:wrap;font-size:15px;line-height:1.8;color:var(--txt)}
   .pos-lyric-cell{display:inline-block}
 
-  /* Editor */
   .editor-title{font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:20px}
   .form-group{margin-bottom:16px}
   .form-label{display:block;font-size:12.5px;font-weight:600;color:var(--txt-lt);margin-bottom:6px}
@@ -131,44 +127,122 @@
   .click-chord-row{display:flex;flex-wrap:wrap;min-height:22px;margin-bottom:1px}
   .click-chord-cell{display:inline-block;font-family:var(--mono);font-size:12px;vertical-align:top;position:relative}
   .click-chord-mark{color:var(--chord);font-weight:600;cursor:pointer;background:rgba(46,125,50,.12);border-radius:3px;padding:1px 3px;font-size:12px;white-space:nowrap}
-  .click-chord-hover{color:var(--accent-pale);font-size:11px;white-space:nowrap}
   .click-lyric-row{display:flex;flex-wrap:wrap}
-  .click-lyric-cell{display:inline-block;font-family:var(--mono);font-size:15px;padding:3px 0;border-bottom:2px solid transparent;border-radius:2px;transition:background .1s;user-select:none;text-align:left}
+  .click-lyric-cell{display:inline-block;font-family:var(--mono);font-size:15px;padding:3px 0;border-bottom:2px solid transparent;border-radius:2px;user-select:none;text-align:left}
   .click-lyric-cell.has-chord{background:rgba(46,125,50,.12);border-bottom-color:var(--accent);cursor:pointer}
   .click-lyric-cell.hoverable{cursor:pointer}
-  .click-lyric-cell.hovered{background:rgba(46,125,50,.06)}
+  .click-lyric-cell.hoverable:hover{background:rgba(46,125,50,.06)}
 
   .add-line-btn{padding:9px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px}
   .editor-actions{display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:10px}
   .preview-btn{padding:10px 20px;background:var(--card);border:1.5px solid var(--bdr);border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;color:var(--txt)}
-  .save-btn{padding:10px 22px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer}
+  .save-btn{padding:10px 22px;background:var(--accent);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
   .delete-btn{padding:10px 18px;background:var(--danger-lt);color:var(--danger);border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer}
   .action-right{display:flex;gap:8px}
 
   .preview-wrap{margin-top:24px}
+
+  /* Loading */
+  .loading-wrap{text-align:center;padding:60px 20px;color:var(--txt-lt)}
+  .spinner{display:inline-block;width:32px;height:32px;border:3px solid var(--bdr);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px}
+  .loading-text{font-size:13px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 20px;background:var(--txt);color:#fff;border-radius:10px;font-size:13px;z-index:1000;animation:slideIn .3s ease;box-shadow:0 8px 24px rgba(0,0,0,.15)}
+  .toast.error{background:var(--danger)}
+  .toast.success{background:var(--accent)}
+
+  .spinner-sm{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
 </style>
 </head>
 <body>
 <div id="app" class="container"></div>
+<div id="toast-container"></div>
 
 <script>
 /* ═══════════════════════════════════════════════════
-   🥦 울로콜리 관리자 설정
-   ───────────────────────────────────────────────────
-   관리자 접속 방법:
-     https://사이트주소/?admin=비밀번호
-   예:
-     https://ullocoli.com/?admin=ullocoli2026
-   ─────────────────────────────────────────────
-   아래 ADMIN_PASSWORD 값을 본인이 원하는 것으로 변경하세요.
-   이 값과 URL의 ?admin= 값이 같으면 관리자 모드가 활성화됩니다.
-   ⚠️ 주의: HTML 소스 보기로 노출됩니다. 절대적 보안 아님.
-════════════════════════════════════════════════════ */
-const ADMIN_PASSWORD = "ullocoli2026";   // ← 여기만 바꾸면 됩니다
+   🥦 울로콜리 설정
+═══════════════════════════════════════════════════ */
+const ADMIN_PASSWORD = "ullocoli2026";
+
+/* Supabase 연결 정보 */
+const SUPABASE_URL = "https://xtavorafqxjfkcnfttum.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YXZvcmFmcXhqZmtjbmZ0dHVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzMTgwOTgsImV4cCI6MjA5MTg5NDA5OH0.7WSFf2hYwM9daIe5Hth0nNU530_PmR-mD4RceRd1TXI";
 /* ═══════════════════════════════════════════════════ */
 
 
-/* ═══ CORE DATA & UTILS ═══ */
+/* ═══ SUPABASE API ═══ */
+const SB_HEADERS = {
+  "apikey": SUPABASE_ANON_KEY,
+  "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+  "Content-Type": "application/json",
+  "Prefer": "return=representation"
+};
+
+async function sbFetchSongs(){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/songs?select=*&order=created_at.desc`,{
+    headers: SB_HEADERS
+  });
+  if(!res.ok) throw new Error("악보를 불러오지 못했습니다");
+  const data = await res.json();
+  // Convert from DB format (original_key) to JS format (originalKey)
+  return data.map(row=>({
+    id: row.id,
+    title: row.title,
+    artist: row.artist,
+    originalKey: row.original_key,
+    category: row.category,
+    text: row.text
+  }));
+}
+
+async function sbInsertSong(song){
+  const body = {
+    id: song.id,
+    title: song.title,
+    artist: song.artist,
+    original_key: song.originalKey,
+    category: song.category,
+    text: song.text
+  };
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/songs`,{
+    method: "POST",
+    headers: SB_HEADERS,
+    body: JSON.stringify(body)
+  });
+  if(!res.ok){
+    const err = await res.text();
+    throw new Error("저장 실패: " + err);
+  }
+  return res.json();
+}
+
+async function sbUpdateSong(song){
+  const body = {
+    title: song.title,
+    artist: song.artist,
+    original_key: song.originalKey,
+    category: song.category,
+    text: song.text
+  };
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/songs?id=eq.${encodeURIComponent(song.id)}`,{
+    method: "PATCH",
+    headers: SB_HEADERS,
+    body: JSON.stringify(body)
+  });
+  if(!res.ok) throw new Error("수정 실패");
+  return res.json();
+}
+
+async function sbDeleteSong(id){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/songs?id=eq.${encodeURIComponent(id)}`,{
+    method: "DELETE",
+    headers: SB_HEADERS
+  });
+  if(!res.ok) throw new Error("삭제 실패");
+  return true;
+}
+
+
+/* ═══ CORE UTILS ═══ */
 const CHROMATIC=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 const FLAT_MAP={Db:"C#",Eb:"D#",Fb:"E",Gb:"F#",Ab:"G#",Bb:"A#",Cb:"B"};
 const CATEGORIES=["전체","감사","사랑","예배","소망","고백"];
@@ -208,6 +282,7 @@ function serialize(lines){
 }
 
 function deserialize(text){
+  if(!text) return [{lyric:"",chords:[]}];
   return text.split("\n").map(raw=>{
     if(!raw.trim()) return {lyric:"",chords:[]};
     if(!raw.includes("[")) return {lyric:raw,chords:[]};
@@ -225,32 +300,38 @@ function deserialize(text){
   });
 }
 
-/* ═══ ADMIN AUTH (URL-based) ═══ */
-const ADMIN_SESSION_KEY="ullocoli_admin_session";
+/* ═══ TOAST ═══ */
+function showToast(msg,type="info"){
+  const container=document.getElementById("toast-container");
+  const toast=document.createElement("div");
+  toast.className=`toast ${type}`;
+  toast.textContent=msg;
+  container.appendChild(toast);
+  setTimeout(()=>{
+    toast.style.opacity="0";
+    toast.style.transition="opacity .3s";
+    setTimeout(()=>toast.remove(),300);
+  },2500);
+}
 
+/* ═══ ADMIN AUTH ═══ */
+const ADMIN_SESSION_KEY="ullocoli_admin_session";
 function checkAdminAccess(){
-  // 1) Check URL param
   const params=new URLSearchParams(window.location.search);
   const urlPassword=params.get("admin");
   if(urlPassword!==null){
     if(urlPassword===ADMIN_PASSWORD){
-      // Save session so user stays logged in across page reloads
       sessionStorage.setItem(ADMIN_SESSION_KEY,"1");
-      // Clean URL so password doesn't show in address bar
-      const cleanUrl=window.location.pathname+window.location.hash;
-      window.history.replaceState({},document.title,cleanUrl);
+      window.history.replaceState({},document.title,window.location.pathname+window.location.hash);
       return true;
     }else{
       alert("비밀번호가 올바르지 않습니다.");
-      const cleanUrl=window.location.pathname+window.location.hash;
-      window.history.replaceState({},document.title,cleanUrl);
+      window.history.replaceState({},document.title,window.location.pathname+window.location.hash);
       return false;
     }
   }
-  // 2) Check existing session
   return sessionStorage.getItem(ADMIN_SESSION_KEY)==="1";
 }
-
 function logoutAdmin(){
   sessionStorage.removeItem(ADMIN_SESSION_KEY);
   State.isAdmin=false;
@@ -258,65 +339,11 @@ function logoutAdmin(){
   render();
 }
 
-/* ═══ LOCAL STORAGE (SONGS) ═══ */
-const STORAGE_KEY="ullocoli_songs_v1";
-const DEFAULT_SONGS=[
-  {
-    id:"s1",title:"감사해",artist:"울로콜리 편곡",originalKey:"G",category:"감사",
-    text:`[G]감사해 주님의 [D/F#]은혜에
-[Em]날마다 새로운 [C]사랑으로
-[G]나를 품어 [D/F#]주시니
-[Em]감사 [C]합니 [D]다
-
-[C]할렐루야 [D]할렐루야
-[G]주님께 [Em]영광
-[C]할렐루야 [D]할렐루야
-[G]감사 드립니다
-
-[Am]주님의 사랑이 [D]나를 감싸네
-[Am]주님의 은혜가 [D]넘쳐흐르네`
-  },
-  {
-    id:"s2",title:"주의 사랑이",artist:"울로콜리 편곡",originalKey:"C",category:"사랑",
-    text:`[C]주의 사랑이 [Em]나에게
-[F]얼마나 크고 [G]넓은지
-[Am]깊어서 헤아[F]릴 수가 없네
-[G]주의 사랑이
-
-[F]오 주님 [G]사랑합니다
-[C]내 모든 [Am]것 드립니다
-[F]오 주님 [G]감사합니다
-[C]영원히 찬양합니다`
-  },
-  {
-    id:"s3",title:"여기에",artist:"울로콜리 편곡",originalKey:"D",category:"예배",
-    text:`[D]여기에 [A/C#]서있는
-[Bm]나를 보[G]시네
-[D]부족한 [A/C#]나를
-[Bm]사랑하[G]시네
-
-[G]주님 앞에 [A]나아갑니다
-[Bm]두 손을 [G]들고
-[G]주님 앞에 [A]엎드립니다
-[D]여기에`
-  }
-];
-
-function loadSongs(){
-  try{
-    const raw=localStorage.getItem(STORAGE_KEY);
-    if(!raw) return [...DEFAULT_SONGS];
-    const parsed=JSON.parse(raw);
-    return Array.isArray(parsed)&&parsed.length>0?parsed:[...DEFAULT_SONGS];
-  }catch(e){return [...DEFAULT_SONGS];}
-}
-function saveSongs(songs){
-  try{localStorage.setItem(STORAGE_KEY,JSON.stringify(songs));}catch(e){}
-}
-
 /* ═══ STATE ═══ */
 const State={
-  songs:loadSongs(),
+  songs:[],
+  loading:true,
+  loadError:null,
   view:"list",
   selectedSongId:null,
   editSongId:null,
@@ -324,11 +351,11 @@ const State={
   activeCat:"전체",
   isAdmin:checkAdminAccess(),
   transpose:0,
+  saving:false,
   ed:{
     title:"",artist:"",originalKey:"C",category:"감사",
     selectedChord:"G",customChord:"",preview:false,
     lines:[{lyric:"",chords:[]}],
-    hoveredLineIdx:null,hoveredPos:null,
   }
 };
 
@@ -340,11 +367,25 @@ function initEditor(song){
     category:song?.category||"감사",
     selectedChord:"G",customChord:"",preview:false,
     lines:song?.text?deserialize(song.text):[{lyric:"",chords:[]}],
-    hoveredLineIdx:null,hoveredPos:null,
   };
 }
 
-/* ═══ RENDER: Chord Line (display) ═══ */
+async function loadSongsFromServer(){
+  State.loading=true;
+  State.loadError=null;
+  render();
+  try{
+    State.songs=await sbFetchSongs();
+    State.loading=false;
+    render();
+  }catch(e){
+    State.loading=false;
+    State.loadError=e.message;
+    render();
+  }
+}
+
+/* ═══ DISPLAY RENDERERS ═══ */
 function renderChordLine(lyric,chords,transpose){
   if(!lyric&&(!chords||chords.length===0)) return `<div style="height:14px"></div>`;
   if((!lyric||!lyric.trim())&&chords&&chords.length>0){
@@ -369,7 +410,6 @@ function renderSheet(song,transpose){
   return `<div class="sheet-card"><div class="sheet">${lines.map(ln=>renderChordLine(ln.lyric,ln.chords,transpose)).join("")}</div></div>`;
 }
 
-/* ═══ RENDER: Views ═══ */
 function renderHeader(){
   return `
     <header class="header">
@@ -389,11 +429,6 @@ function renderFooter(){
 }
 
 function renderListView(){
-  const filtered=State.songs.filter(s=>{
-    const mS=s.title.includes(State.search)||s.artist.includes(State.search);
-    const mC=State.activeCat==="전체"||s.category===State.activeCat;
-    return mS&&mC;
-  });
   return `
     <div class="view">
       ${renderHeader()}
@@ -412,34 +447,57 @@ function renderListView(){
           </div>
         </div>
       `:""}
-      <div class="cat-wrap">
+      <div class="cat-wrap" id="cat-wrap">
         ${CATEGORIES.map(c=>`
           <button class="cat-btn ${State.activeCat===c?"active":""}" data-action="cat" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</button>
         `).join("")}
       </div>
-      <div class="list">
-        ${filtered.length>0?filtered.map(s=>`
-          <div class="card" data-action="open-song" data-id="${escapeHtml(s.id)}">
-            <div style="flex:1">
-              <div class="card-cat">${escapeHtml(s.category)}</div>
-              <h3 class="card-title">${escapeHtml(s.title)}</h3>
-              <p class="card-artist">${escapeHtml(s.artist)}</p>
-              <div class="card-key">♪ Key: ${escapeHtml(s.originalKey)}</div>
-            </div>
-            <div class="card-actions">
-              ${State.isAdmin?`
-                <button class="card-icon-btn" data-action="edit-song" data-id="${escapeHtml(s.id)}" title="편집">✏️</button>
-                <button class="card-icon-btn danger" data-action="delete-song-from-list" data-id="${escapeHtml(s.id)}" title="삭제">🗑️</button>
-              `:""}
-              <span class="card-arrow">→</span>
-            </div>
-          </div>
-        `).join(""):`
-          <div class="empty"><span style="font-size:40px">🎵</span><p style="margin-top:12px">검색 결과가 없습니다</p></div>
-        `}
+      <div class="list" id="song-list">
+        ${renderListContent()}
       </div>
       ${renderFooter()}
     </div>`;
+}
+
+function renderListContent(){
+  if(State.loading){
+    return `<div class="loading-wrap"><div class="spinner"></div><p class="loading-text">악보를 불러오는 중...</p></div>`;
+  }
+  if(State.loadError){
+    return `<div class="empty"><span style="font-size:40px">⚠️</span><p style="margin-top:12px">${escapeHtml(State.loadError)}</p><p class="empty-sub">잠시 후 다시 시도해주세요</p><button class="add-btn" style="margin-top:16px" data-action="reload">다시 불러오기</button></div>`;
+  }
+  const filtered=State.songs.filter(s=>{
+    const mS=s.title.includes(State.search)||(s.artist||"").includes(State.search);
+    const mC=State.activeCat==="전체"||s.category===State.activeCat;
+    return mS&&mC;
+  });
+  if(filtered.length===0){
+    if(State.songs.length===0){
+      return `<div class="empty"><span style="font-size:40px">🎵</span><p style="margin-top:12px">아직 등록된 악보가 없습니다</p>${State.isAdmin?`<p class="empty-sub">위의 "+ 새 악보" 버튼으로 첫 악보를 추가해보세요!</p>`:""}</div>`;
+    }
+    return `<div class="empty"><span style="font-size:40px">🎵</span><p style="margin-top:12px">검색 결과가 없습니다</p></div>`;
+  }
+  return renderSongList(filtered);
+}
+
+function renderSongList(filtered){
+  return filtered.map(s=>`
+    <div class="card" data-action="open-song" data-id="${escapeHtml(s.id)}">
+      <div style="flex:1">
+        <div class="card-cat">${escapeHtml(s.category||"")}</div>
+        <h3 class="card-title">${escapeHtml(s.title)}</h3>
+        <p class="card-artist">${escapeHtml(s.artist||"")}</p>
+        <div class="card-key">♪ Key: ${escapeHtml(s.originalKey||"")}</div>
+      </div>
+      <div class="card-actions">
+        ${State.isAdmin?`
+          <button class="card-icon-btn" data-action="edit-song" data-id="${escapeHtml(s.id)}" title="편집">✏️</button>
+          <button class="card-icon-btn danger" data-action="delete-song-from-list" data-id="${escapeHtml(s.id)}" title="삭제">🗑️</button>
+        `:""}
+        <span class="card-arrow">→</span>
+      </div>
+    </div>
+  `).join("");
 }
 
 function renderSongView(){
@@ -451,7 +509,7 @@ function renderSongView(){
       <button class="back-btn" data-action="back-list"><span>←</span>목록으로</button>
       <div class="song-header">
         <h1 class="song-title-big">${escapeHtml(song.title)}</h1>
-        <p class="song-artist-text">${escapeHtml(song.artist)} · ${escapeHtml(song.category)}</p>
+        <p class="song-artist-text">${escapeHtml(song.artist||"")} · ${escapeHtml(song.category||"")}</p>
         ${State.isAdmin?`
           <div class="song-header-actions">
             <button class="logout-btn" data-action="edit-song" data-id="${escapeHtml(song.id)}">✏️ 편집</button>
@@ -462,8 +520,8 @@ function renderSongView(){
       <div class="transpose-bar">
         <div class="key-row">
           <span class="key-label">현재 키</span>
-          <span class="key-val">${escapeHtml(currentKey)}</span>
-          ${State.transpose!==0?`<span class="key-orig">(원키: ${escapeHtml(song.originalKey)})</span>`:""}
+          <span class="key-val" id="key-display">${escapeHtml(currentKey)}</span>
+          <span class="key-orig" id="key-orig" style="${State.transpose===0?'display:none':''}">(원키: ${escapeHtml(song.originalKey)})</span>
         </div>
         <div class="transpose-btns">
           <button class="t-btn" data-action="transpose" data-dir="-1">♭ 반음 내림</button>
@@ -471,61 +529,52 @@ function renderSongView(){
           <button class="t-btn" data-action="transpose" data-dir="1">♯ 반음 올림</button>
         </div>
       </div>
-      ${renderSheet(song,State.transpose)}
+      <div id="sheet-container">${renderSheet(song,State.transpose)}</div>
     </div>`;
 }
 
+/* ═══ EDITOR RENDERERS ═══ */
 function renderLineEditor(ln,idx){
   const chars=ln.lyric?[...ln.lyric]:[];
   const chordMap={};
   (ln.chords||[]).forEach(c=>{chordMap[c.pos]=c.chord;});
-  const hovered=State.ed.hoveredLineIdx===idx?State.ed.hoveredPos:null;
 
   const chordRow=chars.map((ch,pos)=>{
     const w=cellWidth(ch);
-    let inner="";
-    if(chordMap[pos]){
-      inner=`<span class="click-chord-mark pos-chord-text">${escapeHtml(chordMap[pos])}</span>`;
-    }else if(hovered===pos&&State.ed.selectedChord){
-      inner=`<span class="click-chord-hover pos-chord-text">${escapeHtml(State.ed.selectedChord)}</span>`;
-    }
-    return `<span class="click-chord-cell" style="width:${w}">${inner}</span>`;
+    const chord=chordMap[pos];
+    return `<span class="click-chord-cell" data-chord-cell="${pos}" style="width:${w}">${chord?`<span class="click-chord-mark pos-chord-text">${escapeHtml(chord)}</span>`:""}</span>`;
   }).join("");
 
   const lyricRow=chars.map((ch,pos)=>{
     const hasChord=!!chordMap[pos];
     const cls=["click-lyric-cell"];
     if(hasChord) cls.push("has-chord");
-    else if(State.ed.selectedChord) cls.push("hoverable");
-    if(hovered===pos&&State.ed.selectedChord&&!hasChord) cls.push("hovered");
+    else cls.push("hoverable");
     const display=ch===" "?"&nbsp;":escapeHtml(ch);
-    return `<span class="${cls.join(" ")}" style="width:${cellWidth(ch)}" data-action="click-char" data-line="${idx}" data-pos="${pos}" data-hover="1">${display}</span>`;
+    return `<span class="${cls.join(" ")}" style="width:${cellWidth(ch)}" data-action="click-char" data-line="${idx}" data-pos="${pos}">${display}</span>`;
   }).join("");
 
   return `
-    <div class="editor-line">
+    <div class="editor-line" data-line-idx="${idx}">
       <div class="editor-line-header">
         <input class="editor-lyric-input" value="${escapeHtml(ln.lyric||"")}" placeholder="가사를 입력하세요" data-action="lyric-change" data-line="${idx}"/>
         <button class="editor-line-delete" data-action="delete-line" data-line="${idx}">✕</button>
       </div>
-      ${chars.length>0?`
-        <div class="click-zone">
-          <div class="click-hint">
-            ${State.ed.selectedChord
-              ?`클릭하면 <strong>${escapeHtml(State.ed.selectedChord)}</strong> 배치 · 초록 표시된 코드 클릭 시 삭제`
-              :`위에서 코드를 먼저 선택하세요`}
-          </div>
-          <div class="click-chord-row">${chordRow}</div>
-          <div class="click-lyric-row">${lyricRow}</div>
+      <div class="click-zone" data-click-zone="${idx}" style="${chars.length===0?'display:none':''}">
+        <div class="click-hint">
+          ${State.ed.selectedChord
+            ?`클릭하면 <strong>${escapeHtml(State.ed.selectedChord)}</strong> 배치 · 초록 표시된 코드 클릭 시 삭제`
+            :`위에서 코드를 먼저 선택하세요`}
         </div>
-      `:""}
+        <div class="click-chord-row" data-chord-row="${idx}">${chordRow}</div>
+        <div class="click-lyric-row" data-lyric-row="${idx}">${lyricRow}</div>
+      </div>
     </div>`;
 }
 
 function renderEditorView(){
   const isNew=!State.editSongId;
   const ed=State.ed;
-  const previewSong={title:ed.title,artist:ed.artist,originalKey:ed.originalKey,category:ed.category,text:serialize(ed.lines)};
   return `
     <div class="view">
       <button class="back-btn" data-action="back-list"><span>←</span>돌아가기</button>
@@ -556,7 +605,7 @@ function renderEditorView(){
 
       <div class="chord-palette">
         <label class="form-label">코드 선택 후 아래 가사 클릭</label>
-        <div class="chord-grid">
+        <div class="chord-grid" id="chord-grid">
           ${COMMON_CHORDS.map(c=>`<button class="chord-palette-btn ${ed.selectedChord===c?"active":""}" data-action="pick-chord" data-chord="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}
         </div>
         <div class="custom-chord-row">
@@ -567,7 +616,7 @@ function renderEditorView(){
 
       <div class="form-group">
         <label class="form-label">가사 & 코드 배치</label>
-        <div class="lines-wrap">
+        <div class="lines-wrap" id="lines-wrap">
           ${ed.lines.map((ln,idx)=>renderLineEditor(ln,idx)).join("")}
         </div>
         <button class="add-line-btn" data-action="add-line">+ 가사 줄 추가</button>
@@ -577,12 +626,20 @@ function renderEditorView(){
         <button class="preview-btn" data-action="toggle-preview">${ed.preview?"✏️ 편집":"👁 미리보기"}</button>
         <div class="action-right">
           ${!isNew?`<button class="delete-btn" data-action="delete-song-from-editor">삭제</button>`:""}
-          <button class="save-btn" data-action="save-song">💾 저장</button>
+          <button class="save-btn" data-action="save-song" ${State.saving?"disabled":""}>
+            ${State.saving?'<span class="spinner-sm"></span> 저장 중...':"💾 저장"}
+          </button>
         </div>
       </div>
 
-      ${ed.preview?`<div class="preview-wrap">${renderSheet(previewSong,0)}</div>`:""}
+      <div id="preview-wrap">${ed.preview?renderPreviewSheet():""}</div>
     </div>`;
+}
+
+function renderPreviewSheet(){
+  const ed=State.ed;
+  const previewSong={title:ed.title,artist:ed.artist,originalKey:ed.originalKey,category:ed.category,text:serialize(ed.lines)};
+  return `<div class="preview-wrap">${renderSheet(previewSong,0)}</div>`;
 }
 
 /* ═══ MAIN RENDER ═══ */
@@ -593,65 +650,154 @@ function render(){
   else if(State.view==="editor") html=renderEditorView();
   else html=renderListView();
   app.innerHTML=html;
-  attachInputFocus();
 }
 
-let focusState=null;
-function attachInputFocus(){
-  if(!focusState) return;
-  const el=document.querySelector(`[data-action="${focusState.action}"]${focusState.line!=null?`[data-line="${focusState.line}"]`:""}`);
-  if(el&&el.focus){
-    el.focus();
-    if(typeof focusState.pos==="number"&&el.setSelectionRange){
-      try{el.setSelectionRange(focusState.pos,focusState.pos);}catch(e){}
-    }
+/* ═══ TARGETED UPDATES ═══ */
+function updateChordCell(lineIdx,pos){
+  const line=State.ed.lines[lineIdx];
+  const chord=(line.chords||[]).find(c=>c.pos===pos)?.chord;
+  const cell=document.querySelector(`[data-chord-row="${lineIdx}"] [data-chord-cell="${pos}"]`);
+  if(cell) cell.innerHTML=chord?`<span class="click-chord-mark pos-chord-text">${escapeHtml(chord)}</span>`:"";
+  const lyricCell=document.querySelector(`[data-lyric-row="${lineIdx}"] [data-pos="${pos}"][data-line="${lineIdx}"]`);
+  if(lyricCell){
+    if(chord){lyricCell.classList.add("has-chord");lyricCell.classList.remove("hoverable");}
+    else{lyricCell.classList.remove("has-chord");lyricCell.classList.add("hoverable");}
   }
-  focusState=null;
 }
 
-/* ═══ ADMIN-ONLY GUARD ═══ */
+function rerenderLine(idx){
+  const ln=State.ed.lines[idx];
+  const lineEl=document.querySelector(`[data-line-idx="${idx}"]`);
+  if(!lineEl) return;
+  const zone=lineEl.querySelector(`[data-click-zone="${idx}"]`);
+  if(!zone) return;
+  const chars=ln.lyric?[...ln.lyric]:[];
+  if(chars.length===0){zone.style.display="none";return;}
+  zone.style.display="";
+  const chordMap={};
+  (ln.chords||[]).forEach(c=>{chordMap[c.pos]=c.chord;});
+  const chordRow=chars.map((ch,pos)=>{
+    const w=cellWidth(ch);
+    const chord=chordMap[pos];
+    return `<span class="click-chord-cell" data-chord-cell="${pos}" style="width:${w}">${chord?`<span class="click-chord-mark pos-chord-text">${escapeHtml(chord)}</span>`:""}</span>`;
+  }).join("");
+  const lyricRow=chars.map((ch,pos)=>{
+    const hasChord=!!chordMap[pos];
+    const cls=["click-lyric-cell"];
+    if(hasChord) cls.push("has-chord"); else cls.push("hoverable");
+    const display=ch===" "?"&nbsp;":escapeHtml(ch);
+    return `<span class="${cls.join(" ")}" style="width:${cellWidth(ch)}" data-action="click-char" data-line="${idx}" data-pos="${pos}">${display}</span>`;
+  }).join("");
+  const chordRowEl=zone.querySelector(`[data-chord-row="${idx}"]`);
+  const lyricRowEl=zone.querySelector(`[data-lyric-row="${idx}"]`);
+  if(chordRowEl) chordRowEl.innerHTML=chordRow;
+  if(lyricRowEl) lyricRowEl.innerHTML=lyricRow;
+}
+
+function updateHint(){
+  document.querySelectorAll(".click-hint").forEach(el=>{
+    el.innerHTML=State.ed.selectedChord
+      ?`클릭하면 <strong>${escapeHtml(State.ed.selectedChord)}</strong> 배치 · 초록 표시된 코드 클릭 시 삭제`
+      :`위에서 코드를 먼저 선택하세요`;
+  });
+}
+function updateChordPalette(){
+  document.querySelectorAll(".chord-palette-btn").forEach(btn=>{
+    if(btn.dataset.chord===State.ed.selectedChord) btn.classList.add("active");
+    else btn.classList.remove("active");
+  });
+}
+function updateCatSelection(){
+  document.querySelectorAll(".cat-btn").forEach(btn=>{
+    if(btn.dataset.cat===State.activeCat) btn.classList.add("active");
+    else btn.classList.remove("active");
+  });
+}
+function updateSongList(){
+  const listEl=document.getElementById("song-list");
+  if(listEl) listEl.innerHTML=renderListContent();
+}
+function updateTransposeDisplay(){
+  const song=State.songs.find(s=>s.id===State.selectedSongId);
+  if(!song) return;
+  const currentKey=transposeChord(song.originalKey,State.transpose);
+  const keyDisp=document.getElementById("key-display");
+  const keyOrig=document.getElementById("key-orig");
+  const sheet=document.getElementById("sheet-container");
+  if(keyDisp) keyDisp.textContent=currentKey;
+  if(keyOrig) keyOrig.style.display=State.transpose===0?"none":"";
+  if(sheet) sheet.innerHTML=renderSheet(song,State.transpose);
+}
+
+/* ═══ GUARDS ═══ */
 function requireAdmin(){
-  if(!State.isAdmin){
-    alert("관리자만 사용할 수 있는 기능입니다.");
-    return false;
-  }
+  if(!State.isAdmin){alert("관리자만 사용할 수 있는 기능입니다.");return false;}
   return true;
 }
 
-/* ═══ DELETE HANDLER ═══ */
-function deleteSong(id){
+/* ═══ DELETE ═══ */
+async function deleteSong(id){
   const song=State.songs.find(s=>s.id===id);
   if(!song) return;
   if(!confirm(`"${song.title}" 악보를 정말 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.`)) return;
-  State.songs=State.songs.filter(s=>s.id!==id);
-  saveSongs(State.songs);
-  if(State.selectedSongId===id){
-    State.selectedSongId=null;
-    State.view="list";
+  try{
+    await sbDeleteSong(id);
+    State.songs=State.songs.filter(s=>s.id!==id);
+    if(State.selectedSongId===id){State.selectedSongId=null;State.view="list";}
+    if(State.editSongId===id){State.editSongId=null;State.view="list";}
+    render();
+    showToast("삭제되었습니다","success");
+  }catch(e){
+    showToast("삭제 실패: "+e.message,"error");
   }
-  if(State.editSongId===id){
-    State.editSongId=null;
-    State.view="list";
-  }
-  render();
 }
 
-/* ═══ EVENT HANDLING ═══ */
+/* ═══ SAVE ═══ */
+async function saveCurrentSong(){
+  const ed=State.ed;
+  if(!ed.title.trim()){alert("제목을 입력해주세요");return;}
+  State.saving=true;
+  render();
+  const text=serialize(ed.lines);
+  const isUpdate=!!State.editSongId;
+  const id=State.editSongId||"s"+Date.now();
+  const songData={id,title:ed.title,artist:ed.artist,originalKey:ed.originalKey,category:ed.category,text};
+  try{
+    if(isUpdate){
+      await sbUpdateSong(songData);
+      State.songs=State.songs.map(s=>s.id===id?songData:s);
+    }else{
+      await sbInsertSong(songData);
+      State.songs=[songData,...State.songs];
+    }
+    State.saving=false;
+    State.view="list";
+    State.editSongId=null;
+    render();
+    showToast(isUpdate?"수정되었습니다":"저장되었습니다","success");
+  }catch(e){
+    State.saving=false;
+    render();
+    showToast("저장 실패: "+e.message,"error");
+  }
+}
+
+/* ═══ EVENTS ═══ */
 document.addEventListener("click",e=>{
   const t=e.target.closest("[data-action]");
   if(!t) return;
   const action=t.dataset.action;
 
-  if(action==="cat"){State.activeCat=t.dataset.cat;render();return;}
+  if(action==="reload"){loadSongsFromServer();return;}
+  if(action==="cat"){State.activeCat=t.dataset.cat;updateCatSelection();updateSongList();return;}
   if(action==="logout"){logoutAdmin();return;}
   if(action==="open-song"){
     State.selectedSongId=t.dataset.id;State.transpose=0;State.view="song";render();return;
   }
   if(action==="back-list"){State.view="list";render();return;}
-  if(action==="transpose"){State.transpose+=parseInt(t.dataset.dir,10);render();return;}
-  if(action==="transpose-reset"){State.transpose=0;render();return;}
+  if(action==="transpose"){State.transpose+=parseInt(t.dataset.dir,10);updateTransposeDisplay();return;}
+  if(action==="transpose-reset"){State.transpose=0;updateTransposeDisplay();return;}
 
-  // ── Admin-only actions ──
   if(action==="new-song"){
     if(!requireAdmin()) return;
     State.editSongId=null;initEditor(null);State.view="editor";render();return;
@@ -667,108 +813,82 @@ document.addEventListener("click",e=>{
     e.stopPropagation();
     deleteSong(t.dataset.id);return;
   }
-  if(action==="delete-song-from-view"){
-    if(!requireAdmin()) return;
-    deleteSong(t.dataset.id);return;
-  }
-  if(action==="delete-song-from-editor"){
-    if(!requireAdmin()) return;
-    deleteSong(State.editSongId);return;
-  }
-  if(action==="save-song"){
-    if(!requireAdmin()) return;
-    saveCurrentSong();return;
-  }
+  if(action==="delete-song-from-view"){if(!requireAdmin()) return;deleteSong(t.dataset.id);return;}
+  if(action==="delete-song-from-editor"){if(!requireAdmin()) return;deleteSong(State.editSongId);return;}
+  if(action==="save-song"){if(!requireAdmin()) return;saveCurrentSong();return;}
 
-  // ── Editor interactions ──
-  if(action==="pick-chord"){State.ed.selectedChord=t.dataset.chord;render();return;}
+  if(action==="pick-chord"){
+    State.ed.selectedChord=t.dataset.chord;
+    updateChordPalette();updateHint();return;
+  }
   if(action==="ed-custom-submit"){
     if(State.ed.customChord.trim()){
       State.ed.selectedChord=State.ed.customChord.trim();
-      State.ed.customChord="";render();
+      State.ed.customChord="";
+      const el=document.querySelector('[data-action="ed-custom"]');
+      if(el) el.value="";
+      updateChordPalette();updateHint();
     }return;
   }
-  if(action==="add-line"){State.ed.lines.push({lyric:"",chords:[]});render();return;}
+  if(action==="add-line"){
+    State.ed.lines.push({lyric:"",chords:[]});
+    const wrap=document.getElementById("lines-wrap");
+    if(wrap){
+      const div=document.createElement("div");
+      div.innerHTML=renderLineEditor(State.ed.lines[State.ed.lines.length-1],State.ed.lines.length-1);
+      wrap.appendChild(div.firstElementChild);
+    }
+    return;
+  }
   if(action==="delete-line"){
     const idx=parseInt(t.dataset.line,10);
-    if(State.ed.lines.length>1) State.ed.lines.splice(idx,1);
-    else State.ed.lines[0]={lyric:"",chords:[]};
-    render();return;
+    if(State.ed.lines.length>1){State.ed.lines.splice(idx,1);render();}
+    else{State.ed.lines[0]={lyric:"",chords:[]};render();}
+    return;
   }
   if(action==="click-char"){
     const lineIdx=parseInt(t.dataset.line,10);
     const pos=parseInt(t.dataset.pos,10);
     const line=State.ed.lines[lineIdx];
     const existing=(line.chords||[]).find(c=>c.pos===pos);
-    if(existing){
-      line.chords=line.chords.filter(c=>c.pos!==pos);
-    }else if(State.ed.selectedChord){
-      line.chords=[...(line.chords||[]).filter(c=>c.pos!==pos),{pos,chord:State.ed.selectedChord}];
-    }
-    render();return;
+    if(existing) line.chords=line.chords.filter(c=>c.pos!==pos);
+    else if(State.ed.selectedChord) line.chords=[...(line.chords||[]).filter(c=>c.pos!==pos),{pos,chord:State.ed.selectedChord}];
+    updateChordCell(lineIdx,pos);
+    return;
   }
-  if(action==="toggle-preview"){State.ed.preview=!State.ed.preview;render();return;}
-});
-
-/* Hover effects */
-document.addEventListener("mouseover",e=>{
-  const t=e.target.closest('[data-action="click-char"]');
-  if(!t||State.view!=="editor") return;
-  const lineIdx=parseInt(t.dataset.line,10);
-  const pos=parseInt(t.dataset.pos,10);
-  if(State.ed.hoveredLineIdx!==lineIdx||State.ed.hoveredPos!==pos){
-    State.ed.hoveredLineIdx=lineIdx;State.ed.hoveredPos=pos;
-    render();
-  }
-});
-document.addEventListener("mouseout",e=>{
-  const t=e.target.closest('[data-action="click-char"]');
-  if(!t) return;
-  if(State.ed.hoveredLineIdx!=null){
-    State.ed.hoveredLineIdx=null;State.ed.hoveredPos=null;
-    render();
+  if(action==="toggle-preview"){
+    State.ed.preview=!State.ed.preview;
+    t.textContent=State.ed.preview?"✏️ 편집":"👁 미리보기";
+    const p=document.getElementById("preview-wrap");
+    if(p) p.innerHTML=State.ed.preview?renderPreviewSheet():"";
+    return;
   }
 });
 
-/* Input events */
 document.addEventListener("input",e=>{
   const t=e.target.closest("[data-action]");
   if(!t) return;
   const action=t.dataset.action;
-
-  if(action==="search"){
-    focusState={action:"search",pos:t.selectionStart};
-    State.search=t.value;render();return;
-  }
-  if(action==="ed-title"){
-    focusState={action:"ed-title",pos:t.selectionStart};
-    State.ed.title=t.value;render();return;
-  }
-  if(action==="ed-artist"){
-    focusState={action:"ed-artist",pos:t.selectionStart};
-    State.ed.artist=t.value;render();return;
-  }
-  if(action==="ed-custom"){
-    focusState={action:"ed-custom",pos:t.selectionStart};
-    State.ed.customChord=t.value;render();return;
-  }
+  if(action==="search"){State.search=t.value;updateSongList();return;}
+  if(action==="ed-title"){State.ed.title=t.value;return;}
+  if(action==="ed-artist"){State.ed.artist=t.value;return;}
+  if(action==="ed-custom"){State.ed.customChord=t.value;return;}
   if(action==="lyric-change"){
     const idx=parseInt(t.dataset.line,10);
-    focusState={action:"lyric-change",line:idx,pos:t.selectionStart};
     const val=t.value;
     const line=State.ed.lines[idx];
     line.lyric=val;
     line.chords=(line.chords||[]).filter(c=>c.pos<=[...val].length);
-    render();return;
+    rerenderLine(idx);
+    return;
   }
 });
 
 document.addEventListener("change",e=>{
   const t=e.target.closest("[data-action]");
   if(!t) return;
-  const action=t.dataset.action;
-  if(action==="ed-key"){State.ed.originalKey=t.value;render();return;}
-  if(action==="ed-cat"){State.ed.category=t.value;render();return;}
+  if(t.dataset.action==="ed-key"){State.ed.originalKey=t.value;return;}
+  if(t.dataset.action==="ed-cat"){State.ed.category=t.value;return;}
 });
 
 document.addEventListener("keydown",e=>{
@@ -777,25 +897,16 @@ document.addEventListener("keydown",e=>{
   if(t.dataset.action==="ed-custom"&&e.key==="Enter"){
     if(State.ed.customChord.trim()){
       State.ed.selectedChord=State.ed.customChord.trim();
-      State.ed.customChord="";render();
+      State.ed.customChord="";
+      t.value="";
+      updateChordPalette();updateHint();
     }
   }
 });
 
-function saveCurrentSong(){
-  const ed=State.ed;
-  if(!ed.title.trim()){alert("제목을 입력해주세요");return;}
-  const text=serialize(ed.lines);
-  const id=State.editSongId||"s"+Date.now();
-  const songData={id,title:ed.title,artist:ed.artist,originalKey:ed.originalKey,category:ed.category,text};
-  const existing=State.songs.find(s=>s.id===id);
-  if(existing) State.songs=State.songs.map(s=>s.id===id?songData:s);
-  else State.songs=[...State.songs,songData];
-  saveSongs(State.songs);
-  State.view="list";State.editSongId=null;render();
-}
-
+/* ═══ INIT ═══ */
 render();
+loadSongsFromServer();
 </script>
 </body>
 </html>
