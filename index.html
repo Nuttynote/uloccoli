@@ -98,8 +98,8 @@
 
   .pos-line{margin-bottom:6px;white-space:nowrap}
   .pos-chord-row{display:flex;flex-wrap:nowrap;min-height:20px}
-  .pos-chord-cell{display:inline-block;vertical-align:top;position:relative;flex-shrink:0}
-  .pos-chord-text{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--chord);white-space:nowrap;position:absolute;top:0;left:0}
+  .pos-chord-cell{display:inline-block;vertical-align:top;flex-shrink:0;overflow:visible}
+  .pos-chord-text{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--chord);white-space:nowrap}
   .chord-root{font-size:13px}
   .chord-suffix{font-size:10px;font-weight:500;opacity:.85}
   .pos-lyric-row{display:flex;flex-wrap:nowrap;font-family:var(--handwriting);font-size:17px;line-height:1.8;color:var(--txt);letter-spacing:.02em}
@@ -451,21 +451,46 @@ function renderChordLine(lyric,chords,transpose){
   (chords||[]).forEach(c=>{chordAt[c.pos]=transposeChord(c.chord,transpose);});
 
   /*
-    코드는 position:absolute로 가사 위에 떠있으므로
-    가사 셀 너비는 글자 본연의 너비만 유지.
-    코드가 길어서 다음 코드와 겹칠 수 있지만,
-    이건 실제 악보에서도 자연스러운 표현이고
-    가사가 벌어지는 것보다 훨씬 낫다.
+    코드 겹침 방지:
+    - 가사 셀 너비는 글자 본연의 너비 유지 (가사가 벌어지지 않음)
+    - 코드 셀 너비만 늘려서 코드끼리 겹치지 않게
+    - 코드 행은 flex가 아니라 각 셀이 독립적 너비를 가짐
   */
+  const sorted=[...(chords||[])].sort((a,b)=>a.pos-b.pos);
+
+  // 각 글자의 기본 너비 (ch 단위)
+  const baseWidths=chars.map(ch=>isWide(ch)?2:1);
+
+  // 코드 셀 전용 추가 너비 계산
+  const chordExtraWidth={};
+  for(let ci=0;ci<sorted.length;ci++){
+    const c=sorted[ci];
+    const chordText=transposeChord(c.chord,transpose);
+    const chordLen=chordText.length+1; // +1 for minimum spacing
+    const nextPos=ci<sorted.length-1?sorted[ci+1].pos:chars.length;
+    let availWidth=0;
+    for(let j=c.pos;j<nextPos&&j<chars.length;j++){
+      availWidth+=baseWidths[j]+(chordExtraWidth[j]||0);
+    }
+    if(chordLen>availWidth){
+      // 부족한 너비를 코드가 시작되는 셀에만 추가
+      chordExtraWidth[c.pos]=(chordExtraWidth[c.pos]||0)+(chordLen-availWidth);
+    }
+  }
+
+  // 코드 행: 코드 겹침 방지를 위해 넓힌 너비 사용
   const chordRow=chars.map((ch,i)=>{
-    const w=isWide(ch)?2:1;
+    const w=baseWidths[i]+(chordExtraWidth[i]||0);
     const chord=chordAt[i];
     return `<span class="pos-chord-cell" style="width:${w}ch">${chord?`<span class="pos-chord-text">${formatChordHtml(chord)}</span>`:""}</span>`;
   }).join("");
+
+  // 가사 행: 글자 본연의 너비만 사용 (벌어지지 않음)
   const lyricRow=chars.map((ch,i)=>{
-    const w=isWide(ch)?2:1;
+    const w=baseWidths[i];
     return `<span class="pos-lyric-cell" style="width:${w}ch">${escapeHtml(ch)}</span>`;
   }).join("");
+
   return `<div class="pos-line"><div class="pos-chord-row">${chordRow}</div><div class="pos-lyric-row">${lyricRow}</div></div>`;
 }
 
