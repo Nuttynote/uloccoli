@@ -106,6 +106,22 @@
   /* ═══ 반응형 ═══ */
   .sheet-scaler{overflow:hidden}
   .sheet-inner{transform-origin:top left;display:inline-block;min-width:max-content}
+  .section-label{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--accent);letter-spacing:.06em;text-transform:uppercase;margin-top:16px;margin-bottom:6px;padding-bottom:4px;border-bottom:1px dashed var(--bdr)}
+  .section-label:first-child{margin-top:0}
+
+  /* Section editor */
+  .section-block{margin-bottom:16px;border:1.5px solid var(--bdr);border-radius:14px;background:var(--card);overflow:hidden}
+  .section-header{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--glow);border-bottom:1.5px solid var(--bdr);flex-wrap:wrap}
+  .section-name-input{padding:6px 10px;border:1.5px solid var(--bdr);border-radius:6px;font-size:13px;font-family:var(--mono);font-weight:600;color:var(--accent);background:#fff;width:120px}
+  .section-actions{display:flex;gap:4px;margin-left:auto}
+  .section-action-btn{padding:4px 10px;border:1.5px solid var(--bdr);border-radius:6px;font-size:11px;background:var(--card);cursor:pointer;color:var(--txt-lt);transition:all .15s}
+  .section-action-btn:hover{border-color:var(--accent-lt)}
+  .section-action-btn.danger{color:var(--danger)}
+  .section-action-btn.danger:hover{background:var(--danger-lt);border-color:var(--danger)}
+  .section-action-btn.dup{color:var(--accent)}
+  .section-lines{padding:10px 14px}
+  .add-section-btn{padding:9px 16px;background:var(--glow);color:var(--accent);border:1.5px dashed var(--bdr);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px;width:100%;text-align:center}
+  .add-section-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
   @media(max-width:600px){
     .container{padding:0 12px 30px}
     .header{padding:32px 0 20px}
@@ -291,24 +307,74 @@ function escapeHtml(s){
   return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
-function serialize(lines){
-  return lines.map(ln=>{
-    if(!ln.lyric&&(!ln.chords||ln.chords.length===0)) return "";
-    if(!ln.chords||ln.chords.length===0) return ln.lyric||"";
-    const sorted=[...ln.chords].sort((a,b)=>a.pos-b.pos);
-    let r="",last=0;
-    for(const c of sorted){
-      r+=(ln.lyric||"").slice(last,c.pos)+"["+c.chord+"]";
-      last=c.pos;
-    }
-    r+=(ln.lyric||"").slice(last);
-    return r;
+/*
+  저장 형식: 섹션은 ---섹션이름--- 으로 구분
+  예:
+  ---Intro---
+  [G]  [D]  [Em]  [C]
+  ---Verse 1---
+  [G]감사해 주님의 [D]은혜에
+  ---Chorus---
+  [C]할렐루야
+*/
+function serialize(sections){
+  return sections.map(sec=>{
+    const header=`---${sec.name}---`;
+    const body=sec.lines.map(ln=>{
+      if(!ln.lyric&&(!ln.chords||ln.chords.length===0)) return "";
+      if(!ln.chords||ln.chords.length===0) return ln.lyric||"";
+      const sorted=[...ln.chords].sort((a,b)=>a.pos-b.pos);
+      let r="",last=0;
+      for(const c of sorted){
+        r+=(ln.lyric||"").slice(last,c.pos)+"["+c.chord+"]";
+        last=c.pos;
+      }
+      r+=(ln.lyric||"").slice(last);
+      return r;
+    }).join("\n");
+    return header+"\n"+body;
   }).join("\n");
 }
 
 function deserialize(text){
-  if(!text) return [{lyric:"",chords:[]}];
-  return text.split("\n").map(raw=>{
+  if(!text) return [{name:"Verse",lines:[{lyric:"",chords:[]}]}];
+  const sections=[];
+  let currentSection=null;
+  text.split("\n").forEach(raw=>{
+    const secMatch=raw.match(/^---(.+)---$/);
+    if(secMatch){
+      currentSection={name:secMatch[1],lines:[]};
+      sections.push(currentSection);
+      return;
+    }
+    if(!currentSection){
+      currentSection={name:"Verse",lines:[]};
+      sections.push(currentSection);
+    }
+    if(!raw.trim()){currentSection.lines.push({lyric:"",chords:[]});return;}
+    if(!raw.includes("[")){currentSection.lines.push({lyric:raw,chords:[]});return;}
+    const chords=[];
+    let lyric="";
+    const re=/\[([^\]]+)\]/g;
+    let last=0,m;
+    while((m=re.exec(raw))!==null){
+      lyric+=raw.slice(last,m.index);
+      chords.push({pos:lyric.length,chord:m[1]});
+      last=re.lastIndex;
+    }
+    lyric+=raw.slice(last);
+    currentSection.lines.push({lyric,chords});
+  });
+  if(sections.length===0) return [{name:"Verse",lines:[{lyric:"",chords:[]}]}];
+  return sections;
+}
+
+/* 이전 형식(섹션 없는) 호환: 섹션 마커 없으면 하나의 Verse로 감싸기 */
+function ensureSections(text){
+  if(!text) return [{name:"Verse",lines:[{lyric:"",chords:[]}]}];
+  if(text.includes("---")) return deserialize(text);
+  // 구 형식: 전체를 하나의 섹션으로
+  const lines=text.split("\n").map(raw=>{
     if(!raw.trim()) return {lyric:"",chords:[]};
     if(!raw.includes("[")) return {lyric:raw,chords:[]};
     const chords=[];
@@ -323,6 +389,7 @@ function deserialize(text){
     lyric+=raw.slice(last);
     return {lyric,chords};
   });
+  return [{name:"Verse",lines}];
 }
 
 /* ═══ TOAST ═══ */
@@ -380,11 +447,12 @@ const State={
   ed:{
     title:"",artist:"",originalKey:"C",category:"감사",
     preview:false,
-    lines:[{lyric:"",chords:[]}],
-    editing:null,
-    selectedLines:new Set(),
+    sections:[{name:"Verse",lines:[{lyric:"",chords:[]}]}],
+    editing:null,  // {secIdx, lineIdx, pos, value}
   }
 };
+
+const SECTION_PRESETS=["Intro","Verse","Verse 2","Verse 3","Pre-Chorus","Chorus","Bridge","간주","Outro","Ending"];
 
 function initEditor(song){
   State.ed={
@@ -393,9 +461,8 @@ function initEditor(song){
     originalKey:song?.originalKey||"C",
     category:song?.category||"감사",
     preview:false,
-    lines:song?.text?deserialize(song.text):[{lyric:"",chords:[]}],
+    sections:song?.text?ensureSections(song.text):[{name:"Intro",lines:[{lyric:"",chords:[]}]},{name:"Verse",lines:[{lyric:"",chords:[]}]},{name:"Chorus",lines:[{lyric:"",chords:[]}]}],
     editing:null,
-    selectedLines:new Set(),
   };
 }
 
@@ -480,8 +547,13 @@ function renderChordLine(lyric,chords,transpose){
 }
 
 function renderSheet(song,transpose){
-  const lines=deserialize(song.text);
-  return `<div class="sheet-card"><div class="sheet"><div class="sheet-scaler"><div class="sheet-inner">${lines.map(ln=>renderChordLine(ln.lyric,ln.chords,transpose)).join("")}</div></div></div></div>`;
+  const sections=ensureSections(song.text);
+  const inner=sections.map(sec=>{
+    const label=`<div class="section-label">${escapeHtml(sec.name)}</div>`;
+    const body=sec.lines.map(ln=>renderChordLine(ln.lyric,ln.chords,transpose)).join("");
+    return label+body;
+  }).join("");
+  return `<div class="sheet-card"><div class="sheet"><div class="sheet-scaler"><div class="sheet-inner">${inner}</div></div></div></div>`;
 }
 
 function renderHeader(){
@@ -608,20 +680,20 @@ function renderSongView(){
 }
 
 /* ═══ EDITOR RENDERERS ═══ */
-function renderLineEditor(ln,idx){
+function renderLineEditor(ln,secIdx,lineIdx){
   const chars=ln.lyric?[...ln.lyric]:[];
   const chordMap={};
   (ln.chords||[]).forEach(c=>{chordMap[c.pos]=c.chord;});
   const editing=State.ed.editing;
-  const isEditingThisLine=editing&&editing.lineIdx===idx;
+  const isEditingThis=editing&&editing.secIdx===secIdx&&editing.lineIdx===lineIdx;
 
   const chordRow=chars.map((ch,pos)=>{
     const w=cellWidth(ch);
     const chord=chordMap[pos];
-    const isEditing=isEditingThisLine&&editing.pos===pos;
+    const isEditing=isEditingThis&&editing.pos===pos;
     let inner="";
     if(isEditing){
-      inner=`<input class="inline-chord-input" data-action="inline-chord" data-line="${idx}" data-pos="${pos}" value="${escapeHtml(editing.value||"")}" placeholder="코드" autocomplete="off"/>`;
+      inner=`<input class="inline-chord-input" data-action="inline-chord" data-sec="${secIdx}" data-line="${lineIdx}" data-pos="${pos}" value="${escapeHtml(editing.value||"")}" placeholder="코드" autocomplete="off"/>`;
     }else if(chord){
       inner=`<span class="click-chord-mark pos-chord-text">${escapeHtml(chord)}</span>`;
     }
@@ -630,26 +702,42 @@ function renderLineEditor(ln,idx){
 
   const lyricRow=chars.map((ch,pos)=>{
     const hasChord=!!chordMap[pos];
-    const isEditing=isEditingThisLine&&editing.pos===pos;
+    const isEditing=isEditingThis&&editing.pos===pos;
     const cls=["click-lyric-cell"];
     if(hasChord) cls.push("has-chord");
     if(isEditing) cls.push("editing");
     const display=ch===" "?"&nbsp;":escapeHtml(ch);
-    return `<span class="${cls.join(" ")}" style="width:${cellWidth(ch)}" data-action="click-char" data-line="${idx}" data-pos="${pos}">${display}</span>`;
+    return `<span class="${cls.join(" ")}" style="width:${cellWidth(ch)}" data-action="click-char" data-sec="${secIdx}" data-line="${lineIdx}" data-pos="${pos}">${display}</span>`;
   }).join("");
 
-  const isSelected=State.ed.selectedLines.has(idx);
-
   return `
-    <div class="editor-line ${isSelected?"selected":""}" data-line-idx="${idx}">
+    <div class="editor-line" data-sec-idx="${secIdx}" data-line-idx="${lineIdx}">
       <div class="editor-line-header">
-        <input type="checkbox" class="line-checkbox" data-action="toggle-select" data-line="${idx}" ${isSelected?"checked":""} title="선택"/>
-        <input class="editor-lyric-input" value="${escapeHtml(ln.lyric||"")}" placeholder="가사를 입력하세요" data-action="lyric-change" data-line="${idx}"/>
-        <button class="editor-line-delete" data-action="delete-line" data-line="${idx}">✕</button>
+        <input class="editor-lyric-input" value="${escapeHtml(ln.lyric||"")}" placeholder="가사를 입력하세요 (공백으로 코드 전용 줄)" data-action="lyric-change" data-sec="${secIdx}" data-line="${lineIdx}"/>
+        <button class="editor-line-delete" data-action="delete-line" data-sec="${secIdx}" data-line="${lineIdx}">✕</button>
       </div>
-      <div class="click-zone" data-click-zone="${idx}" style="${chars.length===0?'display:none':''}">
-        <div class="click-chord-row" data-chord-row="${idx}">${chordRow}</div>
-        <div class="click-lyric-row" data-lyric-row="${idx}">${lyricRow}</div>
+      <div class="click-zone" data-click-zone="${secIdx}-${lineIdx}" style="${chars.length===0?'display:none':''}">
+        <div class="click-chord-row" data-chord-row="${secIdx}-${lineIdx}">${chordRow}</div>
+        <div class="click-lyric-row" data-lyric-row="${secIdx}-${lineIdx}">${lyricRow}</div>
+      </div>
+    </div>`;
+}
+
+function renderSectionEditor(sec,secIdx){
+  return `
+    <div class="section-block" data-sec-block="${secIdx}">
+      <div class="section-header">
+        <input class="section-name-input" value="${escapeHtml(sec.name)}" data-action="section-name" data-sec="${secIdx}" placeholder="섹션명"/>
+        <div class="section-actions">
+          <button class="section-action-btn" data-action="add-line-in-sec" data-sec="${secIdx}" title="가사 줄 추가">+ 줄</button>
+          <button class="section-action-btn dup" data-action="dup-section" data-sec="${secIdx}" title="섹션 복제">📋 복제</button>
+          <button class="section-action-btn" data-action="move-sec-up" data-sec="${secIdx}" title="위로">▲</button>
+          <button class="section-action-btn" data-action="move-sec-down" data-sec="${secIdx}" title="아래로">▼</button>
+          <button class="section-action-btn danger" data-action="delete-section" data-sec="${secIdx}" title="섹션 삭제">✕</button>
+        </div>
+      </div>
+      <div class="section-lines">
+        ${sec.lines.map((ln,li)=>renderLineEditor(ln,secIdx,li)).join("")}
       </div>
     </div>`;
 }
@@ -686,22 +774,16 @@ function renderEditorView(){
       </div>
 
       <div class="editor-tip">
-        💡 가사를 입력한 뒤 <strong>코드를 넣을 글자를 클릭</strong>하면 작은 입력창이 떠요.<br>
-        코드를 타이핑하고 <strong>Enter</strong>로 확정 · <strong>Esc</strong>로 취소 · 빈 상태에서 <strong>Backspace</strong>로 삭제
+        💡 가사 입력 후 <strong>글자를 클릭</strong>하면 코드 입력창이 떠요 · <strong>Enter</strong>로 확정 · 빈 상태 <strong>Backspace</strong>로 삭제<br>
+        📌 섹션(Intro/Verse/Chorus 등)으로 구분하고 <strong>📋 복제</strong>로 반복 구간을 쉽게 복사하세요
       </div>
 
       <div class="form-group">
-        <label class="form-label">가사 & 코드 배치</label>
-        <div class="lines-wrap" id="lines-wrap">
-          ${ed.lines.map((ln,idx)=>renderLineEditor(ln,idx)).join("")}
+        <label class="form-label">악보 편집</label>
+        <div id="sections-wrap">
+          ${ed.sections.map((sec,si)=>renderSectionEditor(sec,si)).join("")}
         </div>
-        <div class="lines-toolbar" id="lines-toolbar">
-          <button class="lines-toolbar-btn primary" data-action="add-line">+ 가사 줄</button>
-          <button class="lines-toolbar-btn" data-action="select-all">전체 선택</button>
-          <button class="lines-toolbar-btn" data-action="deselect-all">선택 해제</button>
-          <button class="lines-toolbar-btn" data-action="duplicate-selected">📋 선택 복제</button>
-          <span class="select-count" id="select-count">${ed.selectedLines.size>0?ed.selectedLines.size+"줄 선택됨":""}</span>
-        </div>
+        <button class="add-section-btn" data-action="add-section">+ 새 섹션 추가</button>
       </div>
 
       <div class="editor-actions">
@@ -720,7 +802,7 @@ function renderEditorView(){
 
 function renderPreviewSheet(){
   const ed=State.ed;
-  const previewSong={title:ed.title,artist:ed.artist,originalKey:ed.originalKey,category:ed.category,text:serialize(ed.lines)};
+  const previewSong={title:ed.title,artist:ed.artist,originalKey:ed.originalKey,category:ed.category,text:serialize(ed.sections)};
   return `<div class="preview-wrap">${renderSheet(previewSong,0)}</div>`;
 }
 
@@ -769,76 +851,58 @@ window.addEventListener("resize",()=>{
 });
 
 /* ═══ TARGETED UPDATES ═══ */
-function updateChordCell(lineIdx,pos){
-  const line=State.ed.lines[lineIdx];
-  const chord=(line.chords||[]).find(c=>c.pos===pos)?.chord;
-  const cell=document.querySelector(`[data-chord-row="${lineIdx}"] [data-chord-cell="${pos}"]`);
-  if(cell) cell.innerHTML=chord?`<span class="click-chord-mark pos-chord-text">${escapeHtml(chord)}</span>`:"";
-  const lyricCell=document.querySelector(`[data-lyric-row="${lineIdx}"] [data-pos="${pos}"][data-line="${lineIdx}"]`);
-  if(lyricCell){
-    if(chord) lyricCell.classList.add("has-chord");
-    else lyricCell.classList.remove("has-chord");
-  }
+function getLine(secIdx,lineIdx){
+  return State.ed.sections[secIdx]?.lines[lineIdx];
 }
 
-// Close any open chord input and save its value
 function closeChordEditor(save=true){
   const editing=State.ed.editing;
   if(!editing) return;
-  const {lineIdx,pos,value}=editing;
-  if(save){
-    const line=State.ed.lines[lineIdx];
+  const {secIdx,lineIdx,pos,value}=editing;
+  const line=getLine(secIdx,lineIdx);
+  if(save&&line){
     const trimmed=(value||"").trim();
-    if(trimmed){
-      // 기존 코드 있으면 교체, 없으면 추가
-      line.chords=[...(line.chords||[]).filter(c=>c.pos!==pos),{pos,chord:trimmed}];
-    }else{
-      // 빈 값이면 코드 삭제
-      line.chords=(line.chords||[]).filter(c=>c.pos!==pos);
-    }
+    if(trimmed) line.chords=[...(line.chords||[]).filter(c=>c.pos!==pos),{pos,chord:trimmed}];
+    else line.chords=(line.chords||[]).filter(c=>c.pos!==pos);
   }
   State.ed.editing=null;
-  // 해당 셀만 다시 그리기
-  const cell=document.querySelector(`[data-chord-row="${lineIdx}"] [data-chord-cell="${pos}"]`);
-  const lyricCell=document.querySelector(`[data-lyric-row="${lineIdx}"] [data-pos="${pos}"][data-line="${lineIdx}"]`);
-  const line=State.ed.lines[lineIdx];
-  const chord=(line.chords||[]).find(c=>c.pos===pos)?.chord;
-  if(cell) cell.innerHTML=chord?`<span class="click-chord-mark pos-chord-text">${escapeHtml(chord)}</span>`:"";
-  if(lyricCell){
-    if(chord) lyricCell.classList.add("has-chord");
-    else lyricCell.classList.remove("has-chord");
-    lyricCell.classList.remove("editing");
+  const key=`${secIdx}-${lineIdx}`;
+  const cell=document.querySelector(`[data-chord-row="${key}"] [data-chord-cell="${pos}"]`);
+  const lyricCell=document.querySelector(`[data-lyric-row="${key}"] [data-pos="${pos}"][data-sec="${secIdx}"][data-line="${lineIdx}"]`);
+  if(line){
+    const chord=(line.chords||[]).find(c=>c.pos===pos)?.chord;
+    if(cell) cell.innerHTML=chord?`<span class="click-chord-mark pos-chord-text">${escapeHtml(chord)}</span>`:"";
+    if(lyricCell){
+      if(chord) lyricCell.classList.add("has-chord"); else lyricCell.classList.remove("has-chord");
+      lyricCell.classList.remove("editing");
+    }
   }
 }
 
-// Open chord input at given cell
-function openChordEditor(lineIdx,pos){
-  // 이미 다른 곳 편집 중이면 먼저 저장
+function openChordEditor(secIdx,lineIdx,pos){
   if(State.ed.editing) closeChordEditor(true);
-
-  const line=State.ed.lines[lineIdx];
+  const line=getLine(secIdx,lineIdx);
+  if(!line) return;
   const existing=(line.chords||[]).find(c=>c.pos===pos)?.chord||"";
-  State.ed.editing={lineIdx,pos,value:existing};
-
-  // 해당 셀에 input 삽입
-  const cell=document.querySelector(`[data-chord-row="${lineIdx}"] [data-chord-cell="${pos}"]`);
-  const lyricCell=document.querySelector(`[data-lyric-row="${lineIdx}"] [data-pos="${pos}"][data-line="${lineIdx}"]`);
+  State.ed.editing={secIdx,lineIdx,pos,value:existing};
+  const key=`${secIdx}-${lineIdx}`;
+  const cell=document.querySelector(`[data-chord-row="${key}"] [data-chord-cell="${pos}"]`);
+  const lyricCell=document.querySelector(`[data-lyric-row="${key}"] [data-pos="${pos}"][data-sec="${secIdx}"][data-line="${lineIdx}"]`);
   if(cell){
-    cell.innerHTML=`<input class="inline-chord-input" data-action="inline-chord" data-line="${lineIdx}" data-pos="${pos}" value="${escapeHtml(existing)}" placeholder="코드" autocomplete="off"/>`;
+    cell.innerHTML=`<input class="inline-chord-input" data-action="inline-chord" data-sec="${secIdx}" data-line="${lineIdx}" data-pos="${pos}" value="${escapeHtml(existing)}" placeholder="코드" autocomplete="off"/>`;
     const input=cell.querySelector("input");
-    if(input){
-      input.focus();
-      input.select();
-    }
+    if(input){input.focus();input.select();}
   }
   if(lyricCell) lyricCell.classList.add("editing");
 }
 
-function rerenderLine(idx){
-  const ln=State.ed.lines[idx];
-  const lineEl=document.querySelector(`[data-line-idx="${idx}"]`);
+function rerenderLine(secIdx,lineIdx){
+  const ln=getLine(secIdx,lineIdx);
+  if(!ln) return;
+  const key=`${secIdx}-${lineIdx}`;
+  const lineEl=document.querySelector(`[data-sec-idx="${secIdx}"][data-line-idx="${lineIdx}"]`);
   if(!lineEl) return;
-  const zone=lineEl.querySelector(`[data-click-zone="${idx}"]`);
+  const zone=lineEl.querySelector(`[data-click-zone="${key}"]`);
   if(!zone) return;
   const chars=ln.lyric?[...ln.lyric]:[];
   if(chars.length===0){zone.style.display="none";return;}
@@ -855,12 +919,12 @@ function rerenderLine(idx){
     const cls=["click-lyric-cell"];
     if(hasChord) cls.push("has-chord");
     const display=ch===" "?"&nbsp;":escapeHtml(ch);
-    return `<span class="${cls.join(" ")}" style="width:${cellWidth(ch)}" data-action="click-char" data-line="${idx}" data-pos="${pos}">${display}</span>`;
+    return `<span class="${cls.join(" ")}" style="width:${cellWidth(ch)}" data-action="click-char" data-sec="${secIdx}" data-line="${lineIdx}" data-pos="${pos}">${display}</span>`;
   }).join("");
-  const chordRowEl=zone.querySelector(`[data-chord-row="${idx}"]`);
-  const lyricRowEl=zone.querySelector(`[data-lyric-row="${idx}"]`);
-  if(chordRowEl) chordRowEl.innerHTML=chordRow;
-  if(lyricRowEl) lyricRowEl.innerHTML=lyricRow;
+  const cEl=zone.querySelector(`[data-chord-row="${key}"]`);
+  const lEl=zone.querySelector(`[data-lyric-row="${key}"]`);
+  if(cEl) cEl.innerHTML=chordRow;
+  if(lEl) lEl.innerHTML=lyricRow;
 }
 
 function updateCatSelection(){
@@ -915,7 +979,7 @@ async function saveCurrentSong(){
   if(!ed.title.trim()){alert("제목을 입력해주세요");return;}
   State.saving=true;
   render();
-  const text=serialize(ed.lines);
+  const text=serialize(ed.sections);
   const isUpdate=!!State.editSongId;
   const id=State.editSongId||"s"+Date.now();
   const songData={id,title:ed.title,artist:ed.artist,originalKey:ed.originalKey,category:ed.category,text};
@@ -948,104 +1012,77 @@ document.addEventListener("click",e=>{
   if(action==="reload"){loadSongsFromServer();return;}
   if(action==="cat"){State.activeCat=t.dataset.cat;updateCatSelection();updateSongList();return;}
   if(action==="logout"){logoutAdmin();return;}
-  if(action==="open-song"){
-    State.selectedSongId=t.dataset.id;State.transpose=0;State.view="song";render();return;
-  }
+  if(action==="open-song"){State.selectedSongId=t.dataset.id;State.transpose=0;State.view="song";render();return;}
   if(action==="back-list"){State.view="list";render();return;}
   if(action==="transpose"){State.transpose+=parseInt(t.dataset.dir,10);updateTransposeDisplay();return;}
   if(action==="transpose-reset"){State.transpose=0;updateTransposeDisplay();return;}
 
-  if(action==="new-song"){
-    if(!requireAdmin()) return;
-    State.editSongId=null;initEditor(null);State.view="editor";render();return;
-  }
+  if(action==="new-song"){if(!requireAdmin()) return;State.editSongId=null;initEditor(null);State.view="editor";render();return;}
   if(action==="edit-song"){
     if(!requireAdmin()) return;
     e.stopPropagation();
     const song=State.songs.find(s=>s.id===t.dataset.id);
     State.editSongId=t.dataset.id;initEditor(song);State.view="editor";render();return;
   }
-  if(action==="delete-song-from-list"){
-    if(!requireAdmin()) return;
-    e.stopPropagation();
-    deleteSong(t.dataset.id);return;
-  }
+  if(action==="delete-song-from-list"){if(!requireAdmin()) return;e.stopPropagation();deleteSong(t.dataset.id);return;}
   if(action==="delete-song-from-view"){if(!requireAdmin()) return;deleteSong(t.dataset.id);return;}
   if(action==="delete-song-from-editor"){if(!requireAdmin()) return;deleteSong(State.editSongId);return;}
   if(action==="save-song"){if(!requireAdmin()) return;saveCurrentSong();return;}
 
-  if(action==="add-line"){
-    State.ed.lines.push({lyric:"",chords:[]});
-    const wrap=document.getElementById("lines-wrap");
-    if(wrap){
-      const div=document.createElement("div");
-      div.innerHTML=renderLineEditor(State.ed.lines[State.ed.lines.length-1],State.ed.lines.length-1);
-      wrap.appendChild(div.firstElementChild);
-    }
+  // ── Section actions ──
+  if(action==="add-section"){
+    State.ed.sections.push({name:"Verse",lines:[{lyric:"",chords:[]}]});
+    render();return;
+  }
+  if(action==="dup-section"){
+    const si=parseInt(t.dataset.sec,10);
+    const sec=State.ed.sections[si];
+    const copy={name:sec.name+" (복제)",lines:sec.lines.map(ln=>({lyric:ln.lyric,chords:(ln.chords||[]).map(c=>({...c}))}))};
+    State.ed.sections.splice(si+1,0,copy);
+    render();
+    showToast(`"${sec.name}" 섹션 복제됨`,"success");
     return;
+  }
+  if(action==="delete-section"){
+    const si=parseInt(t.dataset.sec,10);
+    if(State.ed.sections.length<=1){showToast("최소 1개 섹션이 필요해요","info");return;}
+    const name=State.ed.sections[si].name;
+    if(!confirm(`"${name}" 섹션을 삭제하시겠습니까?`)) return;
+    State.ed.sections.splice(si,1);
+    render();return;
+  }
+  if(action==="move-sec-up"){
+    const si=parseInt(t.dataset.sec,10);
+    if(si<=0) return;
+    [State.ed.sections[si-1],State.ed.sections[si]]=[State.ed.sections[si],State.ed.sections[si-1]];
+    render();return;
+  }
+  if(action==="move-sec-down"){
+    const si=parseInt(t.dataset.sec,10);
+    if(si>=State.ed.sections.length-1) return;
+    [State.ed.sections[si],State.ed.sections[si+1]]=[State.ed.sections[si+1],State.ed.sections[si]];
+    render();return;
+  }
+  if(action==="add-line-in-sec"){
+    const si=parseInt(t.dataset.sec,10);
+    State.ed.sections[si].lines.push({lyric:"",chords:[]});
+    render();return;
   }
   if(action==="delete-line"){
-    const idx=parseInt(t.dataset.line,10);
-    State.ed.selectedLines.delete(idx);
-    // selectedLines 중 idx보다 큰 것들 1씩 감소
-    const newSet=new Set();
-    State.ed.selectedLines.forEach(i=>{if(i<idx) newSet.add(i); else if(i>idx) newSet.add(i-1);});
-    State.ed.selectedLines=newSet;
-    if(State.ed.lines.length>1){State.ed.lines.splice(idx,1);render();}
-    else{State.ed.lines[0]={lyric:"",chords:[]};State.ed.selectedLines.clear();render();}
-    return;
+    const si=parseInt(t.dataset.sec,10);
+    const li=parseInt(t.dataset.line,10);
+    const sec=State.ed.sections[si];
+    if(sec.lines.length>1) sec.lines.splice(li,1);
+    else sec.lines[0]={lyric:"",chords:[]};
+    render();return;
   }
-  if(action==="toggle-select"){
-    const idx=parseInt(t.dataset.line,10);
-    if(State.ed.selectedLines.has(idx)) State.ed.selectedLines.delete(idx);
-    else State.ed.selectedLines.add(idx);
-    // 해당 라인의 UI만 업데이트
-    const lineEl=document.querySelector(`[data-line-idx="${idx}"]`);
-    if(lineEl) lineEl.classList.toggle("selected",State.ed.selectedLines.has(idx));
-    const countEl=document.getElementById("select-count");
-    if(countEl) countEl.textContent=State.ed.selectedLines.size>0?State.ed.selectedLines.size+"줄 선택됨":"";
-    return;
-  }
-  if(action==="select-all"){
-    State.ed.lines.forEach((_,i)=>State.ed.selectedLines.add(i));
-    document.querySelectorAll(".editor-line").forEach(el=>el.classList.add("selected"));
-    document.querySelectorAll(".line-checkbox").forEach(cb=>cb.checked=true);
-    const countEl=document.getElementById("select-count");
-    if(countEl) countEl.textContent=State.ed.selectedLines.size+"줄 선택됨";
-    return;
-  }
-  if(action==="deselect-all"){
-    State.ed.selectedLines.clear();
-    document.querySelectorAll(".editor-line").forEach(el=>el.classList.remove("selected"));
-    document.querySelectorAll(".line-checkbox").forEach(cb=>cb.checked=false);
-    const countEl=document.getElementById("select-count");
-    if(countEl) countEl.textContent="";
-    return;
-  }
-  if(action==="duplicate-selected"){
-    if(State.ed.selectedLines.size===0){showToast("복제할 줄을 먼저 선택해주세요","info");return;}
-    // 선택된 줄들을 순서대로 복제
-    const indices=[...State.ed.selectedLines].sort((a,b)=>a-b);
-    const copies=indices.map(i=>({
-      lyric:State.ed.lines[i].lyric,
-      chords:(State.ed.lines[i].chords||[]).map(c=>({...c}))
-    }));
-    // 마지막 선택된 줄 다음에 삽입
-    const insertAt=Math.max(...indices)+1;
-    State.ed.lines.splice(insertAt,0,...copies);
-    // 선택 해제 후 새로 복제된 줄들을 선택
-    State.ed.selectedLines.clear();
-    for(let i=0;i<copies.length;i++) State.ed.selectedLines.add(insertAt+i);
-    render();
-    showToast(`${copies.length}줄 복제됨`,"success");
-    return;
-  }
+
   if(action==="click-char"){
-    // 입력창 자체를 클릭한 경우는 무시 (포커스 유지)
     if(e.target.classList.contains("inline-chord-input")) return;
+    const secIdx=parseInt(t.dataset.sec,10);
     const lineIdx=parseInt(t.dataset.line,10);
     const pos=parseInt(t.dataset.pos,10);
-    openChordEditor(lineIdx,pos);
+    openChordEditor(secIdx,lineIdx,pos);
     return;
   }
   if(action==="toggle-preview"){
@@ -1064,18 +1101,23 @@ document.addEventListener("input",e=>{
   if(action==="search"){State.search=t.value;updateSongList();return;}
   if(action==="ed-title"){State.ed.title=t.value;return;}
   if(action==="ed-artist"){State.ed.artist=t.value;return;}
+  if(action==="section-name"){
+    const si=parseInt(t.dataset.sec,10);
+    State.ed.sections[si].name=t.value;
+    return;
+  }
   if(action==="inline-chord"){
-    // 인라인 코드 입력 중 값만 state에 저장 (아직 확정 안 함)
     if(State.ed.editing) State.ed.editing.value=t.value;
     return;
   }
   if(action==="lyric-change"){
-    const idx=parseInt(t.dataset.line,10);
-    const val=t.value;
-    const line=State.ed.lines[idx];
-    line.lyric=val;
-    line.chords=(line.chords||[]).filter(c=>c.pos<=[...val].length);
-    rerenderLine(idx);
+    const si=parseInt(t.dataset.sec,10);
+    const li=parseInt(t.dataset.line,10);
+    const line=getLine(si,li);
+    if(!line) return;
+    line.lyric=t.value;
+    line.chords=(line.chords||[]).filter(c=>c.pos<=[...t.value].length);
+    rerenderLine(si,li);
     return;
   }
 });
@@ -1091,44 +1133,28 @@ document.addEventListener("keydown",e=>{
   const t=e.target.closest("[data-action]");
   if(!t) return;
 
-  // 인라인 코드 입력 제어
   if(t.dataset.action==="inline-chord"){
-    if(e.key==="Enter"||e.key==="Tab"){
-      e.preventDefault();
-      closeChordEditor(true);
-      return;
-    }
-    if(e.key==="Escape"){
-      e.preventDefault();
-      closeChordEditor(false);
-      return;
-    }
+    if(e.key==="Enter"||e.key==="Tab"){e.preventDefault();closeChordEditor(true);return;}
+    if(e.key==="Escape"){e.preventDefault();closeChordEditor(false);return;}
     if(e.key==="Backspace"&&t.value===""){
-      // 빈 상태에서 백스페이스 → 기존 코드 삭제
       e.preventDefault();
-      if(State.ed.editing){
-        State.ed.editing.value="";
-        closeChordEditor(true);  // 빈 값이면 내부적으로 삭제 처리됨
-      }
+      if(State.ed.editing){State.ed.editing.value="";closeChordEditor(true);}
       return;
     }
     return;
   }
 
-  // 가사 입력에서 Enter = 새 줄 추가하고 포커스 이동
   if(t.dataset.action==="lyric-change"&&e.key==="Enter"&&!e.shiftKey){
     e.preventDefault();
-    const currentIdx=parseInt(t.dataset.line,10);
-    const newIdx=currentIdx+1;
-    State.ed.lines.splice(newIdx,0,{lyric:"",chords:[]});
-    const wrap=document.getElementById("lines-wrap");
-    if(wrap){
-      wrap.innerHTML=State.ed.lines.map((ln,idx)=>renderLineEditor(ln,idx)).join("");
-      requestAnimationFrame(()=>{
-        const newInput=document.querySelector(`[data-action="lyric-change"][data-line="${newIdx}"]`);
-        if(newInput) newInput.focus();
-      });
-    }
+    const si=parseInt(t.dataset.sec,10);
+    const li=parseInt(t.dataset.line,10);
+    const sec=State.ed.sections[si];
+    sec.lines.splice(li+1,0,{lyric:"",chords:[]});
+    render();
+    requestAnimationFrame(()=>{
+      const newInput=document.querySelector(`[data-action="lyric-change"][data-sec="${si}"][data-line="${li+1}"]`);
+      if(newInput) newInput.focus();
+    });
     return;
   }
 });
@@ -1149,16 +1175,17 @@ document.addEventListener("focusout",e=>{
 /* 기존 코드 마크(초록 배지) 클릭하면 수정 모드로 열기 */
 document.addEventListener("click",e=>{
   if(e.target.classList&&e.target.classList.contains("click-chord-mark")){
-    // 부모 셀에서 line/pos 정보 찾기
     const cell=e.target.closest(".click-chord-cell");
     if(!cell) return;
     const pos=parseInt(cell.dataset.chordCell,10);
-    // 같은 click-zone 안의 lyric-row에서 line idx 찾기
     const zone=cell.closest(".click-zone");
     if(!zone) return;
-    const lineIdx=parseInt(zone.dataset.clickZone,10);
+    // data-click-zone="secIdx-lineIdx" 형식
+    const parts=zone.dataset.clickZone.split("-");
+    const secIdx=parseInt(parts[0],10);
+    const lineIdx=parseInt(parts[1],10);
     e.stopPropagation();
-    openChordEditor(lineIdx,pos);
+    openChordEditor(secIdx,lineIdx,pos);
   }
 });
 
