@@ -483,15 +483,16 @@ async function loadSongsFromServer(){
 
 /* ═══ DISPLAY RENDERERS ═══ */
 
-/* 코드 접미사(sus4, maj7, add9 등)를 작게 표시
-   단, 분수코드(A/E, D/F#)는 전부 크게 유지 */
+/* 코드 표시: 알파벳(A-G)만 크게, 나머지 전부 작게
+   분수코드도 동일 규칙 적용 */
 function formatChordHtml(chord){
-  // 분수코드 분리: "A/E", "D/F#", "G/B" 등
-  const slashMatch=chord.match(/^([A-G][#b]?[^/]*)(\/[A-G][#b]?)$/);
+  // 분수코드 분리: "F#/A#", "B/A", "D/F#" 등
+  const slashMatch=chord.match(/^([A-G][#b]?[^/]*)(\/([A-G])([#b]?))$/);
   if(slashMatch){
-    // 앞부분(A, Am, Am7 등)은 포맷 적용, /E 부분은 루트 크기로
     const front=formatChordPart(slashMatch[1]);
-    const bass=`<span class="chord-root">${escapeHtml(slashMatch[2])}</span>`;
+    const slashBassRoot=slashMatch[3]; // "A", "F" 등
+    const slashBassSuffix=slashMatch[4]||""; // "#" 등
+    const bass=`<span class="chord-suffix">/</span><span class="chord-root">${escapeHtml(slashBassRoot)}</span>${slashBassSuffix?`<span class="chord-suffix">${escapeHtml(slashBassSuffix)}</span>`:""}`;
     return front+bass;
   }
   return formatChordPart(chord);
