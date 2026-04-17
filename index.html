@@ -450,35 +450,21 @@ function renderChordLine(lyric,chords,transpose){
   const chordAt={};
   (chords||[]).forEach(c=>{chordAt[c.pos]=transposeChord(c.chord,transpose);});
 
-  const sorted=[...(chords||[])].sort((a,b)=>a.pos-b.pos);
-  const extraWidth={};
-
-  for(let ci=0;ci<sorted.length;ci++){
-    const c=sorted[ci];
-    const chordText=transposeChord(c.chord,transpose);
-    const chordLen=chordText.length+1;
-    const nextPos=ci<sorted.length-1?sorted[ci+1].pos:chars.length;
-    let availWidth=0;
-    for(let j=c.pos;j<nextPos;j++){
-      availWidth+=isWide(chars[j])?2:1;
-    }
-    if(chordLen>availWidth){
-      extraWidth[c.pos]=(extraWidth[c.pos]||0)+(chordLen-availWidth);
-    }
-  }
-
+  /*
+    코드는 position:absolute로 가사 위에 떠있으므로
+    가사 셀 너비는 글자 본연의 너비만 유지.
+    코드가 길어서 다음 코드와 겹칠 수 있지만,
+    이건 실제 악보에서도 자연스러운 표현이고
+    가사가 벌어지는 것보다 훨씬 낫다.
+  */
   const chordRow=chars.map((ch,i)=>{
-    const baseW=isWide(ch)?2:1;
-    const extra=extraWidth[i]||0;
-    const totalW=baseW+extra;
+    const w=isWide(ch)?2:1;
     const chord=chordAt[i];
-    return `<span class="pos-chord-cell" style="width:${totalW}ch">${chord?`<span class="pos-chord-text">${formatChordHtml(chord)}</span>`:""}</span>`;
+    return `<span class="pos-chord-cell" style="width:${w}ch">${chord?`<span class="pos-chord-text">${formatChordHtml(chord)}</span>`:""}</span>`;
   }).join("");
   const lyricRow=chars.map((ch,i)=>{
-    const baseW=isWide(ch)?2:1;
-    const extra=extraWidth[i]||0;
-    const totalW=baseW+extra;
-    return `<span class="pos-lyric-cell" style="width:${totalW}ch">${escapeHtml(ch)}</span>`;
+    const w=isWide(ch)?2:1;
+    return `<span class="pos-lyric-cell" style="width:${w}ch">${escapeHtml(ch)}</span>`;
   }).join("");
   return `<div class="pos-line"><div class="pos-chord-row">${chordRow}</div><div class="pos-lyric-row">${lyricRow}</div></div>`;
 }
