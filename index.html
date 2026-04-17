@@ -498,12 +498,13 @@ function formatChordHtml(chord){
 }
 
 function formatChordPart(part){
-  const m=part.match(/^([A-G][#b]?)(m(?!aj)|M)?(.*)$/);
+  // 루트 알파벳(A-G)만 크게, 나머지(#, b, m, 7, sus4 등) 전부 작게
+  const m=part.match(/^([A-G])(.*)/);
   if(!m) return escapeHtml(part);
-  const root=m[1]+(m[2]||""); // "A", "Am", "C#m" 등 - 루트+m은 크게
-  const tail=m[3]||"";        // "7", "sus4", "maj7", "add9" 등 - 작게
-  if(!tail) return `<span class="chord-root">${escapeHtml(root)}</span>`;
-  return `<span class="chord-root">${escapeHtml(root)}</span><span class="chord-suffix">${escapeHtml(tail)}</span>`;
+  const root=m[1];
+  const suffix=m[2]||"";
+  if(!suffix) return `<span class="chord-root">${escapeHtml(root)}</span>`;
+  return `<span class="chord-root">${escapeHtml(root)}</span><span class="chord-suffix">${escapeHtml(suffix)}</span>`;
 }
 
 function renderChordLine(lyric,chords,transpose){
