@@ -394,14 +394,27 @@ async function loadSongsFromServer(){
 
 /* ═══ DISPLAY RENDERERS ═══ */
 
-/* 코드 접미사(sus4, maj7, add9 등)를 작게 표시 */
+/* 코드 접미사(sus4, maj7, add9 등)를 작게 표시
+   단, 분수코드(A/E, D/F#)는 전부 크게 유지 */
 function formatChordHtml(chord){
-  const m=chord.match(/^([A-G][#b]?)(.*)/);
-  if(!m) return escapeHtml(chord);
-  const root=m[1];
-  const suffix=m[2];
-  if(!suffix) return `<span class="chord-root">${escapeHtml(root)}</span>`;
-  return `<span class="chord-root">${escapeHtml(root)}</span><span class="chord-suffix">${escapeHtml(suffix)}</span>`;
+  // 분수코드 분리: "A/E", "D/F#", "G/B" 등
+  const slashMatch=chord.match(/^([A-G][#b]?[^/]*)(\/[A-G][#b]?)$/);
+  if(slashMatch){
+    // 앞부분(A, Am, Am7 등)은 포맷 적용, /E 부분은 루트 크기로
+    const front=formatChordPart(slashMatch[1]);
+    const bass=`<span class="chord-root">${escapeHtml(slashMatch[2])}</span>`;
+    return front+bass;
+  }
+  return formatChordPart(chord);
+}
+
+function formatChordPart(part){
+  const m=part.match(/^([A-G][#b]?)(m(?!aj)|M)?(.*)$/);
+  if(!m) return escapeHtml(part);
+  const root=m[1]+(m[2]||""); // "A", "Am", "C#m" 등 - 루트+m은 크게
+  const tail=m[3]||"";        // "7", "sus4", "maj7", "add9" 등 - 작게
+  if(!tail) return `<span class="chord-root">${escapeHtml(root)}</span>`;
+  return `<span class="chord-root">${escapeHtml(root)}</span><span class="chord-suffix">${escapeHtml(tail)}</span>`;
 }
 
 function renderChordLine(lyric,chords,transpose){
