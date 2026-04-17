@@ -108,42 +108,25 @@
   .form-select{width:100%;padding:11px 10px;border:1.5px solid var(--bdr);border-radius:10px;font-size:14px;font-family:var(--font);background:var(--card);color:var(--txt)}
   .form-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
 
-  .chord-palette{margin-bottom:20px;padding:14px;background:var(--glow);border:1.5px solid var(--bdr);border-radius:14px}
-  .chord-current{display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:8px 12px;background:var(--card);border:1.5px solid var(--bdr);border-radius:10px}
-  .chord-current-label{font-size:11px;color:var(--txt-lt);font-weight:500}
-  .chord-current-value{font-family:var(--mono);font-size:16px;font-weight:700;color:var(--chord)}
-  .root-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px}
-  .root-btn{flex:1;min-width:36px;padding:8px 0;border:1.5px solid var(--bdr);border-radius:7px;background:var(--card);font-family:var(--mono);font-size:13px;font-weight:600;color:var(--txt);cursor:pointer;transition:all .15s;text-align:center}
-  .root-btn:hover{border-color:var(--accent-lt);background:var(--hover,rgba(46,125,50,.05))}
-  .root-btn.open{background:var(--accent);color:#fff;border-color:var(--accent)}
-  .variants-panel{display:none;padding:10px;background:var(--card);border:1.5px solid var(--bdr);border-radius:10px;margin-bottom:8px;animation:fadeIn .2s ease}
-  .variants-panel.visible{display:block}
-  .variants-header{font-size:11px;color:var(--txt-lt);margin-bottom:8px;font-weight:500}
-  .variants-header strong{color:var(--chord);font-family:var(--mono);font-size:13px}
-  .variants-grid{display:flex;flex-wrap:wrap;gap:5px}
-  .chord-palette-btn{padding:6px 12px;border:1.5px solid var(--bdr);border-radius:6px;background:var(--bg);font-size:12px;font-family:var(--mono);font-weight:500;color:var(--txt);cursor:pointer;transition:all .15s}
-  .chord-palette-btn:hover{border-color:var(--accent-lt)}
-  .chord-palette-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
-  .custom-chord-row{display:flex;gap:6px}
-  .custom-chord-input{flex:1;padding:8px 12px;border:1.5px solid var(--bdr);border-radius:8px;font-size:13px;font-family:var(--mono);background:var(--card);color:var(--txt)}
-  .custom-chord-btn{padding:8px 14px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer}
+  .inline-chord-input{position:absolute;top:-4px;left:0;width:auto;min-width:60px;padding:3px 6px;border:2px solid var(--accent);border-radius:4px;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--chord);background:#fff;box-shadow:0 2px 8px rgba(46,125,50,.2);z-index:10;outline:none}
+  .editor-tip{font-size:11.5px;color:var(--txt-lt);padding:10px 14px;background:var(--glow);border:1.5px solid var(--bdr);border-radius:10px;margin-bottom:14px;line-height:1.6}
+  .editor-tip strong{color:var(--accent)}
 
   .lines-wrap{display:flex;flex-direction:column;gap:8px}
   .editor-line{padding:12px 14px;background:var(--card);border:1.5px solid var(--bdr);border-radius:12px}
   .editor-line-header{display:flex;gap:8px;align-items:center;margin-bottom:8px}
   .editor-lyric-input{flex:1;padding:10px 12px;border:1.5px solid var(--bdr);border-radius:8px;font-size:14px;font-family:var(--mono);background:#fff;color:var(--txt)}
   .editor-line-delete{width:28px;height:28px;border:none;border-radius:6px;background:rgba(197,48,48,.08);color:var(--danger);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .click-zone{margin-top:8px;padding:10px 12px;background:rgba(46,125,50,.03);border-radius:8px;border:1px dashed var(--bdr)}
-  .click-hint{font-size:11px;color:var(--txt-lt);margin-bottom:8px}
-  .click-hint strong{color:var(--chord)}
+  .click-zone{margin-top:8px;padding:18px 12px 10px;background:rgba(46,125,50,.03);border-radius:8px;border:1px dashed var(--bdr)}
   .click-chord-row{display:flex;flex-wrap:wrap;min-height:22px;margin-bottom:1px}
   .click-chord-cell{display:inline-block;font-family:var(--mono);font-size:12px;vertical-align:top;position:relative}
   .click-chord-mark{color:var(--chord);font-weight:600;cursor:pointer;background:rgba(46,125,50,.12);border-radius:3px;padding:1px 3px;font-size:12px;white-space:nowrap}
-  .click-lyric-row{display:flex;flex-wrap:wrap}
-  .click-lyric-cell{display:inline-block;font-family:var(--mono);font-size:15px;padding:3px 0;border-bottom:2px solid transparent;border-radius:2px;user-select:none;text-align:left}
-  .click-lyric-cell.has-chord{background:rgba(46,125,50,.12);border-bottom-color:var(--accent);cursor:pointer}
-  .click-lyric-cell.hoverable{cursor:pointer}
-  .click-lyric-cell.hoverable:hover{background:rgba(46,125,50,.06)}
+  .click-chord-mark:hover{background:rgba(46,125,50,.22)}
+  .click-lyric-row{display:flex;flex-wrap:wrap;position:relative}
+  .click-lyric-cell{display:inline-block;font-family:var(--mono);font-size:15px;padding:3px 0;border-bottom:2px solid transparent;border-radius:2px;user-select:none;text-align:left;cursor:pointer;position:relative}
+  .click-lyric-cell.has-chord{background:rgba(46,125,50,.12);border-bottom-color:var(--accent)}
+  .click-lyric-cell:hover{background:rgba(46,125,50,.06)}
+  .click-lyric-cell.editing{background:rgba(46,125,50,.15);border-bottom-color:var(--accent)}
 
   .add-line-btn{padding:9px 18px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px}
   .editor-actions{display:flex;justify-content:space-between;align-items:center;margin-top:12px;flex-wrap:wrap;gap:10px}
@@ -259,22 +242,6 @@ const CHROMATIC=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 const FLAT_MAP={Db:"C#",Eb:"D#",Fb:"E",Gb:"F#",Ab:"G#",Bb:"A#",Cb:"B"};
 const CATEGORIES=["전체","감사","사랑","예배","소망","고백"];
 
-/* 코드를 루트 음별로 그룹화 */
-const CHORD_GROUPS=[
-  {root:"C", chords:["C","Cm","C7","Cmaj7","Cm7","Csus4","Cadd9","Cdim","Caug","C/E","C/G"]},
-  {root:"C#", chords:["C#","C#m","C#7","C#m7","C#maj7"]},
-  {root:"D", chords:["D","Dm","D7","Dmaj7","Dm7","Dsus4","Dadd9","D/F#","D/A"]},
-  {root:"D#", chords:["D#","D#m","D#7","Eb","Ebm","Eb7"]},
-  {root:"E", chords:["E","Em","E7","Emaj7","Em7","Esus4","E/G#","E/B"]},
-  {root:"F", chords:["F","Fm","F7","Fmaj7","Fm7","Fsus4","F/A","F/C"]},
-  {root:"F#", chords:["F#","F#m","F#7","F#m7","Gb","Gbmaj7"]},
-  {root:"G", chords:["G","Gm","G7","Gmaj7","Gm7","Gsus4","Gadd9","G/B","G/D"]},
-  {root:"G#", chords:["G#","G#m","G#7","Ab","Abmaj7","Abm"]},
-  {root:"A", chords:["A","Am","A7","Amaj7","Am7","Asus4","Aadd9","A/C#","A/E"]},
-  {root:"A#", chords:["A#","A#m","Bb","Bbm","Bb7","Bbmaj7"]},
-  {root:"B", chords:["B","Bm","B7","Bmaj7","Bm7","Bsus4","B/D#","B/F#"]},
-];
-
 function normalizeNote(n){return FLAT_MAP[n]||n;}
 function transposeChord(chord,semi){
   return chord.replace(/([A-G][#b]?)/g,m=>{
@@ -381,9 +348,9 @@ const State={
   saving:false,
   ed:{
     title:"",artist:"",originalKey:"C",category:"감사",
-    selectedChord:"G",customChord:"",preview:false,
+    preview:false,
     lines:[{lyric:"",chords:[]}],
-    openRoot:null,  // 현재 펼쳐진 루트 (한 번에 하나만)
+    editing:null,  // {lineIdx, pos, value} 또는 null
   }
 };
 
@@ -393,9 +360,9 @@ function initEditor(song){
     artist:song?.artist||"울로콜리 편곡",
     originalKey:song?.originalKey||"C",
     category:song?.category||"감사",
-    selectedChord:"G",customChord:"",preview:false,
+    preview:false,
     lines:song?.text?deserialize(song.text):[{lyric:"",chords:[]}],
-    openRoot:null,
+    editing:null,
   };
 }
 
@@ -567,18 +534,28 @@ function renderLineEditor(ln,idx){
   const chars=ln.lyric?[...ln.lyric]:[];
   const chordMap={};
   (ln.chords||[]).forEach(c=>{chordMap[c.pos]=c.chord;});
+  const editing=State.ed.editing;
+  const isEditingThisLine=editing&&editing.lineIdx===idx;
 
   const chordRow=chars.map((ch,pos)=>{
     const w=cellWidth(ch);
     const chord=chordMap[pos];
-    return `<span class="click-chord-cell" data-chord-cell="${pos}" style="width:${w}">${chord?`<span class="click-chord-mark pos-chord-text">${escapeHtml(chord)}</span>`:""}</span>`;
+    const isEditing=isEditingThisLine&&editing.pos===pos;
+    let inner="";
+    if(isEditing){
+      inner=`<input class="inline-chord-input" data-action="inline-chord" data-line="${idx}" data-pos="${pos}" value="${escapeHtml(editing.value||"")}" placeholder="코드" autocomplete="off"/>`;
+    }else if(chord){
+      inner=`<span class="click-chord-mark pos-chord-text">${escapeHtml(chord)}</span>`;
+    }
+    return `<span class="click-chord-cell" data-chord-cell="${pos}" style="width:${w}">${inner}</span>`;
   }).join("");
 
   const lyricRow=chars.map((ch,pos)=>{
     const hasChord=!!chordMap[pos];
+    const isEditing=isEditingThisLine&&editing.pos===pos;
     const cls=["click-lyric-cell"];
     if(hasChord) cls.push("has-chord");
-    else cls.push("hoverable");
+    if(isEditing) cls.push("editing");
     const display=ch===" "?"&nbsp;":escapeHtml(ch);
     return `<span class="${cls.join(" ")}" style="width:${cellWidth(ch)}" data-action="click-char" data-line="${idx}" data-pos="${pos}">${display}</span>`;
   }).join("");
@@ -590,11 +567,6 @@ function renderLineEditor(ln,idx){
         <button class="editor-line-delete" data-action="delete-line" data-line="${idx}">✕</button>
       </div>
       <div class="click-zone" data-click-zone="${idx}" style="${chars.length===0?'display:none':''}">
-        <div class="click-hint">
-          ${State.ed.selectedChord
-            ?`클릭하면 <strong>${escapeHtml(State.ed.selectedChord)}</strong> 배치 · 초록 표시된 코드 클릭 시 삭제`
-            :`위에서 코드를 먼저 선택하세요`}
-        </div>
         <div class="click-chord-row" data-chord-row="${idx}">${chordRow}</div>
         <div class="click-lyric-row" data-lyric-row="${idx}">${lyricRow}</div>
       </div>
@@ -632,23 +604,9 @@ function renderEditorView(){
         </div>
       </div>
 
-      <div class="chord-palette">
-        <div class="chord-current">
-          <span class="chord-current-label">선택된 코드</span>
-          <span class="chord-current-value" id="chord-current-display">${escapeHtml(ed.selectedChord||"없음")}</span>
-        </div>
-        <div class="root-row" id="root-row">
-          ${CHORD_GROUPS.map(g=>`
-            <button class="root-btn ${ed.openRoot===g.root?"open":""}" data-action="toggle-root" data-root="${escapeHtml(g.root)}">${escapeHtml(g.root)}</button>
-          `).join("")}
-        </div>
-        <div class="variants-panel ${ed.openRoot?"visible":""}" id="variants-panel">
-          ${ed.openRoot?renderVariantsPanel(ed.openRoot,ed.selectedChord):""}
-        </div>
-        <div class="custom-chord-row" style="margin-top:4px">
-          <input class="custom-chord-input" value="${escapeHtml(ed.customChord)}" placeholder="직접 입력 (예: Bbm7sus4)" data-action="ed-custom"/>
-          <button class="custom-chord-btn" data-action="ed-custom-submit">선택</button>
-        </div>
+      <div class="editor-tip">
+        💡 가사를 입력한 뒤 <strong>코드를 넣을 글자를 클릭</strong>하면 작은 입력창이 떠요.<br>
+        코드를 타이핑하고 <strong>Enter</strong>로 확정 · <strong>Esc</strong>로 취소 · 빈 상태에서 <strong>Backspace</strong>로 삭제
       </div>
 
       <div class="form-group">
@@ -697,9 +655,62 @@ function updateChordCell(lineIdx,pos){
   if(cell) cell.innerHTML=chord?`<span class="click-chord-mark pos-chord-text">${escapeHtml(chord)}</span>`:"";
   const lyricCell=document.querySelector(`[data-lyric-row="${lineIdx}"] [data-pos="${pos}"][data-line="${lineIdx}"]`);
   if(lyricCell){
-    if(chord){lyricCell.classList.add("has-chord");lyricCell.classList.remove("hoverable");}
-    else{lyricCell.classList.remove("has-chord");lyricCell.classList.add("hoverable");}
+    if(chord) lyricCell.classList.add("has-chord");
+    else lyricCell.classList.remove("has-chord");
   }
+}
+
+// Close any open chord input and save its value
+function closeChordEditor(save=true){
+  const editing=State.ed.editing;
+  if(!editing) return;
+  const {lineIdx,pos,value}=editing;
+  if(save){
+    const line=State.ed.lines[lineIdx];
+    const trimmed=(value||"").trim();
+    if(trimmed){
+      // 기존 코드 있으면 교체, 없으면 추가
+      line.chords=[...(line.chords||[]).filter(c=>c.pos!==pos),{pos,chord:trimmed}];
+    }else{
+      // 빈 값이면 코드 삭제
+      line.chords=(line.chords||[]).filter(c=>c.pos!==pos);
+    }
+  }
+  State.ed.editing=null;
+  // 해당 셀만 다시 그리기
+  const cell=document.querySelector(`[data-chord-row="${lineIdx}"] [data-chord-cell="${pos}"]`);
+  const lyricCell=document.querySelector(`[data-lyric-row="${lineIdx}"] [data-pos="${pos}"][data-line="${lineIdx}"]`);
+  const line=State.ed.lines[lineIdx];
+  const chord=(line.chords||[]).find(c=>c.pos===pos)?.chord;
+  if(cell) cell.innerHTML=chord?`<span class="click-chord-mark pos-chord-text">${escapeHtml(chord)}</span>`:"";
+  if(lyricCell){
+    if(chord) lyricCell.classList.add("has-chord");
+    else lyricCell.classList.remove("has-chord");
+    lyricCell.classList.remove("editing");
+  }
+}
+
+// Open chord input at given cell
+function openChordEditor(lineIdx,pos){
+  // 이미 다른 곳 편집 중이면 먼저 저장
+  if(State.ed.editing) closeChordEditor(true);
+
+  const line=State.ed.lines[lineIdx];
+  const existing=(line.chords||[]).find(c=>c.pos===pos)?.chord||"";
+  State.ed.editing={lineIdx,pos,value:existing};
+
+  // 해당 셀에 input 삽입
+  const cell=document.querySelector(`[data-chord-row="${lineIdx}"] [data-chord-cell="${pos}"]`);
+  const lyricCell=document.querySelector(`[data-lyric-row="${lineIdx}"] [data-pos="${pos}"][data-line="${lineIdx}"]`);
+  if(cell){
+    cell.innerHTML=`<input class="inline-chord-input" data-action="inline-chord" data-line="${lineIdx}" data-pos="${pos}" value="${escapeHtml(existing)}" placeholder="코드" autocomplete="off"/>`;
+    const input=cell.querySelector("input");
+    if(input){
+      input.focus();
+      input.select();
+    }
+  }
+  if(lyricCell) lyricCell.classList.add("editing");
 }
 
 function rerenderLine(idx){
@@ -721,7 +732,7 @@ function rerenderLine(idx){
   const lyricRow=chars.map((ch,pos)=>{
     const hasChord=!!chordMap[pos];
     const cls=["click-lyric-cell"];
-    if(hasChord) cls.push("has-chord"); else cls.push("hoverable");
+    if(hasChord) cls.push("has-chord");
     const display=ch===" "?"&nbsp;":escapeHtml(ch);
     return `<span class="${cls.join(" ")}" style="width:${cellWidth(ch)}" data-action="click-char" data-line="${idx}" data-pos="${pos}">${display}</span>`;
   }).join("");
@@ -731,53 +742,6 @@ function rerenderLine(idx){
   if(lyricRowEl) lyricRowEl.innerHTML=lyricRow;
 }
 
-function updateHint(){
-  document.querySelectorAll(".click-hint").forEach(el=>{
-    el.innerHTML=State.ed.selectedChord
-      ?`클릭하면 <strong>${escapeHtml(State.ed.selectedChord)}</strong> 배치 · 초록 표시된 코드 클릭 시 삭제`
-      :`위에서 코드를 먼저 선택하세요`;
-  });
-}
-function updateChordPalette(){
-  document.querySelectorAll(".chord-palette-btn").forEach(btn=>{
-    if(btn.dataset.chord===State.ed.selectedChord) btn.classList.add("active");
-    else btn.classList.remove("active");
-  });
-  const disp=document.getElementById("chord-current-display");
-  if(disp) disp.textContent=State.ed.selectedChord||"없음";
-}
-
-function renderVariantsPanel(root,selectedChord){
-  const g=CHORD_GROUPS.find(x=>x.root===root);
-  if(!g) return "";
-  return `
-    <div class="variants-header">루트 <strong>${escapeHtml(root)}</strong> 계열</div>
-    <div class="variants-grid">
-      ${g.chords.map(c=>`<button class="chord-palette-btn ${selectedChord===c?"active":""}" data-action="pick-chord" data-chord="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}
-    </div>
-  `;
-}
-
-function toggleRoot(root){
-  // 같은 루트를 다시 누르면 닫힘, 다른 루트를 누르면 그걸로 전환
-  const newRoot=State.ed.openRoot===root?null:root;
-  State.ed.openRoot=newRoot;
-  // 루트 버튼 상태 업데이트
-  document.querySelectorAll(".root-btn").forEach(btn=>{
-    btn.classList.toggle("open",btn.dataset.root===newRoot);
-  });
-  // 패널 내용 업데이트
-  const panel=document.getElementById("variants-panel");
-  if(panel){
-    if(newRoot){
-      panel.innerHTML=renderVariantsPanel(newRoot,State.ed.selectedChord);
-      panel.classList.add("visible");
-    }else{
-      panel.innerHTML="";
-      panel.classList.remove("visible");
-    }
-  }
-}
 function updateCatSelection(){
   document.querySelectorAll(".cat-btn").forEach(btn=>{
     if(btn.dataset.cat===State.activeCat) btn.classList.add("active");
@@ -888,23 +852,6 @@ document.addEventListener("click",e=>{
   if(action==="delete-song-from-editor"){if(!requireAdmin()) return;deleteSong(State.editSongId);return;}
   if(action==="save-song"){if(!requireAdmin()) return;saveCurrentSong();return;}
 
-  if(action==="toggle-root"){
-    toggleRoot(t.dataset.root);
-    return;
-  }
-  if(action==="pick-chord"){
-    State.ed.selectedChord=t.dataset.chord;
-    updateChordPalette();updateHint();return;
-  }
-  if(action==="ed-custom-submit"){
-    if(State.ed.customChord.trim()){
-      State.ed.selectedChord=State.ed.customChord.trim();
-      State.ed.customChord="";
-      const el=document.querySelector('[data-action="ed-custom"]');
-      if(el) el.value="";
-      updateChordPalette();updateHint();
-    }return;
-  }
   if(action==="add-line"){
     State.ed.lines.push({lyric:"",chords:[]});
     const wrap=document.getElementById("lines-wrap");
@@ -922,13 +869,11 @@ document.addEventListener("click",e=>{
     return;
   }
   if(action==="click-char"){
+    // 입력창 자체를 클릭한 경우는 무시 (포커스 유지)
+    if(e.target.classList.contains("inline-chord-input")) return;
     const lineIdx=parseInt(t.dataset.line,10);
     const pos=parseInt(t.dataset.pos,10);
-    const line=State.ed.lines[lineIdx];
-    const existing=(line.chords||[]).find(c=>c.pos===pos);
-    if(existing) line.chords=line.chords.filter(c=>c.pos!==pos);
-    else if(State.ed.selectedChord) line.chords=[...(line.chords||[]).filter(c=>c.pos!==pos),{pos,chord:State.ed.selectedChord}];
-    updateChordCell(lineIdx,pos);
+    openChordEditor(lineIdx,pos);
     return;
   }
   if(action==="toggle-preview"){
@@ -947,7 +892,11 @@ document.addEventListener("input",e=>{
   if(action==="search"){State.search=t.value;updateSongList();return;}
   if(action==="ed-title"){State.ed.title=t.value;return;}
   if(action==="ed-artist"){State.ed.artist=t.value;return;}
-  if(action==="ed-custom"){State.ed.customChord=t.value;return;}
+  if(action==="inline-chord"){
+    // 인라인 코드 입력 중 값만 state에 저장 (아직 확정 안 함)
+    if(State.ed.editing) State.ed.editing.value=t.value;
+    return;
+  }
   if(action==="lyric-change"){
     const idx=parseInt(t.dataset.line,10);
     const val=t.value;
@@ -969,34 +918,75 @@ document.addEventListener("change",e=>{
 document.addEventListener("keydown",e=>{
   const t=e.target.closest("[data-action]");
   if(!t) return;
-  if(t.dataset.action==="ed-custom"&&e.key==="Enter"){
-    if(State.ed.customChord.trim()){
-      State.ed.selectedChord=State.ed.customChord.trim();
-      State.ed.customChord="";
-      t.value="";
-      updateChordPalette();updateHint();
+
+  // 인라인 코드 입력 제어
+  if(t.dataset.action==="inline-chord"){
+    if(e.key==="Enter"||e.key==="Tab"){
+      e.preventDefault();
+      closeChordEditor(true);
+      return;
+    }
+    if(e.key==="Escape"){
+      e.preventDefault();
+      closeChordEditor(false);
+      return;
+    }
+    if(e.key==="Backspace"&&t.value===""){
+      // 빈 상태에서 백스페이스 → 기존 코드 삭제
+      e.preventDefault();
+      if(State.ed.editing){
+        State.ed.editing.value="";
+        closeChordEditor(true);  // 빈 값이면 내부적으로 삭제 처리됨
+      }
+      return;
     }
     return;
   }
+
   // 가사 입력에서 Enter = 새 줄 추가하고 포커스 이동
   if(t.dataset.action==="lyric-change"&&e.key==="Enter"&&!e.shiftKey){
     e.preventDefault();
     const currentIdx=parseInt(t.dataset.line,10);
-    // 새 빈 줄을 현재 줄 바로 다음에 삽입
     const newIdx=currentIdx+1;
     State.ed.lines.splice(newIdx,0,{lyric:"",chords:[]});
-    // DOM도 그 위치에 삽입
     const wrap=document.getElementById("lines-wrap");
     if(wrap){
-      // 이후 줄들의 data-line 값이 틀어지므로 재렌더가 필요함
       wrap.innerHTML=State.ed.lines.map((ln,idx)=>renderLineEditor(ln,idx)).join("");
-      // 새 줄의 input에 포커스
       requestAnimationFrame(()=>{
         const newInput=document.querySelector(`[data-action="lyric-change"][data-line="${newIdx}"]`);
         if(newInput) newInput.focus();
       });
     }
     return;
+  }
+});
+
+/* 인라인 코드 입력에서 포커스 벗어나면 자동 저장 */
+document.addEventListener("focusout",e=>{
+  if(!e.target.classList||!e.target.classList.contains("inline-chord-input")) return;
+  // 약간의 딜레이 - 다른 곳 클릭 이벤트가 먼저 처리되도록
+  setTimeout(()=>{
+    if(State.ed.editing){
+      // 현재 값으로 업데이트
+      State.ed.editing.value=e.target.value;
+      closeChordEditor(true);
+    }
+  },100);
+});
+
+/* 기존 코드 마크(초록 배지) 클릭하면 수정 모드로 열기 */
+document.addEventListener("click",e=>{
+  if(e.target.classList&&e.target.classList.contains("click-chord-mark")){
+    // 부모 셀에서 line/pos 정보 찾기
+    const cell=e.target.closest(".click-chord-cell");
+    if(!cell) return;
+    const pos=parseInt(cell.dataset.chordCell,10);
+    // 같은 click-zone 안의 lyric-row에서 line idx 찾기
+    const zone=cell.closest(".click-zone");
+    if(!zone) return;
+    const lineIdx=parseInt(zone.dataset.clickZone,10);
+    e.stopPropagation();
+    openChordEditor(lineIdx,pos);
   }
 });
 
