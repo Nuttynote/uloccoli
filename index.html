@@ -60,10 +60,6 @@
   .searchbar input{width:100%;padding:14px 16px 14px 42px;border:none;border-radius:14px;font-size:15px;font-family:var(--font);background:var(--card);color:var(--txt);box-shadow:var(--sh-card)}
   .searchbar input::placeholder{color:var(--txt-mute)}
 
-  .chips{display:flex;gap:8px;padding:10px 20px 6px;overflow-x:auto}
-  .chip{flex-shrink:0;padding:9px 16px;border-radius:999px;font-size:13.5px;font-weight:600;background:var(--card);color:var(--txt-lt);box-shadow:var(--sh-card);transition:all .18s}
-  .chip.on{background:var(--accent);color:#fff;box-shadow:0 4px 14px rgba(46,125,50,.28)}
-
   .listwrap{padding:8px 0 0;position:relative}
   .group-head{padding:14px 20px 6px;font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.04em;position:sticky;top:0;background:linear-gradient(180deg,var(--bg) 70%,rgba(244,249,240,0));z-index:5}
   .song-cards{padding:0 16px;display:flex;flex-direction:column;gap:8px}
@@ -76,7 +72,6 @@
   .scard-title{font-family:var(--handwriting);font-size:18px;color:var(--txt);line-height:1.3;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:5px}
   .scard-star{color:var(--gold);font-size:13px;flex-shrink:0}
   .scard-meta{font-size:12px;color:var(--txt-lt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .scard-cat{display:inline-block;font-size:10.5px;font-weight:600;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:6px;margin-left:6px}
   .scard-actions{display:flex;gap:6px;flex-shrink:0}
   .mini-btn{width:34px;height:34px;border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:inset 0 0 0 1px var(--bdr)}
   .mini-btn.danger:active{background:var(--danger-lt)}
@@ -121,12 +116,7 @@
   .step-btn:active{background:var(--accent);color:#fff}
   .reset-btn{padding:0 14px;height:46px;border-radius:14px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--bdr);font-size:12px;font-weight:600;color:var(--txt-lt)}
 
-  /* 글자 크기 조절 (악보) */
-  .fontsize-bar{margin:0 16px 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--sh-card);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
-  .fontsize-bar .lbl{font-size:12px;color:var(--txt-lt);font-weight:600;display:flex;align-items:center;gap:6px}
-  .fontsize-steppers{display:flex;align-items:center;gap:8px}
-  .fs-btn{width:38px;height:38px;border-radius:11px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--bdr);font-size:15px;font-weight:700;color:var(--txt-lt);display:flex;align-items:center;justify-content:center}
-  .fs-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);min-width:38px;text-align:center}
+
 
   .sheet-card{margin:0 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--sh-card);overflow:hidden}
   .sheet{padding:24px 18px;overflow-x:auto}
@@ -235,6 +225,26 @@
   .conti-move{display:flex;gap:4px;flex-shrink:0}
   .conti-move-btn{width:32px;height:32px;border-radius:9px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--bdr);font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--txt-lt)}
 
+  /* 콘티 키 태그 (상세 화면) */
+  .conti-keytag{font-family:var(--mono);font-weight:700;color:var(--accent)}
+  .conti-keytag.changed{color:var(--gold)}
+  .conti-keytag .kt-orig{font-family:var(--font);font-weight:400;color:var(--txt-mute);font-size:11px}
+
+  /* 콘티 편집: 곡 + 키 조절 카드 */
+  .conti-edit-row{margin:0 16px 8px;background:var(--card);border-radius:14px;box-shadow:var(--sh-card);overflow:hidden}
+  .conti-edit-top{display:flex;align-items:center;gap:10px;padding:12px 14px 8px}
+  .conti-key-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px 12px;border-top:1px dashed var(--bdr);background:var(--surface)}
+  .conti-key-label{font-size:12px;font-weight:600;color:var(--txt-lt)}
+  .conti-key-steppers{display:flex;align-items:center;gap:7px}
+  .conti-key-btn{width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent);font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .conti-key-btn:active{background:var(--accent);color:#fff}
+  .conti-key-val{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--accent);min-width:42px;text-align:center}
+  .conti-key-val.changed{color:var(--gold)}
+  .conti-key-reset{padding:0 12px;height:38px;border-radius:11px;background:var(--card);box-shadow:inset 0 0 0 1px var(--bdr);font-size:11.5px;font-weight:600;color:var(--txt-lt)}
+
+  /* 플레이어 헤더 키칩 */
+  .player-keychip{flex-shrink:0;min-width:46px;height:40px;padding:0 12px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-family:var(--mono);font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
   /* 콘티 플레이어 (스와이프) */
   .player-head{position:sticky;top:0;z-index:10;background:rgba(244,249,240,.92);backdrop-filter:blur(12px);padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 8px;display:flex;align-items:center;gap:8px}
   .player-name{flex:1;text-align:center;min-width:0}
@@ -332,14 +342,26 @@ async function sbDeleteSetlist(id){
   if(!res.ok) throw new Error("콘티 삭제 실패");
   return true;
 }
-/* 콘티 곡 목록 통째로 교체 (단순/안전) */
-async function sbReplaceSetlistSongs(setlistId,songIds){
-  // 기존 삭제
+/* 콘티 곡 목록 통째로 교체 (단순/안전)
+   items: [{id, transpose}] 형태. transpose 컬럼이 없는 DB도 지원(없으면 빼고 재시도) */
+let SETLIST_TRANSPOSE_SUPPORTED=true;
+async function sbReplaceSetlistSongs(setlistId,items){
   await fetch(`${SUPABASE_URL}/rest/v1/setlist_songs?setlist_id=eq.${encodeURIComponent(setlistId)}`,{method:"DELETE",headers:SB_HEADERS});
-  if(songIds.length===0) return [];
-  const rows=songIds.map((sid,i)=>({setlist_id:setlistId,song_id:sid,position:i}));
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/setlist_songs`,{method:"POST",headers:SB_HEADERS,body:JSON.stringify(rows)});
-  if(!res.ok) throw new Error("콘티 곡 저장 실패: "+await res.text());
+  if(items.length===0) return [];
+  const withTp=items.map((it,i)=>({setlist_id:setlistId,song_id:it.id,position:i,transpose:it.transpose||0}));
+  let res=await fetch(`${SUPABASE_URL}/rest/v1/setlist_songs`,{method:"POST",headers:SB_HEADERS,body:JSON.stringify(withTp)});
+  if(!res.ok){
+    const errText=await res.text();
+    // transpose 컬럼이 아직 없으면 컬럼 빼고 한 번 더
+    if(/transpose/i.test(errText)){
+      SETLIST_TRANSPOSE_SUPPORTED=false;
+      const noTp=items.map((it,i)=>({setlist_id:setlistId,song_id:it.id,position:i}));
+      res=await fetch(`${SUPABASE_URL}/rest/v1/setlist_songs`,{method:"POST",headers:SB_HEADERS,body:JSON.stringify(noTp)});
+      if(!res.ok) throw new Error("콘티 곡 저장 실패: "+await res.text());
+      return res.json();
+    }
+    throw new Error("콘티 곡 저장 실패: "+errText);
+  }
   return res.json();
 }
 
@@ -475,16 +497,16 @@ const State={
   tab:"songs",            // songs | codes | conti | admin
   overlay:null,           // null | "song" | "editor" | "conti-detail" | "conti-edit" | "player"
   selectedSongId:null,editSongId:null,
-  activeCat:"전체",codeGroup:"기본",
+  codeGroup:"기본",
   isAdmin:checkAdminAccess(),
-  transpose:0,saving:false,sheetScale:1,
+  transpose:0,saving:false,
   ed:{title:"",artist:"",originalKey:"C",category:"감사",preview:false,sections:[{name:"Verse",lines:[{lyric:"",chords:[]}]}],editing:null},
   // 콘티
   setlists:[],setlistsLoaded:false,
   curSetlist:null,            // {id,name}
-  curSetlistSongs:[],         // [songId...]
-  contiEdit:{name:"",picked:[]},   // 편집 중
-  player:{idx:0,transposes:{}},    // 콘티 플레이어
+  curSetlistSongs:[],         // [{id, transpose}]
+  contiEdit:{name:"",picked:[]},   // 편집 중. picked: [{id, transpose}]
+  player:{idx:0},                  // 콘티 플레이어 (키는 콘티에 저장된 값 사용)
 };
 function initEditor(song){
   State.ed={
@@ -704,7 +726,7 @@ function closeChordModal(){document.getElementById("modal-root").innerHTML="";}
    TAB VIEWS
 ═══════════════════════════════════════════════════ */
 function filteredSongs(){
-  return State.songs.filter(s=>State.activeCat==="전체"||s.category===State.activeCat);
+  return State.songs.slice();
 }
 function songById(id){return State.songs.find(s=>s.id===id);}
 
@@ -718,9 +740,6 @@ function renderSongsTab(){
         <p class="top-sub">예배를 위한 코드악보 · 자유로운 조옮김</p>
       </div>
       <div class="searchbar"><span class="ic">🔍</span><input id="search-input" placeholder="곡 제목, 편곡자 검색" data-action="search-input" autocomplete="off"/></div>
-      <div class="chips">
-        ${CATEGORIES.map(c=>`<button class="chip ${State.activeCat===c?"on":""}" data-action="cat" data-cat="${escapeHtml(c)}">${escapeHtml(c)}</button>`).join("")}
-      </div>
       <div class="listwrap" id="song-list">${renderGroupedList()}</div>
     </div>`;
 }
@@ -734,7 +753,7 @@ function renderGroupedList(searchQuery){
   if(list.length===0){
     if(q) return `<div class="empty"><span class="e-ic">🙏</span><p class="e-main">"${escapeHtml(q)}" 검색 결과가 없어요</p><p class="e-sub">다른 단어로 찾아보세요</p></div>`;
     if(State.songs.length===0) return `<div class="empty"><span class="e-ic">🎵</span><p class="e-main">아직 등록된 악보가 없어요</p>${State.isAdmin?`<p class="e-sub">오른쪽 아래 + 버튼으로 첫 악보를 추가해보세요</p>`:`<p class="e-sub">곧 찬양 악보가 채워질 거예요</p>`}</div>`;
-    return `<div class="empty"><span class="e-ic">🎵</span><p class="e-main">이 카테고리엔 악보가 없어요</p></div>`;
+    return `<div class="empty"><span class="e-ic">🎵</span><p class="e-main">악보가 없어요</p></div>`;
   }
   // 검색 중엔 그룹 헤더 없이 평면 리스트
   if(q){
@@ -763,7 +782,7 @@ function renderSongCard(s){
       <div class="scard-key"><span class="k">${escapeHtml(s.originalKey||"–")}</span><span class="lbl">KEY</span></div>
       <div class="scard-body">
         <div class="scard-title">${fav?`<span class="scard-star">★</span>`:""}${escapeHtml(s.title)}</div>
-        <div class="scard-meta">${escapeHtml(s.artist||"")}<span class="scard-cat">${escapeHtml(s.category||"")}</span></div>
+        <div class="scard-meta">${escapeHtml(s.artist||"")}</div>
       </div>
       <div class="scard-actions">
         <button class="mini-btn star ${fav?"on":""}" data-action="toggle-fav" data-id="${escapeHtml(s.id)}">${fav?"★":"☆"}</button>
@@ -866,11 +885,10 @@ function renderSongOverlay(){
       </div>
       <div class="song-hero">
         <h1>${escapeHtml(song.title)}</h1>
-        <div class="meta">${escapeHtml(song.artist||"")}<span class="cat-tag">${escapeHtml(song.category||"")}</span></div>
+        <div class="meta">${escapeHtml(song.artist||"")}</div>
       </div>
       ${renderKeyCtrl(song)}
-      ${renderFontSizeBar()}
-      <div id="sheet-container">${renderSheet(song,State.transpose,State.sheetScale)}</div>
+      <div id="sheet-container">${renderSheet(song,State.transpose,1)}</div>
       <div style="height:24px"></div>
     </div>`;
 }
@@ -890,17 +908,7 @@ function renderKeyCtrl(song){
       </div>
     </div>`;
 }
-function renderFontSizeBar(){
-  return `
-    <div class="fontsize-bar">
-      <span class="lbl">🔠 글자 크기</span>
-      <div class="fontsize-steppers">
-        <button class="fs-btn" data-action="fontsize" data-dir="-1">－</button>
-        <span class="fs-val" id="fs-val">${Math.round(State.sheetScale*100)}%</span>
-        <button class="fs-btn" data-action="fontsize" data-dir="1">＋</button>
-      </div>
-    </div>`;
-}
+
 
 /* ═══ 편집기 오버레이 ═══ */
 function renderLineEditor(ln,secIdx,lineIdx){
@@ -962,7 +970,6 @@ function renderEditorOverlay(){
         <div class="ed-row"><div class="ed-field" style="flex:1"><label class="ed-label">편곡자 / 아티스트</label><input class="ed-input" value="${escapeHtml(ed.artist)}" data-action="ed-artist"/></div></div>
         <div class="ed-row">
           <div class="ed-field" style="flex:1"><label class="ed-label">원키</label><select class="ed-select" data-action="ed-key">${CHROMATIC.map(k=>`<option value="${k}" ${ed.originalKey===k?"selected":""}>${k}</option>`).join("")}</select></div>
-          <div class="ed-field" style="flex:1"><label class="ed-label">카테고리</label><select class="ed-select" data-action="ed-cat">${CATEGORIES.filter(c=>c!=="전체").map(c=>`<option value="${c}" ${ed.category===c?"selected":""}>${c}</option>`).join("")}</select></div>
         </div>
         <div class="ed-tip">💡 가사를 입력한 뒤 <strong>글자를 탭</strong>하면 코드 입력창이 떠요 · <strong>Enter</strong>로 확정<br>📌 섹션 단위로 구분하고 <strong>복제</strong>로 반복 구간을 쉽게 복사하세요</div>
         <div id="sections-wrap">${ed.sections.map((sec,si)=>renderSectionEditor(sec,si)).join("")}</div>
@@ -986,18 +993,25 @@ function renderPreviewSheet(){
 /* ═══ 콘티 상세 오버레이 ═══ */
 function renderContiDetailOverlay(){
   const sl=State.curSetlist;if(!sl){closeOverlay();return "";}
-  const songIds=State.curSetlistSongs;
-  const songs=songIds.map(id=>songById(id)).filter(Boolean);
+  const items=State.curSetlistSongs;  // [{id,transpose}]
   let body;
-  if(songIds.length===0){
+  if(items.length===0){
     body=`<div class="empty"><span class="e-ic">🎵</span><p class="e-main">아직 담긴 곡이 없어요</p>${State.isAdmin?`<p class="e-sub">아래 "곡 담기"로 곡을 추가하세요</p>`:""}</div>`;
   }else{
-    body=songs.map((s,i)=>`
+    body=items.map((it,i)=>{
+      const s=songById(it.id);if(!s) return "";
+      const tp=it.transpose||0;
+      const contiKey=transposeChord(s.originalKey,tp);
+      const keyTag=tp===0
+        ? `<span class="conti-keytag">${escapeHtml(contiKey)}</span>`
+        : `<span class="conti-keytag changed">${escapeHtml(contiKey)} <span class="kt-orig">(원키 ${escapeHtml(s.originalKey)})</span></span>`;
+      return `
       <div class="conti-song-row" data-action="play-from" data-idx="${i}">
         <div class="conti-order">${i+1}</div>
-        <div class="conti-song-body"><div class="conti-song-title">${escapeHtml(s.title)}</div><div class="conti-song-meta">${escapeHtml(s.artist||"")} · ${escapeHtml(s.originalKey||"")}</div></div>
+        <div class="conti-song-body"><div class="conti-song-title">${escapeHtml(s.title)}</div><div class="conti-song-meta">${escapeHtml(s.artist||"")} · ${keyTag}</div></div>
         <span style="color:var(--bdr);font-size:18px">›</span>
-      </div>`).join("");
+      </div>`;
+    }).join("");
   }
   return `
     <div class="view">
@@ -1006,36 +1020,25 @@ function renderContiDetailOverlay(){
         <div class="detail-head-title">${escapeHtml(sl.name)}</div>
         ${State.isAdmin?`<button class="icon-btn" data-action="edit-conti">✏️</button>`:`<div style="width:40px"></div>`}
       </div>
-      <div class="song-hero" style="padding-bottom:10px"><h1 style="font-size:26px">${escapeHtml(sl.name)}</h1><div class="meta">${songIds.length}곡 · 탭하면 그 곡부터 시작해요</div></div>
-      ${songIds.length>0?`<div style="padding:0 16px 12px"><button class="big-btn" data-action="play-from" data-idx="0">▶ 첫 곡부터 인도 시작</button></div>`:""}
+      <div class="song-hero" style="padding-bottom:10px"><h1 style="font-size:26px">${escapeHtml(sl.name)}</h1><div class="meta">${items.length}곡 · 탭하면 그 곡부터 시작해요</div></div>
+      ${items.length>0?`<div style="padding:0 16px 12px"><button class="big-btn" data-action="play-from" data-idx="0">▶ 첫 곡부터 인도 시작</button></div>`:""}
       <div style="padding-top:4px">${body}</div>
-      ${State.isAdmin?`<div style="padding:16px"><button class="ghost-btn" data-action="edit-conti">＋ 곡 담기 / 순서 편집</button></div>`:""}
+      ${State.isAdmin?`<div style="padding:16px"><button class="ghost-btn" data-action="edit-conti">＋ 곡 담기 / 키 · 순서 편집</button></div>`:""}
       <div style="height:20px"></div>
     </div>`;
 }
 
-/* ═══ 콘티 편집 오버레이 (곡 담기 + 순서) ═══ */
+/* ═══ 콘티 편집 오버레이 (곡 담기 + 키 + 순서) ═══ */
 function renderContiEditOverlay(){
   const ce=State.contiEdit;
-  const picked=ce.picked;
-  // 담긴 곡 (순서 있는 목록)
-  const pickedSongs=picked.map(id=>songById(id)).filter(Boolean);
-  const pickedHtml=pickedSongs.length===0
+  const picked=ce.picked;  // [{id,transpose}]
+  const pickedIds=picked.map(p=>p.id);
+  const pickedHtml=picked.length===0
     ? `<div style="padding:20px 16px;text-align:center;color:var(--txt-mute);font-size:13px">아래 목록에서 곡을 탭해 담아보세요</div>`
-    : pickedSongs.map((s,i)=>`
-        <div class="conti-song-row">
-          <div class="conti-order">${i+1}</div>
-          <div class="conti-song-body"><div class="conti-song-title">${escapeHtml(s.title)}</div><div class="conti-song-meta">${escapeHtml(s.originalKey||"")}</div></div>
-          <div class="conti-move">
-            <button class="conti-move-btn" data-action="conti-up" data-idx="${i}">▲</button>
-            <button class="conti-move-btn" data-action="conti-down" data-idx="${i}">▼</button>
-            <button class="conti-move-btn" data-action="conti-remove" data-id="${escapeHtml(s.id)}" style="color:var(--danger)">✕</button>
-          </div>
-        </div>`).join("");
-  // 전체 곡 선택 목록 (가나다)
+    : picked.map((it,i)=>contiPickedRowHtml(it,i)).join("");
   const all=State.songs.slice().sort(compareSongs);
   const pickList=all.map(s=>{
-    const on=picked.includes(s.id);
+    const on=pickedIds.includes(s.id);
     return `
       <div class="picker-song" data-action="conti-toggle" data-id="${escapeHtml(s.id)}">
         <div class="picker-check ${on?"on":""}">${on?"✓":""}</div>
@@ -1053,46 +1056,66 @@ function renderContiEditOverlay(){
         <label class="ed-label">콘티 이름</label>
         <input class="ed-input" value="${escapeHtml(ce.name)}" placeholder="예) 11/3 주일 1부 예배" data-action="conti-name"/>
       </div>
-      <div class="group-head" style="position:static">담긴 곡 (${picked.length})</div>
+      <div class="group-head" style="position:static">담긴 곡 (${picked.length}) — 곡마다 부를 키를 정하세요</div>
       <div id="conti-picked">${pickedHtml}</div>
       <div class="group-head" style="position:static">곡 목록 — 탭하여 담기/빼기</div>
       <div id="conti-picklist">${pickList}</div>
       <div style="height:30px"></div>
     </div>`;
 }
+/* 담긴 곡 한 줄 (키 조절 + 순서/삭제) */
+function contiPickedRowHtml(it,i){
+  const s=songById(it.id);if(!s) return "";
+  const tp=it.transpose||0;
+  const contiKey=transposeChord(s.originalKey,tp);
+  return `
+    <div class="conti-edit-row">
+      <div class="conti-edit-top">
+        <div class="conti-order">${i+1}</div>
+        <div class="conti-song-body"><div class="conti-song-title">${escapeHtml(s.title)}</div><div class="conti-song-meta">원키 ${escapeHtml(s.originalKey||"")}</div></div>
+        <div class="conti-move">
+          <button class="conti-move-btn" data-action="conti-up" data-idx="${i}">▲</button>
+          <button class="conti-move-btn" data-action="conti-down" data-idx="${i}">▼</button>
+          <button class="conti-move-btn" data-action="conti-remove" data-id="${escapeHtml(s.id)}" style="color:var(--danger)">✕</button>
+        </div>
+      </div>
+      <div class="conti-key-row">
+        <span class="conti-key-label">부를 키</span>
+        <div class="conti-key-steppers">
+          <button class="conti-key-btn" data-action="conti-key" data-idx="${i}" data-dir="-1">−</button>
+          <span class="conti-key-val ${tp!==0?'changed':''}">${escapeHtml(contiKey)}</span>
+          <button class="conti-key-btn" data-action="conti-key" data-idx="${i}" data-dir="1">+</button>
+          ${tp!==0?`<button class="conti-key-reset" data-action="conti-key" data-idx="${i}" data-dir="0">원키로</button>`:""}
+        </div>
+      </div>
+    </div>`;
+}
 
-/* ═══ 콘티 플레이어 (스와이프) ═══ */
+/* ═══ 콘티 플레이어 (스와이프) — 콘티에 저장된 키로 고정 ═══ */
 function renderPlayerOverlay(){
-  const songIds=State.curSetlistSongs;
-  const songs=songIds.map(id=>songById(id)).filter(Boolean);
-  if(songs.length===0){closeOverlay();return "";}
-  const idx=Math.max(0,Math.min(State.player.idx,songs.length-1));
+  const items=State.curSetlistSongs;  // [{id,transpose}]
+  const rows=items.map(it=>({s:songById(it.id),tp:it.transpose||0})).filter(r=>r.s);
+  if(rows.length===0){closeOverlay();return "";}
+  const idx=Math.max(0,Math.min(State.player.idx,rows.length-1));
   State.player.idx=idx;
-  const cur=songs[idx];
-  const tp=State.player.transposes[cur.id]||0;
-  const slides=songs.map((s,i)=>{
-    const t=State.player.transposes[s.id]||0;
+  const cur=rows[idx];
+  const curKey=transposeChord(cur.s.originalKey,cur.tp);
+  const slides=rows.map((r,i)=>{
+    const ck=transposeChord(r.s.originalKey,r.tp);
+    const origNote=r.tp!==0?`<span class="cat-tag" style="background:var(--surface);color:var(--txt-mute);margin-left:5px">원키 ${escapeHtml(r.s.originalKey)}</span>`:"";
     return `<div class="player-slide" data-slide="${i}">
-      <div class="song-hero" style="padding:8px 20px 14px"><h1>${escapeHtml(s.title)}</h1><div class="meta">${escapeHtml(s.artist||"")}<span class="cat-tag">${escapeHtml(transposeChord(s.originalKey,t))}</span></div></div>
-      ${renderSheet(s,t,State.sheetScale)}
+      <div class="song-hero" style="padding:8px 20px 14px"><h1>${escapeHtml(r.s.title)}</h1><div class="meta">${escapeHtml(r.s.artist||"")}<span class="cat-tag">${escapeHtml(ck)}</span>${origNote}</div></div>
+      ${renderSheet(r.s,r.tp,1)}
       <div style="height:30px"></div>
     </div>`;
   }).join("");
-  const dots=songs.map((s,i)=>`<span class="pdot ${i===idx?"on":""}"></span>`).join("");
+  const dots=rows.map((r,i)=>`<span class="pdot ${i===idx?"on":""}"></span>`).join("");
   return `
     <div class="view">
       <div class="player-head">
         <button class="icon-btn" data-action="close-overlay">✕</button>
-        <div class="player-name"><div class="pn-title">${escapeHtml(cur.title)}</div><div class="pn-sub">${escapeHtml(State.curSetlist.name)} · ${idx+1}/${songs.length}</div></div>
-        <div style="width:40px"></div>
-      </div>
-      <div class="key-ctrl" style="margin-top:8px">
-        <div class="key-info"><span class="lbl">현재 키</span><span class="val" id="p-key">${escapeHtml(transposeChord(cur.originalKey,tp))}</span><span class="orig" style="${tp===0?'display:none':''}">원키 ${escapeHtml(cur.originalKey)}</span></div>
-        <div class="key-steppers">
-          <button class="step-btn" data-action="p-transpose" data-dir="-1">−</button>
-          <button class="reset-btn" data-action="p-transpose-reset">원키</button>
-          <button class="step-btn" data-action="p-transpose" data-dir="1">+</button>
-        </div>
+        <div class="player-name"><div class="pn-title">${escapeHtml(cur.s.title)}</div><div class="pn-sub">${escapeHtml(State.curSetlist.name)} · ${idx+1}/${rows.length}</div></div>
+        <div class="player-keychip" id="p-keychip">${escapeHtml(curKey)}</div>
       </div>
       <div class="player-track" id="player-track">
         <div class="player-rail" id="player-rail" style="transform:translateX(-${idx*100}%)">${slides}</div>
@@ -1226,13 +1249,7 @@ function updateTransposeDisplay(){
   const keyDisp=document.getElementById("key-display");const keyOrig=document.getElementById("key-orig");const sheet=document.getElementById("sheet-container");
   if(keyDisp) keyDisp.textContent=currentKey;
   if(keyOrig) keyOrig.style.display=State.transpose===0?"none":"";
-  if(sheet) sheet.innerHTML=renderSheet(song,State.transpose,State.sheetScale);
-  requestAnimationFrame(autoFitSheets);
-}
-function updateFontSize(){
-  const song=songById(State.selectedSongId);if(!song) return;
-  const fsv=document.getElementById("fs-val");if(fsv) fsv.textContent=Math.round(State.sheetScale*100)+"%";
-  const sheet=document.getElementById("sheet-container");if(sheet) sheet.innerHTML=renderSheet(song,State.transpose,State.sheetScale);
+  if(sheet) sheet.innerHTML=renderSheet(song,State.transpose,1);
   requestAnimationFrame(autoFitSheets);
 }
 function requireAdmin(){if(!State.isAdmin){showToast("관리자만 사용할 수 있어요","error");return false;}return true;}
@@ -1244,13 +1261,13 @@ async function openSetlist(id){
   openOverlay("conti-detail");
   try{
     const rows=await sbFetchSetlistSongs(id);
-    State.curSetlistSongs=rows.map(r=>r.song_id);
+    State.curSetlistSongs=rows.map(r=>({id:r.song_id,transpose:r.transpose||0}));
     if(State.overlay==="conti-detail") render();
   }catch(e){showToast(e.message,"error");}
 }
 function startContiEdit(){
   const sl=State.curSetlist;
-  State.contiEdit={name:sl?sl.name:"",picked:[...State.curSetlistSongs]};
+  State.contiEdit={name:sl?sl.name:"",picked:State.curSetlistSongs.map(it=>({id:it.id,transpose:it.transpose||0}))};
   openOverlay("conti-edit");
 }
 function startNewConti(){
@@ -1267,13 +1284,12 @@ async function saveConti(){
     let sl=State.curSetlist;
     if(!sl){sl=await sbCreateSetlist(ce.name.trim());}
     else if(sl.name!==ce.name.trim()){await sbRenameSetlist(sl.id,ce.name.trim());sl.name=ce.name.trim();}
-    await sbReplaceSetlistSongs(sl.id,ce.picked);
-    // 상태 갱신
+    await sbReplaceSetlistSongs(sl.id,ce.picked);  // picked: [{id,transpose}]
     State.curSetlist={id:sl.id,name:ce.name.trim()};
-    State.curSetlistSongs=[...ce.picked];
+    State.curSetlistSongs=ce.picked.map(it=>({id:it.id,transpose:it.transpose||0}));
     await loadSetlists();
     openOverlay("conti-detail");
-    showToast("콘티가 저장되었어요","success");
+    showToast(SETLIST_TRANSPOSE_SUPPORTED?"콘티가 저장되었어요":"저장됐지만 키 설정은 저장되지 않았어요 (테이블 컬럼 추가 필요)",SETLIST_TRANSPOSE_SUPPORTED?"success":"info");
   }catch(e){showToast(e.message,"error");if(btn){btn.innerHTML="저장";btn.disabled=false;}}
 }
 async function deleteSetlist(id){
@@ -1283,7 +1299,7 @@ async function deleteSetlist(id){
   catch(e){showToast(e.message,"error");}
 }
 function openPlayer(idx){
-  State.player={idx:idx||0,transposes:{}};
+  State.player={idx:idx||0};
   openOverlay("player");
 }
 
@@ -1292,7 +1308,7 @@ function setupPlayerSwipe(){
   const track=document.getElementById("player-track");
   const rail=document.getElementById("player-rail");
   if(!track||!rail) return;
-  const songs=State.curSetlistSongs;const count=songs.length;
+  const count=State.curSetlistSongs.length;
   let startX=0,startY=0,dragging=false,decided=false,horizontal=false,railW=track.clientWidth;
   function onStart(e){
     const t=e.touches?e.touches[0]:e;
@@ -1303,13 +1319,10 @@ function setupPlayerSwipe(){
     if(!dragging) return;
     const t=e.touches?e.touches[0]:e;
     const dx=t.clientX-startX,dy=t.clientY-startY;
-    if(!decided){
-      if(Math.abs(dx)>8||Math.abs(dy)>8){decided=true;horizontal=Math.abs(dx)>Math.abs(dy);}
-    }
+    if(!decided){if(Math.abs(dx)>8||Math.abs(dy)>8){decided=true;horizontal=Math.abs(dx)>Math.abs(dy);}}
     if(decided&&horizontal){
       if(e.cancelable) e.preventDefault();
       let offset=-State.player.idx*railW+dx;
-      // 끝에서 저항
       const min=-(count-1)*railW,max=0;
       if(offset>max) offset=max+(offset-max)*0.3;
       if(offset<min) offset=min+(offset-min)*0.3;
@@ -1320,51 +1333,27 @@ function setupPlayerSwipe(){
     if(!dragging) return;dragging=false;rail.classList.remove("dragging");
     if(!decided||!horizontal){rail.style.transform=`translateX(-${State.player.idx*100}%)`;return;}
     const t=e.changedTouches?e.changedTouches[0]:e;
-    const dx=t.clientX-startX;
-    const threshold=railW*0.18;
+    const dx=t.clientX-startX;const threshold=railW*0.18;
     let idx=State.player.idx;
     if(dx<-threshold&&idx<count-1) idx++;
     else if(dx>threshold&&idx>0) idx--;
     goToSlide(idx);
   }
   track.ontouchstart=onStart;track.ontouchmove=onMove;track.ontouchend=onEnd;
-  // 마우스(데스크탑 테스트용)
   track.onmousedown=e=>{onStart(e);const mm=ev=>onMove(ev);const mu=ev=>{onEnd(ev);document.removeEventListener("mousemove",mm);document.removeEventListener("mouseup",mu);};document.addEventListener("mousemove",mm);document.addEventListener("mouseup",mu);};
 }
 function goToSlide(idx){
   const rail=document.getElementById("player-rail");
   State.player.idx=idx;
   if(rail){rail.classList.remove("dragging");rail.style.transform=`translateX(-${idx*100}%)`;}
-  // 상단 정보/점 갱신
-  const songs=State.curSetlistSongs.map(id=>songById(id)).filter(Boolean);
-  const cur=songs[idx];if(!cur) return;
-  const tp=State.player.transposes[cur.id]||0;
+  const items=State.curSetlistSongs;
+  const it=items[idx];if(!it) return;
+  const cur=songById(it.id);if(!cur) return;
+  const tp=it.transpose||0;
   const pnTitle=document.querySelector(".pn-title");if(pnTitle) pnTitle.textContent=cur.title;
-  const pnSub=document.querySelector(".pn-sub");if(pnSub) pnSub.textContent=`${State.curSetlist.name} · ${idx+1}/${songs.length}`;
-  const pKey=document.getElementById("p-key");if(pKey) pKey.textContent=transposeChord(cur.originalKey,tp);
-  const orig=document.querySelector("#overlay .key-info .orig");if(orig){orig.style.display=tp===0?"none":"";orig.textContent="원키 "+cur.originalKey;}
+  const pnSub=document.querySelector(".pn-sub");if(pnSub) pnSub.textContent=`${State.curSetlist.name} · ${idx+1}/${items.length}`;
+  const keychip=document.getElementById("p-keychip");if(keychip) keychip.textContent=transposeChord(cur.originalKey,tp);
   document.querySelectorAll(".pdot").forEach((d,i)=>d.classList.toggle("on",i===idx));
-  requestAnimationFrame(autoFitSheets);
-}
-function playerTranspose(dir){
-  const songs=State.curSetlistSongs.map(id=>songById(id)).filter(Boolean);
-  const cur=songs[State.player.idx];if(!cur) return;
-  if(dir===0) State.player.transposes[cur.id]=0;
-  else State.player.transposes[cur.id]=(State.player.transposes[cur.id]||0)+dir;
-  const tp=State.player.transposes[cur.id];
-  const pKey=document.getElementById("p-key");if(pKey) pKey.textContent=transposeChord(cur.originalKey,tp);
-  const orig=document.querySelector("#overlay .key-info .orig");if(orig){orig.style.display=tp===0?"none":"";orig.textContent="원키 "+cur.originalKey;}
-  // 해당 슬라이드 시트만 다시
-  const slide=document.querySelector(`[data-slide="${State.player.idx}"]`);
-  if(slide){
-    const sheetCard=slide.querySelector(".sheet-card");
-    if(sheetCard){
-      const tmp=document.createElement("div");tmp.innerHTML=renderSheet(cur,tp,State.sheetScale);
-      sheetCard.replaceWith(tmp.firstElementChild);
-    }
-    // 헤더 키 태그
-    const tag=slide.querySelector(".cat-tag");if(tag) tag.textContent=transposeChord(cur.originalKey,tp);
-  }
   requestAnimationFrame(autoFitSheets);
 }
 
@@ -1410,19 +1399,16 @@ document.addEventListener("click",e=>{
   if(a==="close-modal"){if(e.target.closest(".chord-modal")&&!e.target.classList.contains("cm-close")) return;closeChordModal();return;}
   if(a==="tab"){State.tab=t.dataset.tab;State.overlay=null;render();document.getElementById("scroll").scrollTo(0,0);if(t.dataset.tab==="conti"&&!State.setlistsLoaded) loadSetlists();return;}
   if(a==="reload"){loadSongsFromServer();return;}
-  if(a==="cat"){State.activeCat=t.dataset.cat;document.getElementById("song-list").innerHTML=renderGroupedList();document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c.dataset.cat===State.activeCat));return;}
   if(a==="code-group"){State.codeGroup=t.dataset.grp;render();return;}
   if(a==="jump"){jumpToGroup(t.dataset.grp);return;}
 
   if(a==="toggle-fav"){e.stopPropagation();const on=toggleFav(t.dataset.id);document.getElementById("song-list").innerHTML=renderGroupedList();showToast(on?"즐겨찾기에 추가했어요":"즐겨찾기에서 뺐어요","success");return;}
   if(a==="toggle-fav-detail"){const on=toggleFav(t.dataset.id);t.classList.toggle("on",on);t.textContent=on?"★":"☆";showToast(on?"즐겨찾기에 추가했어요":"즐겨찾기에서 뺐어요","success");return;}
 
-  if(a==="open-song"){State.selectedSongId=t.dataset.id;State.transpose=0;State.sheetScale=1;openOverlay("song");return;}
+  if(a==="open-song"){State.selectedSongId=t.dataset.id;State.transpose=0;openOverlay("song");return;}
   if(a==="close-overlay"){closeOverlay();return;}
   if(a==="transpose"){State.transpose+=parseInt(t.dataset.dir,10);updateTransposeDisplay();return;}
   if(a==="transpose-reset"){State.transpose=0;updateTransposeDisplay();return;}
-  if(a==="fontsize"){const d=parseInt(t.dataset.dir,10);State.sheetScale=Math.min(1.6,Math.max(0.7,+(State.sheetScale+d*0.1).toFixed(2)));updateFontSize();return;}
-
   if(a==="do-login"){const inp=document.getElementById("pw-input");loginAdmin(inp?inp.value:"");return;}
   if(a==="logout"){logoutAdmin();return;}
 
@@ -1441,24 +1427,27 @@ document.addEventListener("click",e=>{
   if(a==="save-conti"){saveConti();return;}
   if(a==="conti-toggle"){
     const id=t.dataset.id;const ce=State.contiEdit;
-    if(ce.picked.includes(id)) ce.picked=ce.picked.filter(x=>x!==id);
-    else ce.picked=[...ce.picked,id];
-    // 부분 갱신
-    document.getElementById("conti-picked").innerHTML=(function(){
-      const ps=ce.picked.map(id=>songById(id)).filter(Boolean);
-      if(ps.length===0) return `<div style="padding:20px 16px;text-align:center;color:var(--txt-mute);font-size:13px">아래 목록에서 곡을 탭해 담아보세요</div>`;
-      return ps.map((s,i)=>`<div class="conti-song-row"><div class="conti-order">${i+1}</div><div class="conti-song-body"><div class="conti-song-title">${escapeHtml(s.title)}</div><div class="conti-song-meta">${escapeHtml(s.originalKey||"")}</div></div><div class="conti-move"><button class="conti-move-btn" data-action="conti-up" data-idx="${i}">▲</button><button class="conti-move-btn" data-action="conti-down" data-idx="${i}">▼</button><button class="conti-move-btn" data-action="conti-remove" data-id="${escapeHtml(s.id)}" style="color:var(--danger)">✕</button></div></div>`).join("");
-    })();
-    const cell=t.querySelector(".picker-check");if(cell){const on=ce.picked.includes(id);cell.classList.toggle("on",on);cell.textContent=on?"✓":"";}
-    const ph=document.querySelector('.group-head');if(ph) ph.textContent=`담긴 곡 (${ce.picked.length})`;
+    const exists=ce.picked.some(p=>p.id===id);
+    if(exists) ce.picked=ce.picked.filter(p=>p.id!==id);
+    else ce.picked=[...ce.picked,{id,transpose:0}];
+    renderPickedList();
+    const cell=t.querySelector(".picker-check");if(cell){const on=ce.picked.some(p=>p.id===id);cell.classList.toggle("on",on);cell.textContent=on?"✓":"";}
     return;
   }
-  if(a==="conti-up"){const i=parseInt(t.dataset.idx,10);const p=State.contiEdit.picked;if(i>0){[p[i-1],p[i]]=[p[i],p[i-1]];refreshContiEditLists();}return;}
-  if(a==="conti-down"){const i=parseInt(t.dataset.idx,10);const p=State.contiEdit.picked;if(i<p.length-1){[p[i],p[i+1]]=[p[i+1],p[i]];refreshContiEditLists();}return;}
-  if(a==="conti-remove"){State.contiEdit.picked=State.contiEdit.picked.filter(x=>x!==t.dataset.id);refreshContiEditLists();return;}
+  if(a==="conti-up"){const i=parseInt(t.dataset.idx,10);const p=State.contiEdit.picked;if(i>0){[p[i-1],p[i]]=[p[i],p[i-1]];renderPickedList();syncPicklistChecks();}return;}
+  if(a==="conti-down"){const i=parseInt(t.dataset.idx,10);const p=State.contiEdit.picked;if(i<p.length-1){[p[i],p[i+1]]=[p[i+1],p[i]];renderPickedList();syncPicklistChecks();}return;}
+  if(a==="conti-remove"){State.contiEdit.picked=State.contiEdit.picked.filter(p=>p.id!==t.dataset.id);renderPickedList();syncPicklistChecks();return;}
+  if(a==="conti-key"){
+    const i=parseInt(t.dataset.idx,10);const dir=parseInt(t.dataset.dir,10);
+    const it=State.contiEdit.picked[i];if(!it) return;
+    if(dir===0) it.transpose=0;
+    else it.transpose=((it.transpose||0)+dir+120)%12; // 0~11 범위 유지(한 옥타브 내)
+    // 해당 줄만 다시 그림
+    const rows=document.querySelectorAll("#conti-picked .conti-edit-row");
+    if(rows[i]){const tmp=document.createElement("div");tmp.innerHTML=contiPickedRowHtml(it,i);rows[i].replaceWith(tmp.firstElementChild);}
+    return;
+  }
   if(a==="play-from"){openPlayer(parseInt(t.dataset.idx,10)||0);return;}
-  if(a==="p-transpose"){playerTranspose(parseInt(t.dataset.dir,10));return;}
-  if(a==="p-transpose-reset"){playerTranspose(0);return;}
 
   // 섹션 액션
   if(a==="add-section"){State.ed.sections.push({name:"Verse",lines:[{lyric:"",chords:[]}]});render();return;}
@@ -1471,16 +1460,21 @@ document.addEventListener("click",e=>{
   if(a==="click-char"){if(e.target.classList.contains("inline-chord-input"))return;openChordEditor(parseInt(t.dataset.sec,10),parseInt(t.dataset.line,10),parseInt(t.dataset.pos,10));return;}
   if(a==="toggle-preview"){State.ed.preview=!State.ed.preview;t.textContent=State.ed.preview?"✏️ 편집":"👁 미리보기";const p=document.getElementById("preview-wrap");if(p)p.innerHTML=State.ed.preview?renderPreviewSheet():"";requestAnimationFrame(autoFitSheets);return;}
 });
-function refreshContiEditLists(){
+function renderPickedList(){
   const ce=State.contiEdit;
   const picked=document.getElementById("conti-picked");
   if(picked){
-    const ps=ce.picked.map(id=>songById(id)).filter(Boolean);
-    picked.innerHTML=ps.length===0?`<div style="padding:20px 16px;text-align:center;color:var(--txt-mute);font-size:13px">아래 목록에서 곡을 탭해 담아보세요</div>`:ps.map((s,i)=>`<div class="conti-song-row"><div class="conti-order">${i+1}</div><div class="conti-song-body"><div class="conti-song-title">${escapeHtml(s.title)}</div><div class="conti-song-meta">${escapeHtml(s.originalKey||"")}</div></div><div class="conti-move"><button class="conti-move-btn" data-action="conti-up" data-idx="${i}">▲</button><button class="conti-move-btn" data-action="conti-down" data-idx="${i}">▼</button><button class="conti-move-btn" data-action="conti-remove" data-id="${escapeHtml(s.id)}" style="color:var(--danger)">✕</button></div></div>`).join("");
+    picked.innerHTML=ce.picked.length===0
+      ? `<div style="padding:20px 16px;text-align:center;color:var(--txt-mute);font-size:13px">아래 목록에서 곡을 탭해 담아보세요</div>`
+      : ce.picked.map((it,i)=>contiPickedRowHtml(it,i)).join("");
   }
-  // 체크 상태 갱신
+  const ph=document.querySelectorAll('#overlay .group-head')[0];
+  if(ph) ph.textContent=`담긴 곡 (${ce.picked.length}) — 곡마다 부를 키를 정하세요`;
+}
+function syncPicklistChecks(){
+  const ids=State.contiEdit.picked.map(p=>p.id);
   document.querySelectorAll('#conti-picklist .picker-song').forEach(el=>{
-    const id=el.dataset.id;const on=ce.picked.includes(id);
+    const on=ids.includes(el.dataset.id);
     const c=el.querySelector(".picker-check");if(c){c.classList.toggle("on",on);c.textContent=on?"✓":"";}
   });
 }
@@ -1511,7 +1505,6 @@ document.addEventListener("input",e=>{
 document.addEventListener("change",e=>{
   const t=e.target.closest("[data-action]");if(!t) return;
   if(t.dataset.action==="ed-key"){State.ed.originalKey=t.value;return;}
-  if(t.dataset.action==="ed-cat"){State.ed.category=t.value;return;}
 });
 
 /* ═══ EVENTS: KEYDOWN ═══ */
