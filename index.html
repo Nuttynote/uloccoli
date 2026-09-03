@@ -204,61 +204,6 @@
   .save-btn:disabled{opacity:.6}
   .delete-link{text-align:center;padding:12px;font-size:13px;color:var(--danger);font-weight:600;margin-bottom:8px}
 
-  /* ═══ 콘티 ═══ */
-  .setlist-card{display:flex;align-items:center;gap:14px;padding:18px 18px;margin:0 16px;background:var(--card);border-radius:var(--radius);box-shadow:var(--sh-card)}
-  .setlist-ic{width:50px;height:50px;border-radius:15px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
-  .setlist-body{flex:1;min-width:0}
-  .setlist-name{font-size:16px;font-weight:700;color:var(--txt);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .setlist-count{font-size:12.5px;color:var(--txt-lt)}
-  .setlist-list{display:flex;flex-direction:column;gap:10px;padding-top:6px}
-  .add-setlist-row{margin:6px 16px 0}
-
-  /* 콘티 곡 편집(담기) */
-  .picker-song{display:flex;align-items:center;gap:12px;padding:13px 16px;margin:0 16px 8px;background:var(--card);border-radius:14px;box-shadow:var(--sh-card)}
-  .picker-check{width:26px;height:26px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;box-shadow:inset 0 0 0 1.5px var(--bdr);color:transparent}
-  .picker-check.on{background:var(--accent);color:#fff;box-shadow:none}
-  .conti-song-row{display:flex;align-items:center;gap:10px;padding:13px 14px;margin:0 16px 8px;background:var(--card);border-radius:14px;box-shadow:var(--sh-card)}
-  .conti-order{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--accent);width:24px;text-align:center;flex-shrink:0}
-  .conti-song-body{flex:1;min-width:0}
-  .conti-song-title{font-size:14.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .conti-song-meta{font-size:11.5px;color:var(--txt-lt)}
-  .conti-move{display:flex;gap:4px;flex-shrink:0}
-  .conti-move-btn{width:32px;height:32px;border-radius:9px;background:var(--surface);box-shadow:inset 0 0 0 1px var(--bdr);font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--txt-lt)}
-
-  /* 콘티 키 태그 (상세 화면) */
-  .conti-keytag{font-family:var(--mono);font-weight:700;color:var(--accent)}
-  .conti-keytag.changed{color:var(--gold)}
-  .conti-keytag .kt-orig{font-family:var(--font);font-weight:400;color:var(--txt-mute);font-size:11px}
-
-  /* 콘티 편집: 곡 + 키 조절 카드 */
-  .conti-edit-row{margin:0 16px 8px;background:var(--card);border-radius:14px;box-shadow:var(--sh-card);overflow:hidden}
-  .conti-edit-top{display:flex;align-items:center;gap:10px;padding:12px 14px 8px}
-  .conti-key-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 14px 12px;border-top:1px dashed var(--bdr);background:var(--surface)}
-  .conti-key-label{font-size:12px;font-weight:600;color:var(--txt-lt)}
-  .conti-key-steppers{display:flex;align-items:center;gap:7px}
-  .conti-key-btn{width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent);font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center}
-  .conti-key-btn:active{background:var(--accent);color:#fff}
-  .conti-key-val{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--accent);min-width:42px;text-align:center}
-  .conti-key-val.changed{color:var(--gold)}
-  .conti-key-reset{padding:0 12px;height:38px;border-radius:11px;background:var(--card);box-shadow:inset 0 0 0 1px var(--bdr);font-size:11.5px;font-weight:600;color:var(--txt-lt)}
-
-  /* 플레이어 헤더 키칩 */
-  .player-keychip{flex-shrink:0;min-width:46px;height:40px;padding:0 12px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-family:var(--mono);font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center}
-
-  /* 콘티 플레이어 (스와이프) */
-  .player-head{position:sticky;top:0;z-index:10;background:rgba(244,249,240,.92);backdrop-filter:blur(12px);padding:calc(env(safe-area-inset-top,0px) + 10px) 14px 8px;display:flex;align-items:center;gap:8px}
-  .player-name{flex:1;text-align:center;min-width:0}
-  .player-name .pn-title{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .player-name .pn-sub{font-size:11px;color:var(--txt-lt)}
-  .player-track{overflow:hidden;position:relative;touch-action:pan-y}
-  .player-rail{display:flex;transition:transform .32s cubic-bezier(.2,.8,.2,1)}
-  .player-rail.dragging{transition:none}
-  .player-slide{flex:0 0 100%;width:100%;min-height:50vh}
-  .player-dots{display:flex;justify-content:center;gap:6px;padding:12px 0 4px;flex-wrap:wrap}
-  .pdot{width:7px;height:7px;border-radius:50%;background:var(--bdr);transition:all .2s}
-  .pdot.on{background:var(--accent);width:22px;border-radius:4px}
-  .player-edge-hint{text-align:center;font-size:12px;color:var(--txt-mute);padding:10px}
-
   #toast-container{position:fixed;bottom:calc(var(--tabbar-h) + 20px);left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:100;pointer-events:none}
   .toast{padding:13px 20px;background:var(--txt);color:#fff;border-radius:13px;font-size:13.5px;font-weight:500;box-shadow:var(--sh-pop);animation:slideUp .3s ease;max-width:88%}
   .toast.error{background:var(--danger)}
@@ -312,57 +257,6 @@ async function sbDeleteSong(id){
   const res=await fetch(`${SUPABASE_URL}/rest/v1/songs?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:SB_HEADERS});
   if(!res.ok) throw new Error("삭제 실패");
   return true;
-}
-
-/* ── 콘티(세트리스트) API ── */
-let SETLIST_SUPPORTED=true;  // 테이블 없으면 false로
-async function sbFetchSetlists(){
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/setlists?select=*&order=created_at.desc`,{headers:SB_HEADERS});
-  if(!res.ok){SETLIST_SUPPORTED=false;throw new Error("콘티 테이블이 아직 없어요");}
-  return res.json();
-}
-async function sbFetchSetlistSongs(setlistId){
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/setlist_songs?select=*&setlist_id=eq.${encodeURIComponent(setlistId)}&order=position.asc`,{headers:SB_HEADERS});
-  if(!res.ok) throw new Error("콘티 곡을 불러오지 못했어요");
-  return res.json();
-}
-async function sbCreateSetlist(name){
-  const body={id:"sl"+Date.now(),name};
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/setlists`,{method:"POST",headers:SB_HEADERS,body:JSON.stringify(body)});
-  if(!res.ok) throw new Error("콘티 생성 실패: "+await res.text());
-  return (await res.json())[0];
-}
-async function sbRenameSetlist(id,name){
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/setlists?id=eq.${encodeURIComponent(id)}`,{method:"PATCH",headers:SB_HEADERS,body:JSON.stringify({name})});
-  if(!res.ok) throw new Error("이름 변경 실패");
-  return res.json();
-}
-async function sbDeleteSetlist(id){
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/setlists?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:SB_HEADERS});
-  if(!res.ok) throw new Error("콘티 삭제 실패");
-  return true;
-}
-/* 콘티 곡 목록 통째로 교체 (단순/안전)
-   items: [{id, transpose}] 형태. transpose 컬럼이 없는 DB도 지원(없으면 빼고 재시도) */
-let SETLIST_TRANSPOSE_SUPPORTED=true;
-async function sbReplaceSetlistSongs(setlistId,items){
-  await fetch(`${SUPABASE_URL}/rest/v1/setlist_songs?setlist_id=eq.${encodeURIComponent(setlistId)}`,{method:"DELETE",headers:SB_HEADERS});
-  if(items.length===0) return [];
-  const withTp=items.map((it,i)=>({setlist_id:setlistId,song_id:it.id,position:i,transpose:it.transpose||0}));
-  let res=await fetch(`${SUPABASE_URL}/rest/v1/setlist_songs`,{method:"POST",headers:SB_HEADERS,body:JSON.stringify(withTp)});
-  if(!res.ok){
-    const errText=await res.text();
-    // transpose 컬럼이 아직 없으면 컬럼 빼고 한 번 더
-    if(/transpose/i.test(errText)){
-      SETLIST_TRANSPOSE_SUPPORTED=false;
-      const noTp=items.map((it,i)=>({setlist_id:setlistId,song_id:it.id,position:i}));
-      res=await fetch(`${SUPABASE_URL}/rest/v1/setlist_songs`,{method:"POST",headers:SB_HEADERS,body:JSON.stringify(noTp)});
-      if(!res.ok) throw new Error("콘티 곡 저장 실패: "+await res.text());
-      return res.json();
-    }
-    throw new Error("콘티 곡 저장 실패: "+errText);
-  }
-  return res.json();
 }
 
 /* ═══ CORE UTILS ═══ */
@@ -494,19 +388,13 @@ function logoutAdmin(){try{sessionStorage.removeItem(ADMIN_SESSION_KEY);}catch(e
 /* ═══ STATE ═══ */
 const State={
   songs:[],loading:true,loadError:null,
-  tab:"songs",            // songs | codes | conti | admin
-  overlay:null,           // null | "song" | "editor" | "conti-detail" | "conti-edit" | "player"
+  tab:"songs",            // songs | codes | admin
+  overlay:null,           // null | "song" | "editor"
   selectedSongId:null,editSongId:null,
   codeGroup:"기본",
   isAdmin:checkAdminAccess(),
   transpose:0,saving:false,
   ed:{title:"",artist:"",originalKey:"C",category:"감사",preview:false,sections:[{name:"Verse",lines:[{lyric:"",chords:[]}]}],editing:null},
-  // 콘티
-  setlists:[],setlistsLoaded:false,
-  curSetlist:null,            // {id,name}
-  curSetlistSongs:[],         // [{id, transpose}]
-  contiEdit:{name:"",picked:[]},   // 편집 중. picked: [{id, transpose}]
-  player:{idx:0},                  // 콘티 플레이어 (키는 콘티에 저장된 값 사용)
 };
 function initEditor(song){
   State.ed={
@@ -520,15 +408,6 @@ async function loadSongsFromServer(){
   State.loading=true;State.loadError=null;render();
   try{State.songs=await sbFetchSongs();State.loading=false;render();}
   catch(e){State.loading=false;State.loadError=e.message;render();}
-}
-async function loadSetlists(){
-  try{
-    State.setlists=await sbFetchSetlists();
-    State.setlistsLoaded=true;SETLIST_SUPPORTED=true;
-  }catch(e){
-    State.setlists=[];State.setlistsLoaded=true;SETLIST_SUPPORTED=false;
-  }
-  if(State.tab==="conti") render();
 }
 
 /* ═══════════════════════════════════════════════════
@@ -808,41 +687,6 @@ function renderCodesTab(){
     </div>`;
 }
 
-/* ── 콘티 탭 ── */
-function renderContiTab(){
-  let body;
-  if(!State.setlistsLoaded){
-    body=`<div class="loadwrap"><div class="spinner"></div><p>콘티를 불러오는 중...</p></div>`;
-  }else if(!SETLIST_SUPPORTED){
-    body=`<div class="empty"><span class="e-ic">🗂️</span><p class="e-main">콘티 기능 준비가 필요해요</p><p class="e-sub">Supabase에 콘티 테이블을 먼저 만들어주세요.<br>(설정 안내는 만든 사람에게 문의)</p></div>`;
-  }else if(State.setlists.length===0){
-    body=`<div class="empty"><span class="e-ic">📂</span><p class="e-main">아직 만든 콘티가 없어요</p>${State.isAdmin?`<p class="e-sub">오른쪽 아래 + 로 첫 콘티를 만들어보세요</p>`:`<p class="e-sub">예배 콘티가 곧 올라올 거예요</p>`}</div>`;
-  }else{
-    body=`<div class="setlist-list">${State.setlists.map(sl=>renderSetlistCard(sl)).join("")}</div>`;
-  }
-  return `
-    <div class="view">
-      <div class="top">
-        <div class="top-eyebrow"><span class="top-mark">📂</span><span class="top-brand">오늘의 콘티</span></div>
-        <h1 class="top-title">예배 콘티</h1>
-        <p class="top-sub">곡을 순서대로 묶고, 좌우로 넘기며 인도하세요</p>
-      </div>
-      ${body}
-    </div>`;
-}
-function renderSetlistCard(sl){
-  const count=sl.song_count!=null?sl.song_count:null;
-  return `
-    <div class="setlist-card" data-action="open-setlist" data-id="${escapeHtml(sl.id)}">
-      <div class="setlist-ic">🎼</div>
-      <div class="setlist-body">
-        <div class="setlist-name">${escapeHtml(sl.name)}</div>
-        <div class="setlist-count">탭하여 콘티 열기</div>
-      </div>
-      ${State.isAdmin?`<button class="mini-btn danger" data-action="delete-setlist" data-id="${escapeHtml(sl.id)}">🗑️</button>`:`<span style="color:var(--bdr);font-size:18px">›</span>`}
-    </div>`;
-}
-
 /* ── 관리 탭 ── */
 function renderAdminTab(){
   if(!State.isAdmin){
@@ -850,8 +694,8 @@ function renderAdminTab(){
       <div class="view">
         <div class="top"><div class="top-eyebrow"><span class="top-mark">🔐</span><span class="top-brand">관리</span></div><h1 class="top-title">관리자 로그인</h1></div>
         <div class="admin-card">
-          <h3>악보 · 콘티 관리</h3>
-          <p>관리자 비밀번호를 입력하면 악보와 콘티를 추가·편집할 수 있어요.</p>
+          <h3>악보 관리</h3>
+          <p>관리자 비밀번호를 입력하면 악보를 추가·편집할 수 있어요.</p>
           <input id="pw-input" class="pw-input" type="password" placeholder="비밀번호" data-action="pw-input" autocomplete="off"/>
           <button class="big-btn" data-action="do-login">🔓 로그인</button>
         </div>
@@ -862,10 +706,10 @@ function renderAdminTab(){
       <div class="top"><div class="top-eyebrow"><span class="top-mark">🥦</span><span class="top-brand">관리</span></div><h1 class="top-title">관리자 모드</h1></div>
       <div class="admin-card">
         <div class="admin-status"><span class="admin-dot"></span>관리자로 로그인됨</div>
-        <p>악보 추가는 악보집 탭의 + 버튼, 콘티 만들기는 콘티 탭의 + 버튼을 사용하세요.</p>
+        <p>악보 추가는 악보집 탭의 + 버튼을 사용하세요.</p>
         <button class="ghost-btn" data-action="logout">로그아웃</button>
       </div>
-      <div class="admin-card"><h3>현황</h3><p style="margin:0">악보 ${State.songs.length}곡 · 콘티 ${State.setlists.length}개</p></div>
+      <div class="admin-card"><h3>현황</h3><p style="margin:0">악보 ${State.songs.length}곡</p></div>
     </div>`;
 }
 
@@ -990,147 +834,10 @@ function renderPreviewSheet(){
   return `<div style="margin-top:16px">${renderSheet(previewSong,0,1)}</div>`;
 }
 
-/* ═══ 콘티 상세 오버레이 ═══ */
-function renderContiDetailOverlay(){
-  const sl=State.curSetlist;if(!sl){closeOverlay();return "";}
-  const items=State.curSetlistSongs;  // [{id,transpose}]
-  let body;
-  if(items.length===0){
-    body=`<div class="empty"><span class="e-ic">🎵</span><p class="e-main">아직 담긴 곡이 없어요</p>${State.isAdmin?`<p class="e-sub">아래 "곡 담기"로 곡을 추가하세요</p>`:""}</div>`;
-  }else{
-    body=items.map((it,i)=>{
-      const s=songById(it.id);if(!s) return "";
-      const tp=it.transpose||0;
-      const contiKey=transposeChord(s.originalKey,tp);
-      const keyTag=tp===0
-        ? `<span class="conti-keytag">${escapeHtml(contiKey)}</span>`
-        : `<span class="conti-keytag changed">${escapeHtml(contiKey)} <span class="kt-orig">(원키 ${escapeHtml(s.originalKey)})</span></span>`;
-      return `
-      <div class="conti-song-row" data-action="play-from" data-idx="${i}">
-        <div class="conti-order">${i+1}</div>
-        <div class="conti-song-body"><div class="conti-song-title">${escapeHtml(s.title)}</div><div class="conti-song-meta">${escapeHtml(s.artist||"")} · ${keyTag}</div></div>
-        <span style="color:var(--bdr);font-size:18px">›</span>
-      </div>`;
-    }).join("");
-  }
-  return `
-    <div class="view">
-      <div class="detail-head">
-        <button class="icon-btn" data-action="close-overlay">←</button>
-        <div class="detail-head-title">${escapeHtml(sl.name)}</div>
-        ${State.isAdmin?`<button class="icon-btn" data-action="edit-conti">✏️</button>`:`<div style="width:40px"></div>`}
-      </div>
-      <div class="song-hero" style="padding-bottom:10px"><h1 style="font-size:26px">${escapeHtml(sl.name)}</h1><div class="meta">${items.length}곡 · 탭하면 그 곡부터 시작해요</div></div>
-      ${items.length>0?`<div style="padding:0 16px 12px"><button class="big-btn" data-action="play-from" data-idx="0">▶ 첫 곡부터 인도 시작</button></div>`:""}
-      <div style="padding-top:4px">${body}</div>
-      ${State.isAdmin?`<div style="padding:16px"><button class="ghost-btn" data-action="edit-conti">＋ 곡 담기 / 키 · 순서 편집</button></div>`:""}
-      <div style="height:20px"></div>
-    </div>`;
-}
-
-/* ═══ 콘티 편집 오버레이 (곡 담기 + 키 + 순서) ═══ */
-function renderContiEditOverlay(){
-  const ce=State.contiEdit;
-  const picked=ce.picked;  // [{id,transpose}]
-  const pickedIds=picked.map(p=>p.id);
-  const pickedHtml=picked.length===0
-    ? `<div style="padding:20px 16px;text-align:center;color:var(--txt-mute);font-size:13px">아래 목록에서 곡을 탭해 담아보세요</div>`
-    : picked.map((it,i)=>contiPickedRowHtml(it,i)).join("");
-  const all=State.songs.slice().sort(compareSongs);
-  const pickList=all.map(s=>{
-    const on=pickedIds.includes(s.id);
-    return `
-      <div class="picker-song" data-action="conti-toggle" data-id="${escapeHtml(s.id)}">
-        <div class="picker-check ${on?"on":""}">${on?"✓":""}</div>
-        <div class="conti-song-body"><div class="conti-song-title">${escapeHtml(s.title)}</div><div class="conti-song-meta">${escapeHtml(s.artist||"")} · ${escapeHtml(s.originalKey||"")}</div></div>
-      </div>`;
-  }).join("");
-  return `
-    <div class="view">
-      <div class="detail-head">
-        <button class="icon-btn" data-action="close-conti-edit">←</button>
-        <div class="detail-head-title">콘티 편집</div>
-        <button class="icon-btn" data-action="save-conti" style="background:var(--accent);color:#fff;font-size:14px;font-weight:700;width:auto;padding:0 14px">저장</button>
-      </div>
-      <div class="ed-field" style="padding:0 16px;margin-top:6px">
-        <label class="ed-label">콘티 이름</label>
-        <input class="ed-input" value="${escapeHtml(ce.name)}" placeholder="예) 11/3 주일 1부 예배" data-action="conti-name"/>
-      </div>
-      <div class="group-head" style="position:static">담긴 곡 (${picked.length}) — 곡마다 부를 키를 정하세요</div>
-      <div id="conti-picked">${pickedHtml}</div>
-      <div class="group-head" style="position:static">곡 목록 — 탭하여 담기/빼기</div>
-      <div id="conti-picklist">${pickList}</div>
-      <div style="height:30px"></div>
-    </div>`;
-}
-/* 담긴 곡 한 줄 (키 조절 + 순서/삭제) */
-function contiPickedRowHtml(it,i){
-  const s=songById(it.id);if(!s) return "";
-  const tp=it.transpose||0;
-  const contiKey=transposeChord(s.originalKey,tp);
-  return `
-    <div class="conti-edit-row">
-      <div class="conti-edit-top">
-        <div class="conti-order">${i+1}</div>
-        <div class="conti-song-body"><div class="conti-song-title">${escapeHtml(s.title)}</div><div class="conti-song-meta">원키 ${escapeHtml(s.originalKey||"")}</div></div>
-        <div class="conti-move">
-          <button class="conti-move-btn" data-action="conti-up" data-idx="${i}">▲</button>
-          <button class="conti-move-btn" data-action="conti-down" data-idx="${i}">▼</button>
-          <button class="conti-move-btn" data-action="conti-remove" data-id="${escapeHtml(s.id)}" style="color:var(--danger)">✕</button>
-        </div>
-      </div>
-      <div class="conti-key-row">
-        <span class="conti-key-label">부를 키</span>
-        <div class="conti-key-steppers">
-          <button class="conti-key-btn" data-action="conti-key" data-idx="${i}" data-dir="-1">−</button>
-          <span class="conti-key-val ${tp!==0?'changed':''}">${escapeHtml(contiKey)}</span>
-          <button class="conti-key-btn" data-action="conti-key" data-idx="${i}" data-dir="1">+</button>
-          ${tp!==0?`<button class="conti-key-reset" data-action="conti-key" data-idx="${i}" data-dir="0">원키로</button>`:""}
-        </div>
-      </div>
-    </div>`;
-}
-
-/* ═══ 콘티 플레이어 (스와이프) — 콘티에 저장된 키로 고정 ═══ */
-function renderPlayerOverlay(){
-  const items=State.curSetlistSongs;  // [{id,transpose}]
-  const rows=items.map(it=>({s:songById(it.id),tp:it.transpose||0})).filter(r=>r.s);
-  if(rows.length===0){closeOverlay();return "";}
-  const idx=Math.max(0,Math.min(State.player.idx,rows.length-1));
-  State.player.idx=idx;
-  const cur=rows[idx];
-  const curKey=transposeChord(cur.s.originalKey,cur.tp);
-  const slides=rows.map((r,i)=>{
-    const ck=transposeChord(r.s.originalKey,r.tp);
-    const origNote=r.tp!==0?`<span class="cat-tag" style="background:var(--surface);color:var(--txt-mute);margin-left:5px">원키 ${escapeHtml(r.s.originalKey)}</span>`:"";
-    return `<div class="player-slide" data-slide="${i}">
-      <div class="song-hero" style="padding:8px 20px 14px"><h1>${escapeHtml(r.s.title)}</h1><div class="meta">${escapeHtml(r.s.artist||"")}<span class="cat-tag">${escapeHtml(ck)}</span>${origNote}</div></div>
-      ${renderSheet(r.s,r.tp,1)}
-      <div style="height:30px"></div>
-    </div>`;
-  }).join("");
-  const dots=rows.map((r,i)=>`<span class="pdot ${i===idx?"on":""}"></span>`).join("");
-  return `
-    <div class="view">
-      <div class="player-head">
-        <button class="icon-btn" data-action="close-overlay">✕</button>
-        <div class="player-name"><div class="pn-title">${escapeHtml(cur.s.title)}</div><div class="pn-sub">${escapeHtml(State.curSetlist.name)} · ${idx+1}/${rows.length}</div></div>
-        <div class="player-keychip" id="p-keychip">${escapeHtml(curKey)}</div>
-      </div>
-      <div class="player-track" id="player-track">
-        <div class="player-rail" id="player-rail" style="transform:translateX(-${idx*100}%)">${slides}</div>
-      </div>
-      <div class="player-dots">${dots}</div>
-      <div class="player-edge-hint">← 좌우로 밀어서 곡을 넘기세요 →</div>
-      <div style="height:24px"></div>
-    </div>`;
-}
-
 /* ═══ TABBAR ═══ */
 function renderTabbar(){
   const tabs=[
     {id:"songs",ic:"🎵",lbl:"악보집"},
-    {id:"conti",ic:"📂",lbl:"콘티"},
     {id:"codes",ic:"🎸",lbl:"코드표"},
     {id:"admin",ic:State.isAdmin?"🥦":"🔐",lbl:"관리"},
   ];
@@ -1145,25 +852,20 @@ function render(){
     let oh="";
     if(State.overlay==="song") oh=renderSongOverlay();
     else if(State.overlay==="editor") oh=renderEditorOverlay();
-    else if(State.overlay==="conti-detail") oh=renderContiDetailOverlay();
-    else if(State.overlay==="conti-edit") oh=renderContiEditOverlay();
-    else if(State.overlay==="player") oh=renderPlayerOverlay();
     overlayRoot.innerHTML=`<div id="overlay" style="position:fixed;inset:0;max-width:480px;margin:0 auto;background:var(--bg);z-index:40;overflow-y:auto;animation:sheetUp .3s cubic-bezier(.2,.8,.2,1)">${oh}</div>`;
-    if(State.overlay==="player") requestAnimationFrame(setupPlayerSwipe);
   }else{
     overlayRoot.innerHTML="";
   }
   let html="";
   if(State.tab==="songs") html=renderSongsTab();
   else if(State.tab==="codes") html=renderCodesTab();
-  else if(State.tab==="conti") html=renderContiTab();
   else if(State.tab==="admin") html=renderAdminTab();
   scroll.innerHTML=html;
 
   const existingFab=document.getElementById("fab");if(existingFab) existingFab.remove();
-  if(State.isAdmin&&!State.overlay&&(State.tab==="songs"||State.tab==="conti")){
+  if(State.isAdmin&&!State.overlay&&State.tab==="songs"){
     const fab=document.createElement("button");fab.id="fab";fab.className="fab";fab.innerHTML="+";
-    fab.setAttribute("data-action",State.tab==="songs"?"new-song":"new-conti");
+    fab.setAttribute("data-action","new-song");
     document.getElementById("app-shell").appendChild(fab);
   }
   document.getElementById("tabbar").innerHTML=renderTabbar();
@@ -1254,109 +956,6 @@ function updateTransposeDisplay(){
 }
 function requireAdmin(){if(!State.isAdmin){showToast("관리자만 사용할 수 있어요","error");return false;}return true;}
 
-/* ═══ 콘티 동작 ═══ */
-async function openSetlist(id){
-  const sl=State.setlists.find(s=>s.id===id);if(!sl) return;
-  State.curSetlist=sl;State.curSetlistSongs=[];
-  openOverlay("conti-detail");
-  try{
-    const rows=await sbFetchSetlistSongs(id);
-    State.curSetlistSongs=rows.map(r=>({id:r.song_id,transpose:r.transpose||0}));
-    if(State.overlay==="conti-detail") render();
-  }catch(e){showToast(e.message,"error");}
-}
-function startContiEdit(){
-  const sl=State.curSetlist;
-  State.contiEdit={name:sl?sl.name:"",picked:State.curSetlistSongs.map(it=>({id:it.id,transpose:it.transpose||0}))};
-  openOverlay("conti-edit");
-}
-function startNewConti(){
-  State.curSetlist=null;State.curSetlistSongs=[];
-  State.contiEdit={name:"",picked:[]};
-  openOverlay("conti-edit");
-}
-async function saveConti(){
-  const ce=State.contiEdit;
-  if(!ce.name.trim()){showToast("콘티 이름을 입력해주세요","error");return;}
-  const btn=document.querySelector('[data-action="save-conti"]');
-  if(btn){btn.innerHTML='<span class="spinner-sm"></span>';btn.disabled=true;}
-  try{
-    let sl=State.curSetlist;
-    if(!sl){sl=await sbCreateSetlist(ce.name.trim());}
-    else if(sl.name!==ce.name.trim()){await sbRenameSetlist(sl.id,ce.name.trim());sl.name=ce.name.trim();}
-    await sbReplaceSetlistSongs(sl.id,ce.picked);  // picked: [{id,transpose}]
-    State.curSetlist={id:sl.id,name:ce.name.trim()};
-    State.curSetlistSongs=ce.picked.map(it=>({id:it.id,transpose:it.transpose||0}));
-    await loadSetlists();
-    openOverlay("conti-detail");
-    showToast(SETLIST_TRANSPOSE_SUPPORTED?"콘티가 저장되었어요":"저장됐지만 키 설정은 저장되지 않았어요 (테이블 컬럼 추가 필요)",SETLIST_TRANSPOSE_SUPPORTED?"success":"info");
-  }catch(e){showToast(e.message,"error");if(btn){btn.innerHTML="저장";btn.disabled=false;}}
-}
-async function deleteSetlist(id){
-  const sl=State.setlists.find(s=>s.id===id);if(!sl) return;
-  if(!confirm(`"${sl.name}" 콘티를 삭제할까요?`)) return;
-  try{await sbDeleteSetlist(id);State.setlists=State.setlists.filter(s=>s.id!==id);render();showToast("콘티가 삭제되었어요","success");}
-  catch(e){showToast(e.message,"error");}
-}
-function openPlayer(idx){
-  State.player={idx:idx||0};
-  openOverlay("player");
-}
-
-/* 플레이어 스와이프 */
-function setupPlayerSwipe(){
-  const track=document.getElementById("player-track");
-  const rail=document.getElementById("player-rail");
-  if(!track||!rail) return;
-  const count=State.curSetlistSongs.length;
-  let startX=0,startY=0,dragging=false,decided=false,horizontal=false,railW=track.clientWidth;
-  function onStart(e){
-    const t=e.touches?e.touches[0]:e;
-    startX=t.clientX;startY=t.clientY;dragging=true;decided=false;horizontal=false;
-    railW=track.clientWidth;rail.classList.add("dragging");
-  }
-  function onMove(e){
-    if(!dragging) return;
-    const t=e.touches?e.touches[0]:e;
-    const dx=t.clientX-startX,dy=t.clientY-startY;
-    if(!decided){if(Math.abs(dx)>8||Math.abs(dy)>8){decided=true;horizontal=Math.abs(dx)>Math.abs(dy);}}
-    if(decided&&horizontal){
-      if(e.cancelable) e.preventDefault();
-      let offset=-State.player.idx*railW+dx;
-      const min=-(count-1)*railW,max=0;
-      if(offset>max) offset=max+(offset-max)*0.3;
-      if(offset<min) offset=min+(offset-min)*0.3;
-      rail.style.transform=`translateX(${offset}px)`;
-    }
-  }
-  function onEnd(e){
-    if(!dragging) return;dragging=false;rail.classList.remove("dragging");
-    if(!decided||!horizontal){rail.style.transform=`translateX(-${State.player.idx*100}%)`;return;}
-    const t=e.changedTouches?e.changedTouches[0]:e;
-    const dx=t.clientX-startX;const threshold=railW*0.18;
-    let idx=State.player.idx;
-    if(dx<-threshold&&idx<count-1) idx++;
-    else if(dx>threshold&&idx>0) idx--;
-    goToSlide(idx);
-  }
-  track.ontouchstart=onStart;track.ontouchmove=onMove;track.ontouchend=onEnd;
-  track.onmousedown=e=>{onStart(e);const mm=ev=>onMove(ev);const mu=ev=>{onEnd(ev);document.removeEventListener("mousemove",mm);document.removeEventListener("mouseup",mu);};document.addEventListener("mousemove",mm);document.addEventListener("mouseup",mu);};
-}
-function goToSlide(idx){
-  const rail=document.getElementById("player-rail");
-  State.player.idx=idx;
-  if(rail){rail.classList.remove("dragging");rail.style.transform=`translateX(-${idx*100}%)`;}
-  const items=State.curSetlistSongs;
-  const it=items[idx];if(!it) return;
-  const cur=songById(it.id);if(!cur) return;
-  const tp=it.transpose||0;
-  const pnTitle=document.querySelector(".pn-title");if(pnTitle) pnTitle.textContent=cur.title;
-  const pnSub=document.querySelector(".pn-sub");if(pnSub) pnSub.textContent=`${State.curSetlist.name} · ${idx+1}/${items.length}`;
-  const keychip=document.getElementById("p-keychip");if(keychip) keychip.textContent=transposeChord(cur.originalKey,tp);
-  document.querySelectorAll(".pdot").forEach((d,i)=>d.classList.toggle("on",i===idx));
-  requestAnimationFrame(autoFitSheets);
-}
-
 /* ═══ DELETE / SAVE 곡 ═══ */
 async function deleteSong(id){
   const song=songById(id);if(!song) return;
@@ -1397,7 +996,7 @@ document.addEventListener("click",e=>{
   const a=t.dataset.action;
 
   if(a==="close-modal"){if(e.target.closest(".chord-modal")&&!e.target.classList.contains("cm-close")) return;closeChordModal();return;}
-  if(a==="tab"){State.tab=t.dataset.tab;State.overlay=null;render();document.getElementById("scroll").scrollTo(0,0);if(t.dataset.tab==="conti"&&!State.setlistsLoaded) loadSetlists();return;}
+  if(a==="tab"){State.tab=t.dataset.tab;State.overlay=null;render();document.getElementById("scroll").scrollTo(0,0);return;}
   if(a==="reload"){loadSongsFromServer();return;}
   if(a==="code-group"){State.codeGroup=t.dataset.grp;render();return;}
   if(a==="jump"){jumpToGroup(t.dataset.grp);return;}
@@ -1418,37 +1017,6 @@ document.addEventListener("click",e=>{
   if(a==="delete-song-editor"){if(!requireAdmin())return;deleteSong(State.editSongId);return;}
   if(a==="save-song"){if(!requireAdmin())return;saveCurrentSong();return;}
 
-  // 콘티
-  if(a==="new-conti"){if(!requireAdmin())return;startNewConti();return;}
-  if(a==="open-setlist"){e.stopPropagation();openSetlist(t.dataset.id);return;}
-  if(a==="delete-setlist"){if(!requireAdmin())return;e.stopPropagation();deleteSetlist(t.dataset.id);return;}
-  if(a==="edit-conti"){if(!requireAdmin())return;startContiEdit();return;}
-  if(a==="close-conti-edit"){if(State.curSetlist) openOverlay("conti-detail");else{State.overlay=null;State.tab="conti";render();}return;}
-  if(a==="save-conti"){saveConti();return;}
-  if(a==="conti-toggle"){
-    const id=t.dataset.id;const ce=State.contiEdit;
-    const exists=ce.picked.some(p=>p.id===id);
-    if(exists) ce.picked=ce.picked.filter(p=>p.id!==id);
-    else ce.picked=[...ce.picked,{id,transpose:0}];
-    renderPickedList();
-    const cell=t.querySelector(".picker-check");if(cell){const on=ce.picked.some(p=>p.id===id);cell.classList.toggle("on",on);cell.textContent=on?"✓":"";}
-    return;
-  }
-  if(a==="conti-up"){const i=parseInt(t.dataset.idx,10);const p=State.contiEdit.picked;if(i>0){[p[i-1],p[i]]=[p[i],p[i-1]];renderPickedList();syncPicklistChecks();}return;}
-  if(a==="conti-down"){const i=parseInt(t.dataset.idx,10);const p=State.contiEdit.picked;if(i<p.length-1){[p[i],p[i+1]]=[p[i+1],p[i]];renderPickedList();syncPicklistChecks();}return;}
-  if(a==="conti-remove"){State.contiEdit.picked=State.contiEdit.picked.filter(p=>p.id!==t.dataset.id);renderPickedList();syncPicklistChecks();return;}
-  if(a==="conti-key"){
-    const i=parseInt(t.dataset.idx,10);const dir=parseInt(t.dataset.dir,10);
-    const it=State.contiEdit.picked[i];if(!it) return;
-    if(dir===0) it.transpose=0;
-    else it.transpose=((it.transpose||0)+dir+120)%12; // 0~11 범위 유지(한 옥타브 내)
-    // 해당 줄만 다시 그림
-    const rows=document.querySelectorAll("#conti-picked .conti-edit-row");
-    if(rows[i]){const tmp=document.createElement("div");tmp.innerHTML=contiPickedRowHtml(it,i);rows[i].replaceWith(tmp.firstElementChild);}
-    return;
-  }
-  if(a==="play-from"){openPlayer(parseInt(t.dataset.idx,10)||0);return;}
-
   // 섹션 액션
   if(a==="add-section"){State.ed.sections.push({name:"Verse",lines:[{lyric:"",chords:[]}]});render();return;}
   if(a==="dup-section"){const si=parseInt(t.dataset.sec,10);const sec=State.ed.sections[si];const copy={name:sec.name,lines:sec.lines.map(ln=>({lyric:ln.lyric,chords:(ln.chords||[]).map(c=>({...c}))}))};State.ed.sections.splice(si+1,0,copy);render();showToast(`"${sec.name}" 복제됨`,"success");return;}
@@ -1460,24 +1028,6 @@ document.addEventListener("click",e=>{
   if(a==="click-char"){if(e.target.classList.contains("inline-chord-input"))return;openChordEditor(parseInt(t.dataset.sec,10),parseInt(t.dataset.line,10),parseInt(t.dataset.pos,10));return;}
   if(a==="toggle-preview"){State.ed.preview=!State.ed.preview;t.textContent=State.ed.preview?"✏️ 편집":"👁 미리보기";const p=document.getElementById("preview-wrap");if(p)p.innerHTML=State.ed.preview?renderPreviewSheet():"";requestAnimationFrame(autoFitSheets);return;}
 });
-function renderPickedList(){
-  const ce=State.contiEdit;
-  const picked=document.getElementById("conti-picked");
-  if(picked){
-    picked.innerHTML=ce.picked.length===0
-      ? `<div style="padding:20px 16px;text-align:center;color:var(--txt-mute);font-size:13px">아래 목록에서 곡을 탭해 담아보세요</div>`
-      : ce.picked.map((it,i)=>contiPickedRowHtml(it,i)).join("");
-  }
-  const ph=document.querySelectorAll('#overlay .group-head')[0];
-  if(ph) ph.textContent=`담긴 곡 (${ce.picked.length}) — 곡마다 부를 키를 정하세요`;
-}
-function syncPicklistChecks(){
-  const ids=State.contiEdit.picked.map(p=>p.id);
-  document.querySelectorAll('#conti-picklist .picker-song').forEach(el=>{
-    const on=ids.includes(el.dataset.id);
-    const c=el.querySelector(".picker-check");if(c){c.classList.toggle("on",on);c.textContent=on?"✓":"";}
-  });
-}
 
 /* 기존 코드 마크 클릭 → 수정(편집기) */
 document.addEventListener("click",e=>{
@@ -1495,7 +1045,6 @@ document.addEventListener("input",e=>{
   const a=t.dataset.action;
   if(a==="search-input"){document.getElementById("song-list").innerHTML=renderGroupedList(t.value);return;}
   if(a==="pw-input"){return;}
-  if(a==="conti-name"){State.contiEdit.name=t.value;return;}
   if(a==="ed-title"){State.ed.title=t.value;return;}
   if(a==="ed-artist"){State.ed.artist=t.value;return;}
   if(a==="section-name"){State.ed.sections[parseInt(t.dataset.sec,10)].name=t.value;return;}
@@ -1523,7 +1072,6 @@ document.addEventListener("keydown",e=>{
     return;
   }
   if(t.dataset.action==="pw-input"&&e.key==="Enter"){e.preventDefault();loginAdmin(t.value);return;}
-  if(t.dataset.action==="conti-name"&&e.key==="Enter"){e.preventDefault();t.blur();return;}
 });
 document.addEventListener("focusout",e=>{
   if(!e.target.classList||!e.target.classList.contains("inline-chord-input")) return;
@@ -1533,7 +1081,6 @@ document.addEventListener("focusout",e=>{
 /* ═══ INIT ═══ */
 render();
 loadSongsFromServer();
-loadSetlists();
 </script>
 </body>
 </html>
