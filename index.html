@@ -278,15 +278,14 @@ function broccoli(size,color,stroke){
   const s=size||46;
   return '<svg class="brand-mark" width="'+s+'" height="'+s+'" viewBox="0 0 48 48"><circle cx="17" cy="19" r="8" fill="'+color+'"/><circle cx="31" cy="19" r="8" fill="'+color+'"/><circle cx="24" cy="13" r="8" fill="'+color+'"/><rect x="21.6" y="24" width="4.8" height="16" rx="2.4" fill="'+color+'"/></svg>';
 }
-const ADMIN_PASSWORD = "gksdnf12!!";
 const SUPABASE_URL = "https://xtavorafqxjfkcnfttum.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh0YXZvcmFmcXhqZmtjbmZ0dHVtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzMTgwOTgsImV4cCI6MjA5MTg5NDA5OH0.7WSFf2hYwM9daIe5Hth0nNU530_PmR-mD4RceRd1TXI";
 
+/* 읽기 전용 — 공개 anon key로 직접 Supabase 조회 (RLS로 select만 허용) */
 const SB_HEADERS = {
   "apikey": SUPABASE_ANON_KEY,
   "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
-  "Content-Type": "application/json",
-  "Prefer": "return=representation"
+  "Content-Type": "application/json"
 };
 async function sbFetchSongs(){
   const res = await fetch(`${SUPABASE_URL}/rest/v1/songs?select=*&order=created_at.desc`,{headers:SB_HEADERS});
@@ -294,46 +293,29 @@ async function sbFetchSongs(){
   const data = await res.json();
   return data.map(row=>({id:row.id,title:row.title,artist:row.artist,originalKey:row.original_key,category:row.category,text:row.text}));
 }
-async function sbInsertSong(song){
-  const body={id:song.id,title:song.title,artist:song.artist,original_key:song.originalKey,category:song.category,text:song.text};
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/songs`,{method:"POST",headers:SB_HEADERS,body:JSON.stringify(body)});
-  if(!res.ok){throw new Error("저장 실패: "+await res.text());}
-  return res.json();
-}
-async function sbUpdateSong(song){
-  const body={title:song.title,artist:song.artist,original_key:song.originalKey,category:song.category,text:song.text};
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/songs?id=eq.${encodeURIComponent(song.id)}`,{method:"PATCH",headers:SB_HEADERS,body:JSON.stringify(body)});
-  if(!res.ok) throw new Error("수정 실패");
-  return res.json();
-}
-async function sbDeleteSong(id){
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/songs?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:SB_HEADERS});
-  if(!res.ok) throw new Error("삭제 실패");
-  return true;
-}
 async function sbFetchChords(){
   const res = await fetch(`${SUPABASE_URL}/rest/v1/chords?select=*`,{headers:SB_HEADERS});
   if(!res.ok) throw new Error("코드표 커스텀 데이터를 불러오지 못했어요");
   const data = await res.json();
   return data.map(row=>({id:row.id,root:row.root,name:row.name,full:row.full_name,frets:row.frets}));
 }
-async function sbInsertChord(chord){
-  const body={id:chord.id,root:chord.root,name:chord.name,full_name:chord.full,frets:chord.frets};
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/chords`,{method:"POST",headers:SB_HEADERS,body:JSON.stringify(body)});
-  if(!res.ok){throw new Error("저장 실패: "+await res.text());}
-  return res.json();
+
+/* 쓰기(추가/수정/삭제) — 전부 서버 함수(/api)를 거친다. 비밀번호는 서버에서만 검증하고,
+   진짜 쓰기 권한이 있는 키(service role key)도 서버에만 있어서 브라우저에는 절대 노출되지 않는다. */
+function getAdminPw(){
+  try{return sessionStorage.getItem(ADMIN_PW_KEY)||"";}catch(e){return "";}
 }
-async function sbUpdateChord(chord){
-  const body={root:chord.root,name:chord.name,full_name:chord.full,frets:chord.frets};
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/chords?id=eq.${encodeURIComponent(chord.id)}`,{method:"PATCH",headers:SB_HEADERS,body:JSON.stringify(body)});
-  if(!res.ok) throw new Error("수정 실패");
-  return res.json();
+async function apiWrite(path,method,body){
+  const res=await fetch(path,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify({password:getAdminPw(),...body})});
+  if(!res.ok){const t=await res.text().catch(()=>"");throw new Error(t||"요청 실패");}
+  return res.json().catch(()=>({}));
 }
-async function sbDeleteChord(id){
-  const res=await fetch(`${SUPABASE_URL}/rest/v1/chords?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:SB_HEADERS});
-  if(!res.ok) throw new Error("삭제 실패");
-  return true;
-}
+async function sbInsertSong(song){ return apiWrite("/api/songs","POST",{song}); }
+async function sbUpdateSong(song){ return apiWrite("/api/songs","PATCH",{id:song.id,song}); }
+async function sbDeleteSong(id){ return apiWrite("/api/songs","DELETE",{id}); }
+async function sbInsertChord(chord){ return apiWrite("/api/chords","POST",{chord}); }
+async function sbUpdateChord(chord){ return apiWrite("/api/chords","PATCH",{id:chord.id,chord}); }
+async function sbDeleteChord(id){ return apiWrite("/api/chords","DELETE",{id}); }
 
 /* ═══ CORE UTILS ═══ */
 const CHROMATIC=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
@@ -440,26 +422,43 @@ function toggleFav(id){
 
 /* ADMIN */
 const ADMIN_SESSION_KEY="ullocoli_admin_session";
+const ADMIN_PW_KEY="ullocoli_admin_pw";
 function checkAdminAccess(){
-  const params=new URLSearchParams(window.location.search);
-  const urlPassword=params.get("admin");
-  if(urlPassword!==null){
-    if(urlPassword===ADMIN_PASSWORD){
-      try{sessionStorage.setItem(ADMIN_SESSION_KEY,"1");}catch(e){}
-      window.history.replaceState({},document.title,window.location.pathname+window.location.hash);
-      return true;
-    }else{window.history.replaceState({},document.title,window.location.pathname+window.location.hash);}
-  }
-  try{return sessionStorage.getItem(ADMIN_SESSION_KEY)==="1";}catch(e){return false;}
+  try{return sessionStorage.getItem(ADMIN_SESSION_KEY)==="1" && !!sessionStorage.getItem(ADMIN_PW_KEY);}
+  catch(e){return false;}
 }
-function loginAdmin(pw){
-  if(pw===ADMIN_PASSWORD){
-    try{sessionStorage.setItem(ADMIN_SESSION_KEY,"1");}catch(e){}
+async function verifyAdminPassword(pw){
+  try{
+    const res=await fetch("/api/verify-admin",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})});
+    if(!res.ok) return false;
+    const data=await res.json();
+    return !!data.ok;
+  }catch(e){return false;}
+}
+async function loginAdmin(pw){
+  const ok=await verifyAdminPassword(pw);
+  if(ok){
+    try{sessionStorage.setItem(ADMIN_SESSION_KEY,"1");sessionStorage.setItem(ADMIN_PW_KEY,pw);}catch(e){}
     State.isAdmin=true;State.adminSheet=false;showToast("관리자 모드가 켜졌어요","success");render();return true;
   }
   showToast("비밀번호가 맞지 않아요","error");return false;
 }
-function logoutAdmin(){try{sessionStorage.removeItem(ADMIN_SESSION_KEY);}catch(e){}State.isAdmin=false;render();showToast("로그아웃되었어요","info");}
+function logoutAdmin(){
+  try{sessionStorage.removeItem(ADMIN_SESSION_KEY);sessionStorage.removeItem(ADMIN_PW_KEY);}catch(e){}
+  State.isAdmin=false;render();showToast("로그아웃되었어요","info");
+}
+/* ?admin=비밀번호 매직링크로 접속했을 때: 서버에 비동기로 검증 요청 (동기적으로 못 함) */
+async function tryUrlAdminLogin(){
+  const params=new URLSearchParams(window.location.search);
+  const pw=params.get("admin");
+  if(pw===null) return;
+  window.history.replaceState({},document.title,window.location.pathname+window.location.hash);
+  const ok=await verifyAdminPassword(pw);
+  if(ok){
+    try{sessionStorage.setItem(ADMIN_SESSION_KEY,"1");sessionStorage.setItem(ADMIN_PW_KEY,pw);}catch(e){}
+    State.isAdmin=true;render();showToast("관리자 모드가 켜졌어요","success");
+  }
+}
 
 /* ═══ STATE ═══ */
 const State={
@@ -1347,6 +1346,7 @@ document.addEventListener("input",e=>{
 render();
 loadSongsFromServer();
 loadChordsFromServer();
+tryUrlAdminLogin();
 </script>
 </body>
 </html>
