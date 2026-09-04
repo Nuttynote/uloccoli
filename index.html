@@ -841,7 +841,7 @@ function renderSongsTab(){
     <div class="view" id="songs-tab">
       <div class="home-top">
         <div class="home-top-row">
-          <img class="brand-mark" src="assets/logo.png" width="46" height="46" alt="울로콜리" style="border-radius:12px;object-fit:cover">
+          <img class="brand-mark" src="assets/logo.png" width="46" height="46" alt="울로콜리" data-action="reload-app" style="border-radius:12px;object-fit:cover;cursor:pointer">
           <button class="admin-pill ${State.isAdmin?"on":""}" data-action="open-admin">
             ${State.isAdmin?ICONS.unlock(13):ICONS.lock(13)}<span>${State.isAdmin?"관리자 모드":"관리자"}</span>
           </button>
@@ -1195,6 +1195,11 @@ document.addEventListener("click",e=>{
 
   if(a==="close-modal"){if(e.target.closest(".chord-modal")&&!e.target.classList.contains("cm-close")) return;closeChordModal();return;}
   if(a==="tab"){State.tab=t.dataset.tab;State.overlay=null;render();document.getElementById("scroll").scrollTo(0,0);return;}
+  if(a==="reload-app"){
+    t.style.transition="transform .5s ease";t.style.transform="rotate(360deg)";
+    window.location.href=window.location.pathname+"?_r="+Date.now();
+    return;
+  }
   if(a==="reload"){loadSongsFromServer();return;}
   if(a==="code-root"){State.codeRoot=t.dataset.root;render();return;}
 
