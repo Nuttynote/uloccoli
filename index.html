@@ -138,7 +138,8 @@
   .plain-top p{font-size:12.5px;line-height:1.7;color:var(--txt-lt);margin-top:12px}
   .code-group-tabs{display:flex;gap:8px;padding:24px 24px 0;overflow-x:auto}
   .chord-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:24px 24px 0}
-  .chord-cell{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .chord-cell{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative}
+  .chord-cell-edit{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:6px;background:var(--sub);color:var(--main);display:flex;align-items:center;justify-content:center;z-index:2}
   .chord-cell .cname{font-size:14px;font-weight:700;color:var(--main)}
   .chord-diagram{width:100%;max-width:88px}
   .chord-fullname{font-size:9.5px;color:var(--txt-mute);text-align:center;min-height:12px}
@@ -201,6 +202,21 @@
   .save-btn{flex:1;padding:16px;border-radius:12px;background:var(--main);color:#fff;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px}
   .save-btn:disabled{opacity:.5}
   .delete-link{text-align:center;padding:24px 0 0;font-size:13px;color:var(--danger);font-weight:600}
+  .fe-basebar{display:flex;align-items:center;justify-content:center;gap:12px;margin:4px 0 10px}
+  .fe-basebar-label{font-size:12.5px;font-weight:700;color:var(--main);min-width:96px;text-align:center}
+  .fret-editor{border:1px solid var(--bdr);border-radius:12px;overflow:hidden;background:var(--card)}
+  .fe-toprow{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:2px solid var(--txt)}
+  .fe-top-cell{height:32px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--txt-mute);border-right:1px solid var(--bdr);background:var(--bg)}
+  .fe-top-cell:last-child{border-right:none}
+  .fe-top-cell.dot{color:transparent}
+  .fe-row{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid var(--bdr)}
+  .fe-row:last-child{border-bottom:none}
+  .fe-cell{height:42px;border-right:1px solid var(--bdr);position:relative;background:var(--card)}
+  .fe-cell:last-child{border-right:none}
+  .fe-cell::after{content:"";position:absolute;top:50%;left:50%;width:22px;height:22px;border-radius:50%;background:transparent;transform:translate(-50%,-50%)}
+  .fe-cell.on::after{background:var(--main)}
+  .fe-cell:active::after{background:var(--sub)}
+  .fe-cell.on:active::after{background:var(--main)}
 
   #toast-container{position:fixed;bottom:calc(var(--tabbar-h) + 24px);left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:100;pointer-events:none}
   .toast{padding:12px 20px;background:var(--txt);color:#fff;border-radius:10px;font-size:13.5px;font-weight:500;animation:popIn .24s ease;max-width:88%}
@@ -221,6 +237,7 @@
 <div id="overlay-root"></div>
 <div id="modal-root"></div>
 <div id="sheet-root"></div>
+<div id="chordsheet-root"></div>
 
 <script>
 
@@ -292,6 +309,29 @@ async function sbUpdateSong(song){
 }
 async function sbDeleteSong(id){
   const res=await fetch(`${SUPABASE_URL}/rest/v1/songs?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:SB_HEADERS});
+  if(!res.ok) throw new Error("삭제 실패");
+  return true;
+}
+async function sbFetchChords(){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/chords?select=*`,{headers:SB_HEADERS});
+  if(!res.ok) throw new Error("코드표 커스텀 데이터를 불러오지 못했어요");
+  const data = await res.json();
+  return data.map(row=>({id:row.id,root:row.root,name:row.name,full:row.full_name,frets:row.frets}));
+}
+async function sbInsertChord(chord){
+  const body={id:chord.id,root:chord.root,name:chord.name,full_name:chord.full,frets:chord.frets};
+  const res=await fetch(`${SUPABASE_URL}/rest/v1/chords`,{method:"POST",headers:SB_HEADERS,body:JSON.stringify(body)});
+  if(!res.ok){throw new Error("저장 실패: "+await res.text());}
+  return res.json();
+}
+async function sbUpdateChord(chord){
+  const body={root:chord.root,name:chord.name,full_name:chord.full,frets:chord.frets};
+  const res=await fetch(`${SUPABASE_URL}/rest/v1/chords?id=eq.${encodeURIComponent(chord.id)}`,{method:"PATCH",headers:SB_HEADERS,body:JSON.stringify(body)});
+  if(!res.ok) throw new Error("수정 실패");
+  return res.json();
+}
+async function sbDeleteChord(id){
+  const res=await fetch(`${SUPABASE_URL}/rest/v1/chords?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:SB_HEADERS});
   if(!res.ok) throw new Error("삭제 실패");
   return true;
 }
@@ -429,7 +469,8 @@ const State={
   adminSheet:false,fontScale:1,immersive:false,
   overlay:null,           // null | "song" | "editor"
   selectedSongId:null,editSongId:null,
-  codeGroup:"기본",
+  codeRoot:"C",
+  customChords:[],chordSheet:null,
   isAdmin:checkAdminAccess(),
   transpose:0,saving:false,
   ed:{title:"",artist:"",originalKey:"C",category:"감사",preview:false,sections:[{name:"Verse",lines:[{lyric:"",chords:[]}]}],editing:null},
@@ -451,83 +492,80 @@ async function loadSongsFromServer(){
 /* ═══════════════════════════════════════════════════
    기타 코드 다이어그램 데이터
 ═══════════════════════════════════════════════════ */
-const CHORD_GROUPS=["기본","마이너","7th","maj7 / m7","sus / add","기타"];
-const GUITAR_CHORDS={
-  "기본":[
+const ROOT_NOTES=["C","D","E","F","G","A","B"];
+const CHORDS_BY_ROOT={
+  C:[
     {name:"C",full:"C Major",frets:[-1,3,2,0,1,0]},
-    {name:"D",full:"D Major",frets:[-1,-1,0,2,3,2]},
-    {name:"E",full:"E Major",frets:[0,2,2,1,0,0]},
-    {name:"F",full:"F Major",frets:[1,3,3,2,1,1]},
-    {name:"G",full:"G Major",frets:[3,2,0,0,0,3]},
-    {name:"A",full:"A Major",frets:[-1,0,2,2,2,0]},
-    {name:"B",full:"B Major",frets:[-1,2,4,4,4,2]},
-  ],
-  "마이너":[
     {name:"Cm",full:"C minor",frets:[-1,3,5,5,4,3]},
-    {name:"Dm",full:"D minor",frets:[-1,-1,0,2,3,1]},
-    {name:"Em",full:"E minor",frets:[0,2,2,0,0,0]},
-    {name:"Fm",full:"F minor",frets:[1,3,3,1,1,1]},
-    {name:"Gm",full:"G minor",frets:[3,5,5,3,3,3]},
-    {name:"Am",full:"A minor",frets:[-1,0,2,2,1,0]},
-    {name:"Bm",full:"B minor",frets:[-1,2,4,4,3,2]},
-  ],
-  "7th":[
     {name:"C7",full:"C dominant 7",frets:[-1,3,2,3,1,0]},
-    {name:"D7",full:"D dominant 7",frets:[-1,-1,0,2,1,2]},
-    {name:"E7",full:"E dominant 7",frets:[0,2,0,1,0,0]},
-    {name:"F7",full:"F dominant 7",frets:[1,3,1,2,1,1]},
-    {name:"G7",full:"G dominant 7",frets:[3,2,0,0,0,1]},
-    {name:"A7",full:"A dominant 7",frets:[-1,0,2,0,2,0]},
-    {name:"B7",full:"B dominant 7",frets:[-1,2,1,2,0,2]},
-  ],
-  "maj7 / m7":[
     {name:"Cmaj7",full:"C major 7",frets:[-1,3,2,0,0,0]},
-    {name:"Dmaj7",full:"D major 7",frets:[-1,-1,0,2,2,2]},
-    {name:"Emaj7",full:"E major 7",frets:[0,2,1,1,0,0]},
-    {name:"Fmaj7",full:"F major 7",frets:[-1,-1,3,2,1,0]},
-    {name:"Gmaj7",full:"G major 7",frets:[3,2,0,0,0,2]},
-    {name:"Amaj7",full:"A major 7",frets:[-1,0,2,1,2,0]},
     {name:"Cm7",full:"C minor 7",frets:[-1,3,5,3,4,3]},
-    {name:"Dm7",full:"D minor 7",frets:[-1,-1,0,2,1,1]},
-    {name:"Em7",full:"E minor 7",frets:[0,2,2,0,3,0]},
-    {name:"Gm7",full:"G minor 7",frets:[3,5,3,3,3,3]},
-    {name:"Am7",full:"A minor 7",frets:[-1,0,2,0,1,0]},
-    {name:"Bm7",full:"B minor 7",frets:[-1,2,0,2,0,2]},
-  ],
-  "sus / add":[
-    {name:"Dsus2",full:"D suspended 2",frets:[-1,-1,0,2,3,0]},
-    {name:"Dsus4",full:"D suspended 4",frets:[-1,-1,0,2,3,3]},
-    {name:"Asus2",full:"A suspended 2",frets:[-1,0,2,2,0,0]},
-    {name:"Asus4",full:"A suspended 4",frets:[-1,0,2,2,3,0]},
-    {name:"Esus4",full:"E suspended 4",frets:[0,2,2,2,0,0]},
-    {name:"Gsus4",full:"G suspended 4",frets:[3,3,0,0,1,3]},
+    {name:"Csus2",full:"C suspended 2",frets:[-1,3,5,5,3,3]},
     {name:"Csus4",full:"C suspended 4",frets:[-1,3,3,0,1,1]},
     {name:"Cadd9",full:"C add 9",frets:[-1,3,2,0,3,0]},
-    {name:"Gadd9",full:"G add 9",frets:[3,2,0,2,0,3]},
+  ],
+  D:[
+    {name:"D",full:"D Major",frets:[-1,-1,0,2,3,2]},
+    {name:"Dm",full:"D minor",frets:[-1,-1,0,2,3,1]},
+    {name:"D7",full:"D dominant 7",frets:[-1,-1,0,2,1,2]},
+    {name:"Dmaj7",full:"D major 7",frets:[-1,-1,0,2,2,2]},
+    {name:"Dm7",full:"D minor 7",frets:[-1,-1,0,2,1,1]},
+    {name:"Dsus2",full:"D suspended 2",frets:[-1,-1,0,2,3,0]},
+    {name:"Dsus4",full:"D suspended 4",frets:[-1,-1,0,2,3,3]},
     {name:"Dadd9",full:"D add 9",frets:[-1,-1,0,2,3,0]},
+  ],
+  E:[
+    {name:"E",full:"E Major",frets:[0,2,2,1,0,0]},
+    {name:"Em",full:"E minor",frets:[0,2,2,0,0,0]},
+    {name:"E7",full:"E dominant 7",frets:[0,2,0,1,0,0]},
+    {name:"Emaj7",full:"E major 7",frets:[0,2,1,1,0,0]},
+    {name:"Em7",full:"E minor 7",frets:[0,2,2,0,3,0]},
+    {name:"Esus2",full:"E suspended 2",frets:[-1,7,9,9,7,7]},
+    {name:"Esus4",full:"E suspended 4",frets:[0,2,2,2,0,0]},
     {name:"Eadd9",full:"E add 9",frets:[0,2,2,1,0,2]},
+  ],
+  F:[
+    {name:"F",full:"F Major",frets:[1,3,3,2,1,1]},
+    {name:"Fm",full:"F minor",frets:[1,3,3,1,1,1]},
+    {name:"F7",full:"F dominant 7",frets:[1,3,1,2,1,1]},
+    {name:"Fmaj7",full:"F major 7",frets:[-1,-1,3,2,1,0]},
+    {name:"Fm7",full:"F minor 7",frets:[1,3,1,1,1,1]},
+    {name:"Fsus2",full:"F suspended 2",frets:[-1,8,10,10,8,8]},
+    {name:"Fsus4",full:"F suspended 4",frets:[-1,8,10,10,11,8]},
+  ],
+  G:[
+    {name:"G",full:"G Major",frets:[3,2,0,0,0,3]},
+    {name:"Gm",full:"G minor",frets:[3,5,5,3,3,3]},
+    {name:"G7",full:"G dominant 7",frets:[3,2,0,0,0,1]},
+    {name:"Gmaj7",full:"G major 7",frets:[3,2,0,0,0,2]},
+    {name:"Gm7",full:"G minor 7",frets:[3,5,3,3,3,3]},
+    {name:"Gsus2",full:"G suspended 2",frets:[-1,10,12,12,10,10]},
+    {name:"Gsus4",full:"G suspended 4",frets:[3,3,0,0,1,3]},
+    {name:"Gadd9",full:"G add 9",frets:[3,2,0,2,0,3]},
+  ],
+  A:[
+    {name:"A",full:"A Major",frets:[-1,0,2,2,2,0]},
+    {name:"Am",full:"A minor",frets:[-1,0,2,2,1,0]},
+    {name:"A7",full:"A dominant 7",frets:[-1,0,2,0,2,0]},
+    {name:"Amaj7",full:"A major 7",frets:[-1,0,2,1,2,0]},
+    {name:"Am7",full:"A minor 7",frets:[-1,0,2,0,1,0]},
+    {name:"Asus2",full:"A suspended 2",frets:[-1,0,2,2,0,0]},
+    {name:"Asus4",full:"A suspended 4",frets:[-1,0,2,2,3,0]},
     {name:"Aadd9",full:"A add 9",frets:[-1,0,2,4,2,0]},
   ],
-  "기타":[
-    {name:"Cdim",full:"C diminished",frets:[-1,3,4,2,4,2]},
-    {name:"Adim",full:"A diminished",frets:[-1,0,1,2,1,2]},
-    {name:"Gdim",full:"G diminished",frets:[3,-1,2,3,2,-1]},
-    {name:"Caug",full:"C augmented",frets:[-1,3,2,1,1,0]},
-    {name:"Eaug",full:"E augmented",frets:[0,3,2,1,1,0]},
-    {name:"Gaug",full:"G augmented",frets:[3,2,1,0,0,3]},
-    {name:"C6",full:"C 6th",frets:[-1,3,2,2,1,0]},
-    {name:"G6",full:"G 6th",frets:[3,2,0,0,0,0]},
-    {name:"D6",full:"D 6th",frets:[-1,-1,0,2,0,2]},
-    {name:"Am6",full:"A minor 6",frets:[-1,0,2,2,1,2]},
-    {name:"Em6",full:"E minor 6",frets:[0,2,2,0,2,0]},
-    {name:"C9",full:"C 9th",frets:[-1,3,2,3,3,3]},
-    {name:"E9",full:"E 9th",frets:[0,2,0,1,0,2]},
-    {name:"A9",full:"A 9th",frets:[-1,0,2,4,2,3]},
+  B:[
+    {name:"B",full:"B Major",frets:[-1,2,4,4,4,2]},
+    {name:"Bm",full:"B minor",frets:[-1,2,4,4,3,2]},
+    {name:"B7",full:"B dominant 7",frets:[-1,2,1,2,0,2]},
+    {name:"Bmaj7",full:"B major 7",frets:[-1,2,4,3,4,2]},
+    {name:"Bm7",full:"B minor 7",frets:[-1,2,0,2,0,2]},
+    {name:"Bsus2",full:"B suspended 2",frets:[-1,2,4,4,2,2]},
+    {name:"Bsus4",full:"B suspended 4",frets:[-1,2,4,4,5,2]},
   ],
 };
 /* 코드명 → 운지 객체 조회용 인덱스 (플랫→샵, 분수코드 앞부분) */
 const CHORD_INDEX={};
-Object.values(GUITAR_CHORDS).forEach(arr=>arr.forEach(ch=>{CHORD_INDEX[ch.name]=ch;}));
+Object.values(CHORDS_BY_ROOT).forEach(arr=>arr.forEach(ch=>{CHORD_INDEX[ch.name]=ch;}));
 function chordLookupKey(chord){
   if(!chord) return null;
   let c=chord.split("/")[0].trim();
@@ -539,25 +577,47 @@ function chordLookupKey(chord){
 function findChordVoicing(chord){
   const key=chordLookupKey(chord);
   if(!key) return null;
+  const custom=State.customChords.find(c=>c.name===key);
+  if(custom) return custom;
   if(CHORD_INDEX[key]) return CHORD_INDEX[key];
   // m7→min7 등 변형 시도: 일부 표기 보정
   const alt=key.replace("maj","M").replace("min","m");
+  const customAlt=State.customChords.find(c=>c.name===alt);
+  if(customAlt) return customAlt;
   if(CHORD_INDEX[alt]) return CHORD_INDEX[alt];
   return null;
 }
 
+/* 프렛 정규화: 개방현이 하나도 없고 가장 낮은 프렛이 1보다 크면(=바레 코드),
+   시작 프렛(base)을 계산하고 나머지를 그 위치 기준 상대값(1~4)으로 바꿔준다.
+   그래야 4칸짜리 그리드를 벗어나지 않는다. */
+function normalizeFrets(frets){
+  const hasOpen=frets.includes(0);
+  const fretted=frets.filter(f=>f>0);
+  if(hasOpen||fretted.length===0) return {base:1,rel:frets.slice()};
+  const base=Math.min(...fretted);
+  if(base<=1) return {base:1,rel:frets.slice()};
+  const rel=frets.map(f=>f>0?f-base+1:f);
+  return {base,rel};
+}
 /* 코드 다이어그램 SVG */
-function chordDiagramSVG(ch,scale=1){
+function chordDiagramSVG(ch){
+  const {base,rel}=normalizeFrets(ch.frets);
   const W=96,H=104,padX=12,padTop=18,padBottom=14;
   const strings=6,frets=4;
   const gridW=W-padX*2,gridH=H-padTop-padBottom;
   const colGap=gridW/(strings-1),rowGap=gridH/frets;
   const x=i=>padX+i*colGap,y=f=>padTop+f*rowGap;
   let svg=`<svg class="chord-diagram" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
-  svg+=`<rect x="${padX-1}" y="${padTop-3}" width="${gridW+2}" height="3" rx="1.5" fill="#17211B"/>`;
+  if(base===1){
+    svg+=`<rect x="${padX-1}" y="${padTop-3}" width="${gridW+2}" height="3" rx="1.5" fill="#17211B"/>`;
+  }else{
+    svg+=`<line x1="${padX}" y1="${padTop}" x2="${padX+gridW}" y2="${padTop}" stroke="#D8DFD9" stroke-width="1.2"/>`;
+    svg+=`<text x="${padX-5}" y="${y(1)-rowGap/2+3.5}" text-anchor="end" font-size="10.5" font-weight="700" fill="#24503C" font-family="Pretendard Variable, sans-serif">${base}fr</text>`;
+  }
   for(let f=1;f<=frets;f++) svg+=`<line x1="${padX}" y1="${y(f)}" x2="${padX+gridW}" y2="${y(f)}" stroke="#D8DFD9" stroke-width="1.2"/>`;
   for(let i=0;i<strings;i++) svg+=`<line x1="${x(i)}" y1="${padTop}" x2="${x(i)}" y2="${padTop+gridH}" stroke="#D8DFD9" stroke-width="1.2"/>`;
-  ch.frets.forEach((fr,i)=>{
+  rel.forEach((fr,i)=>{
     const cx=x(i);
     if(fr===-1) svg+=`<text x="${cx}" y="${padTop-7}" text-anchor="middle" font-size="9" font-weight="700" fill="#A9B4AC" font-family="Pretendard Variable, sans-serif">×</text>`;
     else if(fr===0) svg+=`<circle cx="${cx}" cy="${padTop-7}" r="3" fill="none" stroke="#24503C" stroke-width="1.4"/>`;
@@ -620,7 +680,94 @@ function renderSheet(song,transpose,scale){
   return `<div class="sheet-card"><div class="sheet"><div class="sheet-scaler"><div class="sheet-inner" style="font-size:${sc}em">${inner}</div></div></div></div>`;
 }
 
-/* ═══ 코드 팝업 ═══ */
+/* 기본 코드 + 관리자가 수정/추가한 코드를 병합 */
+function chordsForRoot(root){
+  const base=(CHORDS_BY_ROOT[root]||[]).map(c=>({...c}));
+  const overrideMap={};
+  State.customChords.filter(c=>c.root===root).forEach(c=>{overrideMap[c.name]=c;});
+  const merged=base.map(c=>overrideMap[c.name]?{...overrideMap[c.name]}:c);
+  Object.values(overrideMap).forEach(c=>{ if(!base.find(b=>b.name===c.name)) merged.push(c); });
+  return merged;
+}
+function renderChordCell(ch,root){
+  return `<div class="chord-cell">
+      ${State.isAdmin?`<button class="chord-cell-edit" data-action="edit-chord" data-root="${escapeHtml(root)}" data-name="${escapeHtml(ch.name)}">${ICONS.pencil(12)}</button>`:""}
+      <span class="cname">${escapeHtml(ch.name)}</span>${chordDiagramSVG(ch)}<span class="chord-fullname">${escapeHtml(ch.full)}</span>
+    </div>`;
+}
+/* ═══ 코드 편집 바텀시트 ═══ */
+function renderChordSheet(){
+  if(!State.chordSheet) return "";
+  const cs=State.chordSheet;
+  if(cs.viewBase==null) cs.viewBase=Math.max(1,normalizeFrets(cs.frets).base);
+  const vb=cs.viewBase;
+  const topRow=cs.frets.map((v,i)=>{
+    const label=v===-1?"×":v===0?"○":"";
+    return `<button class="fe-top-cell ${v>0?"dot":""}" data-action="cs-toggle-string" data-idx="${i}">${label}</button>`;
+  }).join("");
+  const rowsHtml=[1,2,3,4].map(r=>{
+    const abs=vb+r-1;
+    const cells=cs.frets.map((v,i)=>`<button class="fe-cell ${v===abs?"on":""}" data-action="cs-grid-cell" data-idx="${i}" data-row="${r}"></button>`).join("");
+    return `<div class="fe-row">${cells}</div>`;
+  }).join("");
+  const preview={name:cs.name||"?",full:cs.full||"",frets:cs.frets};
+  return `<div class="sheet-bg" data-action="close-chord-sheet-bg"><div class="bottom-sheet">
+      <div class="bs-head"><h3>${cs.id?"코드 편집":"새 코드 추가"}</h3><button data-action="close-chord-sheet" style="color:var(--txt-mute)">${ICONS.close(20)}</button></div>
+      <div class="ed-field"><label class="ed-label">코드 이름</label><input class="ed-input" value="${escapeHtml(cs.name)}" placeholder="예: Cm9" data-action="cs-name"/></div>
+      <div class="ed-field"><label class="ed-label">정식 명칭</label><input class="ed-input" value="${escapeHtml(cs.full)}" placeholder="예: C minor 9" data-action="cs-full"/></div>
+      <div class="ed-field"><label class="ed-label">루트 (표시될 탭)</label><select class="ed-select" data-action="cs-root">${ROOT_NOTES.map(r=>`<option value="${r}" ${cs.root===r?"selected":""}>${r}</option>`).join("")}</select></div>
+      <div class="ed-field">
+        <label class="ed-label">운지 · 동그라미를 눌러서 코드를 짚으세요</label>
+        <div class="fe-basebar">
+          <button class="kb" data-action="cs-viewbase" data-dir="-1">${ICONS.minus(16)}</button>
+          <span class="fe-basebar-label">${vb===1?"오픈 포지션 (넛)":vb+"프렛부터"}</span>
+          <button class="kb" data-action="cs-viewbase" data-dir="1">${ICONS.plus(16)}</button>
+        </div>
+        <div class="fret-editor">
+          <div class="fe-toprow">${topRow}</div>
+          ${rowsHtml}
+        </div>
+        <div class="ed-tip" style="margin-top:8px;margin-bottom:0">왼쪽부터 6번줄(저음)~1번줄(고음)이에요. 맨 위 ×/○ 버튼은 뮤트/개방 전환이고, 동그라미를 찍으면 자동으로 해제돼요.</div>
+      </div>
+      <div style="display:flex;justify-content:center;padding:16px 0 20px">${chordDiagramSVG(preview)}</div>
+      <button class="big-btn" data-action="save-chord">${ICONS.check(18)}저장</button>
+      ${cs.id?`<div class="delete-link" data-action="delete-chord">이 수정 내용 삭제 (기본값으로 되돌리기)</div>`:""}
+    </div></div>`;
+}
+function openNewChordSheet(){
+  State.chordSheet={id:null,root:State.codeRoot,name:"",full:"",frets:[-1,-1,-1,-1,-1,-1],viewBase:1};
+  render();
+}
+function openEditChordSheet(root,name){
+  const ch=chordsForRoot(root).find(c=>c.name===name);if(!ch) return;
+  const override=State.customChords.find(c=>c.root===root&&c.name===name);
+  const frets=override?[...override.frets]:[...ch.frets];
+  State.chordSheet={id:override?override.id:null,root,name:ch.name,full:ch.full,frets,viewBase:Math.max(1,normalizeFrets(frets).base)};
+  render();
+}
+async function saveChordSheet(){
+  const cs=State.chordSheet;
+  if(!cs.name.trim()){showToast("코드 이름을 입력해주세요","error");return;}
+  const payload={id:cs.id||("ch"+Date.now()),root:cs.root,name:cs.name.trim(),full:cs.full.trim(),frets:cs.frets};
+  try{
+    if(cs.id){await sbUpdateChord(payload);State.customChords=State.customChords.map(c=>c.id===cs.id?payload:c);}
+    else{await sbInsertChord(payload);State.customChords=[...State.customChords,payload];}
+    State.chordSheet=null;render();showToast("코드가 저장됐어요","success");
+  }catch(e){showToast("저장 실패: "+e.message,"error");}
+}
+async function deleteChordSheet(){
+  const cs=State.chordSheet;if(!cs||!cs.id) return;
+  if(!confirm("이 수정 내용을 삭제하고 기본값으로 되돌릴까요?")) return;
+  try{
+    await sbDeleteChord(cs.id);
+    State.customChords=State.customChords.filter(c=>c.id!==cs.id);
+    State.chordSheet=null;render();showToast("삭제됐어요","success");
+  }catch(e){showToast("삭제 실패: "+e.message,"error");}
+}
+async function loadChordsFromServer(){
+  try{State.customChords=await sbFetchChords();render();}
+  catch(e){console.error(e);}
+}
 function showChordModal(chordName){
   const voicing=findChordVoicing(chordName);
   const root=document.getElementById("modal-root");
@@ -711,15 +858,15 @@ function renderSongRow(s){
 
 /* ── 코드표 ── */
 function renderCodesTab(){
-  const group=State.codeGroup;const chords=GUITAR_CHORDS[group]||[];
+  const root=State.codeRoot;const chords=chordsForRoot(root);
   return `
     <div class="view">
       <div class="plain-top">
         <h1>코드 운지표</h1>
-        <p>동그라미는 누르는 위치, ○는 개방현, ×는 치지 않는 줄이에요. 왼쪽이 6번줄(저음).</p>
+        <p>동그라미는 누르는 위치, ○는 개방현, ×는 치지 않는 줄이에요. 왼쪽이 6번줄(저음). 위에 숫자(예: 3fr)가 있으면 그 프렛부터 짚는 코드예요.</p>
       </div>
-      <div class="code-group-tabs">${CHORD_GROUPS.map(g=>`<button class="chip ${group===g?"on":""}" data-action="code-group" data-grp="${escapeHtml(g)}">${escapeHtml(g)}</button>`).join("")}</div>
-      <div class="chord-grid">${chords.map(ch=>`<div class="chord-cell"><span class="cname">${escapeHtml(ch.name)}</span>${chordDiagramSVG(ch)}<span class="chord-fullname">${escapeHtml(ch.full)}</span></div>`).join("")}</div>
+      <div class="code-group-tabs">${ROOT_NOTES.map(r=>`<button class="chip ${root===r?"on":""}" data-action="code-root" data-root="${escapeHtml(r)}">${escapeHtml(r)}</button>`).join("")}</div>
+      <div class="chord-grid">${chords.map(ch=>renderChordCell(ch,root)).join("")}</div>
     </div>`;
 }
 
@@ -878,12 +1025,19 @@ function render(){
   else if(State.tab==="codes") html=renderCodesTab();
   scroll.innerHTML=html;
   document.getElementById("sheet-root").innerHTML=renderAdminSheet();
+  document.getElementById("chordsheet-root").innerHTML=renderChordSheet();
 
   const existingFab=document.getElementById("fab");if(existingFab) existingFab.remove();
-  if(State.isAdmin&&!State.overlay&&State.tab==="songs"){
-    const fab=document.createElement("button");fab.id="fab";fab.className="fab";fab.innerHTML=ICONS.plus(24);
-    fab.setAttribute("data-action","new-song");
-    document.getElementById("app-shell").appendChild(fab);
+  if(State.isAdmin&&!State.overlay&&!State.chordSheet&&!State.adminSheet){
+    if(State.tab==="songs"){
+      const fab=document.createElement("button");fab.id="fab";fab.className="fab";fab.innerHTML=ICONS.plus(24);
+      fab.setAttribute("data-action","new-song");
+      document.getElementById("app-shell").appendChild(fab);
+    }else if(State.tab==="codes"){
+      const fab=document.createElement("button");fab.id="fab";fab.className="fab";fab.innerHTML=ICONS.plus(24);
+      fab.setAttribute("data-action","new-chord");
+      document.getElementById("app-shell").appendChild(fab);
+    }
   }
   document.getElementById("tabbar").innerHTML=renderTabbar();
   requestAnimationFrame(autoFitSheets);
@@ -1015,7 +1169,33 @@ document.addEventListener("click",e=>{
   if(a==="close-modal"){if(e.target.closest(".chord-modal")&&!e.target.classList.contains("cm-close")) return;closeChordModal();return;}
   if(a==="tab"){State.tab=t.dataset.tab;State.overlay=null;render();document.getElementById("scroll").scrollTo(0,0);return;}
   if(a==="reload"){loadSongsFromServer();return;}
-  if(a==="code-group"){State.codeGroup=t.dataset.grp;render();return;}
+  if(a==="code-root"){State.codeRoot=t.dataset.root;render();return;}
+
+  if(a==="new-chord"){if(!requireAdmin())return;openNewChordSheet();return;}
+  if(a==="edit-chord"){if(!requireAdmin())return;e.stopPropagation();openEditChordSheet(t.dataset.root,t.dataset.name);return;}
+  if(a==="close-chord-sheet"){State.chordSheet=null;render();return;}
+  if(a==="close-chord-sheet-bg"){if(e.target.closest(".bottom-sheet"))return;State.chordSheet=null;render();return;}
+  if(a==="save-chord"){if(!requireAdmin())return;saveChordSheet();return;}
+  if(a==="delete-chord"){if(!requireAdmin())return;deleteChordSheet();return;}
+  if(a==="cs-toggle-string"){
+    if(!State.chordSheet)return;
+    const idx=parseInt(t.dataset.idx,10);
+    State.chordSheet.frets[idx]=State.chordSheet.frets[idx]===-1?0:-1;
+    render();return;
+  }
+  if(a==="cs-grid-cell"){
+    if(!State.chordSheet)return;
+    const idx=parseInt(t.dataset.idx,10);const row=parseInt(t.dataset.row,10);
+    const abs=(State.chordSheet.viewBase||1)+row-1;
+    State.chordSheet.frets[idx]=State.chordSheet.frets[idx]===abs?-1:abs;
+    render();return;
+  }
+  if(a==="cs-viewbase"){
+    if(!State.chordSheet)return;
+    const dir=parseInt(t.dataset.dir,10);
+    State.chordSheet.viewBase=Math.min(15,Math.max(1,(State.chordSheet.viewBase||1)+dir));
+    render();return;
+  }
   if(a==="jump"){jumpToGroup(t.dataset.grp);return;}
 
   if(a==="toggle-fav"){e.stopPropagation();const on=toggleFav(t.dataset.id);document.getElementById("song-list").innerHTML=renderGroupedList();showToast(on?"즐겨찾기에 추가했어요":"즐겨찾기에서 뺐어요","success");return;}
@@ -1064,6 +1244,8 @@ document.addEventListener("input",e=>{
   if(a==="pw-input"){return;}
   if(a==="ed-title"){State.ed.title=t.value;return;}
   if(a==="ed-artist"){State.ed.artist=t.value;return;}
+  if(a==="cs-name"){if(State.chordSheet)State.chordSheet.name=t.value;return;}
+  if(a==="cs-full"){if(State.chordSheet)State.chordSheet.full=t.value;return;}
   if(a==="section-name"){State.ed.sections[parseInt(t.dataset.sec,10)].name=t.value;return;}
   if(a==="inline-chord"){if(State.ed.editing)State.ed.editing.value=t.value;return;}
   if(a==="lyric-change"){const si=parseInt(t.dataset.sec,10);const li=parseInt(t.dataset.line,10);const line=getLine(si,li);if(!line)return;line.lyric=t.value;line.chords=(line.chords||[]).filter(c=>c.pos<=[...t.value].length);rerenderLine(si,li);return;}
@@ -1071,6 +1253,7 @@ document.addEventListener("input",e=>{
 document.addEventListener("change",e=>{
   const t=e.target.closest("[data-action]");if(!t) return;
   if(t.dataset.action==="ed-key"){State.ed.originalKey=t.value;return;}
+  if(t.dataset.action==="cs-root"){if(State.chordSheet)State.chordSheet.root=t.value;return;}
 });
 
 /* ═══ EVENTS: KEYDOWN ═══ */
@@ -1156,7 +1339,7 @@ document.addEventListener("input",e=>{
 /* ═══ INIT ═══ */
 render();
 loadSongsFromServer();
+loadChordsFromServer();
 </script>
 </body>
 </html>
-
