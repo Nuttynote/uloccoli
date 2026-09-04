@@ -464,7 +464,7 @@ async function tryUrlAdminLogin(){
 const State={
   songs:[],loading:true,loadError:null,
   tab:"songs",            // songs | codes
-  adminSheet:false,fontScale:0.8,immersive:false,
+  adminSheet:false,fontScale:1,immersive:false,
   overlay:null,           // null | "song" | "editor"
   selectedSongId:null,editSongId:null,
   codeRoot:"C",
@@ -718,7 +718,7 @@ function renderSheet(song,transpose,scale){
     const body=sec.lines.map(ln=>renderChordLine(ln.lyric,ln.chords,transpose)).join("");
     return label+body;
   }).join("");
-  return `<div class="sheet-card"><div class="sheet"><div class="sheet-inner" style="font-size:${(19*sc).toFixed(2)}px">${inner}</div></div></div>`;
+  return `<div class="sheet-card"><div class="sheet"><div class="sheet-inner" style="font-size:${(15.2*sc).toFixed(2)}px">${inner}</div></div></div>`;
 }
 
 /* 기본 코드 + 관리자가 수정/추가한 코드를 병합 */
@@ -1319,7 +1319,7 @@ function updateTransposeDisplay(){
 }
 function updateSheetScale(){
   const inner=document.querySelector("#sheet-container .sheet-inner");
-  if(inner) inner.style.fontSize=(19*(State.fontScale||1)).toFixed(2)+"px";
+  if(inner) inner.style.fontSize=(15.2*(State.fontScale||1)).toFixed(2)+"px";
 }
 document.addEventListener("click",e=>{
   const t=e.target.closest("[data-action]");if(!t) return;
@@ -1331,7 +1331,7 @@ document.addEventListener("click",e=>{
   if(a==="toggle-immersive"){State.immersive=!State.immersive;render();return;}
   if(a==="font-step"){
     const d=parseInt(t.dataset.dir,10)*0.1;
-    State.fontScale=Math.min(1.2,Math.max(0.8,Math.round((State.fontScale+d)*10)/10));
+    State.fontScale=Math.min(1.5,Math.max(1.0,Math.round((State.fontScale+d)*10)/10));
     updateSheetScale();showToast("가사 크기 "+Math.round(State.fontScale*100)+"%","info");return;
   }
 });
