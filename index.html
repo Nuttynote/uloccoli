@@ -633,6 +633,9 @@ function normalizeFrets(frets){
   const hasOpen=frets.includes(0);
   const fretted=frets.filter(f=>f>0);
   if(hasOpen||fretted.length===0) return {base:1,rel:frets.slice()};
+  const maxF=Math.max(...fretted);
+  // 넛(1번 프렛)부터 그려도 4칸 그리드 안에 다 들어가면 굳이 재배치할 필요 없음
+  if(maxF<=4) return {base:1,rel:frets.slice()};
   const base=Math.min(...fretted);
   if(base<=1) return {base:1,rel:frets.slice()};
   const rel=frets.map(f=>f>0?f-base+1:f);
