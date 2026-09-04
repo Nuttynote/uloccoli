@@ -714,15 +714,14 @@ function renderChordLine(lyric,chords,transpose){
   }).join("");
   return `<div class="pos-line">${row}</div>`;
 }
-function renderSheet(song,transpose,scale){
+function renderSheet(song,transpose){
   const sections=ensureSections(song.text);
-  const sc=scale||1;
   const inner=sections.map(sec=>{
     const label=`<div class="section-label">${escapeHtml(sec.name)}</div>`;
     const body=sec.lines.map(ln=>renderChordLine(ln.lyric,ln.chords,transpose)).join("");
     return label+body;
   }).join("");
-  return `<div class="sheet-card"><div class="sheet"><div class="sheet-scaler"><div class="sheet-inner" style="font-size:${sc}em">${inner}</div></div></div></div>`;
+  return `<div class="sheet-card"><div class="sheet"><div class="sheet-scaler"><div class="sheet-inner">${inner}</div></div></div></div>`;
 }
 
 /* 기본 코드 + 관리자가 수정/추가한 코드를 병합 */
@@ -963,7 +962,7 @@ function renderSongOverlay(){
         </div>
       </div>
       ${State.immersive?"":`<div class="song-hero"><h1>${escapeHtml(song.title)}</h1><div class="meta">${escapeHtml(song.artist||"")}</div></div>`}
-      <div id="sheet-container">${renderSheet(song,State.transpose,State.fontScale)}</div>
+      <div id="sheet-container">${renderSheet(song,State.transpose)}</div>
       <div style="height:48px"></div>
     </div>`;
 }
@@ -1043,7 +1042,7 @@ function renderEditorOverlay(){
 function renderPreviewSheet(){
   const ed=State.ed;
   const previewSong={title:ed.title,artist:ed.artist,originalKey:ed.originalKey,category:ed.category,text:serialize(ed.sections)};
-  return `<div style="margin-top:24px">${renderSheet(previewSong,0,1)}</div>`;
+  return `<div style="margin-top:24px">${renderSheet(previewSong,0)}</div>`;
 }
 
 /* ═══ 탭바 (2탭) ═══ */
@@ -1092,9 +1091,11 @@ function autoFitSheets(){
     const inner=scaler.querySelector(".sheet-inner");if(!inner) return;
     inner.style.transform="none";scaler.style.height="auto";
     const containerW=scaler.clientWidth;const contentW=inner.scrollWidth;
-    if(contentW>containerW&&containerW>0){
-      const scale=containerW/contentW;inner.style.transform=`scale(${scale})`;
-      scaler.style.height=(inner.scrollHeight*scale)+"px";
+    const fitScale=(contentW>containerW&&containerW>0)?containerW/contentW:1;
+    const finalScale=fitScale*(State.fontScale||1);
+    if(Math.abs(finalScale-1)>0.001){
+      inner.style.transform=`scale(${finalScale})`;
+      scaler.style.height=(inner.scrollHeight*finalScale)+"px";
     }else{inner.style.transform="none";scaler.style.height="auto";}
   });
 }
@@ -1167,7 +1168,7 @@ function updateTransposeDisplay(){
   const keyDisp=document.getElementById("key-display");const keyOrig=document.getElementById("key-orig");const sheet=document.getElementById("sheet-container");
   if(keyDisp) keyDisp.textContent=currentKey;
   if(keyOrig) keyOrig.style.display=State.transpose===0?"none":"";
-  if(sheet) sheet.innerHTML=renderSheet(song,State.transpose,1);
+  if(sheet) sheet.innerHTML=renderSheet(song,State.transpose);
   requestAnimationFrame(autoFitSheets);
 }
 function requireAdmin(){if(!State.isAdmin){showToast("관리자만 사용할 수 있어요","error");return false;}return true;}
@@ -1330,9 +1331,14 @@ function fitSheetsNow(){
     const inner=scaler.querySelector(".sheet-inner");if(!inner) return;
     inner.style.transform="none";scaler.style.height="auto";
     const containerW=scaler.clientWidth;const contentW=inner.scrollWidth;
-    if(contentW>containerW&&containerW>0){
-      const scale=containerW/contentW;inner.style.transform=`scale(${scale})`;
-      scaler.style.height=(inner.scrollHeight*scale)+"px";
+    // 화면 폭에 맞추기 위한 배율(원본 크기 기준으로 딱 1번만 계산) — 넘칠 때만 축소, 넘치지 않으면 1
+    const fitScale=(contentW>containerW&&containerW>0)?containerW/contentW:1;
+    // 사용자가 설정한 가사 크기 배율을 그 위에 곱한다 (서로 상쇄되지 않도록 완전히 분리)
+    const userScale=State.fontScale||1;
+    const finalScale=fitScale*userScale;
+    if(Math.abs(finalScale-1)>0.001){
+      inner.style.transform=`scale(${finalScale})`;
+      scaler.style.height=(inner.scrollHeight*finalScale)+"px";
     }else{inner.style.transform="none";scaler.style.height="auto";}
   });
 }
@@ -1353,13 +1359,10 @@ function updateTransposeDisplay(){
   const sheet=document.getElementById("sheet-container");
   if(kd) kd.textContent=cur;
   if(ko) ko.textContent=(diff?diff+" · ":"")+"원키 "+song.originalKey;
-  if(sheet) sheet.innerHTML=renderSheet(song,State.transpose,State.fontScale);
+  if(sheet) sheet.innerHTML=renderSheet(song,State.transpose);
   requestAnimationFrame(autoFitSheets);
 }
 function updateSheetScale(){
-  const song=songById(State.selectedSongId);if(!song) return;
-  const sheet=document.getElementById("sheet-container");
-  if(sheet) sheet.innerHTML=renderSheet(song,State.transpose,State.fontScale);
   requestAnimationFrame(autoFitSheets);
 }
 document.addEventListener("click",e=>{
