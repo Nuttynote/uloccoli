@@ -1331,7 +1331,7 @@ document.addEventListener("click",e=>{
   if(a==="toggle-immersive"){State.immersive=!State.immersive;render();return;}
   if(a==="font-step"){
     const d=parseInt(t.dataset.dir,10)*0.1;
-    State.fontScale=Math.min(1.5,Math.max(1.0,Math.round((State.fontScale+d)*10)/10));
+    State.fontScale=Math.min(1.2,Math.max(0.8,Math.round((State.fontScale+d)*10)/10));
     updateSheetScale();showToast("가사 크기 "+Math.round(State.fontScale*100)+"%","info");return;
   }
 });
