@@ -492,7 +492,7 @@ async function loadSongsFromServer(){
 /* ═══════════════════════════════════════════════════
    기타 코드 다이어그램 데이터
 ═══════════════════════════════════════════════════ */
-const ROOT_NOTES=["C","D","E","F","G","A","B"];
+const ROOT_NOTES=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
 const CHORDS_BY_ROOT={
   C:[
     {name:"C",full:"C Major",frets:[-1,3,2,0,1,0]},
@@ -504,6 +504,15 @@ const CHORDS_BY_ROOT={
     {name:"Csus4",full:"C suspended 4",frets:[-1,3,3,0,1,1]},
     {name:"Cadd9",full:"C add 9",frets:[-1,3,2,0,3,0]},
   ],
+  "C#":[
+    {name:"C#",full:"C# Major",frets:[-1,4,6,6,6,4]},
+    {name:"C#m",full:"C# minor",frets:[-1,4,6,6,5,4]},
+    {name:"C#7",full:"C# dominant 7",frets:[-1,4,6,4,6,4]},
+    {name:"C#maj7",full:"C# major 7",frets:[-1,4,6,5,6,4]},
+    {name:"C#m7",full:"C# minor 7",frets:[-1,4,6,4,5,4]},
+    {name:"C#sus2",full:"C# suspended 2",frets:[-1,4,6,6,4,4]},
+    {name:"C#sus4",full:"C# suspended 4",frets:[-1,4,6,6,7,4]},
+  ],
   D:[
     {name:"D",full:"D Major",frets:[-1,-1,0,2,3,2]},
     {name:"Dm",full:"D minor",frets:[-1,-1,0,2,3,1]},
@@ -513,6 +522,15 @@ const CHORDS_BY_ROOT={
     {name:"Dsus2",full:"D suspended 2",frets:[-1,-1,0,2,3,0]},
     {name:"Dsus4",full:"D suspended 4",frets:[-1,-1,0,2,3,3]},
     {name:"Dadd9",full:"D add 9",frets:[-1,-1,0,2,3,0]},
+  ],
+  "D#":[
+    {name:"D#",full:"D# Major",frets:[-1,6,8,8,8,6]},
+    {name:"D#m",full:"D# minor",frets:[-1,6,8,8,7,6]},
+    {name:"D#7",full:"D# dominant 7",frets:[-1,6,8,6,8,6]},
+    {name:"D#maj7",full:"D# major 7",frets:[-1,6,8,7,8,6]},
+    {name:"D#m7",full:"D# minor 7",frets:[-1,6,8,6,7,6]},
+    {name:"D#sus2",full:"D# suspended 2",frets:[-1,6,8,8,6,6]},
+    {name:"D#sus4",full:"D# suspended 4",frets:[-1,6,8,8,9,6]},
   ],
   E:[
     {name:"E",full:"E Major",frets:[0,2,2,1,0,0]},
@@ -533,6 +551,15 @@ const CHORDS_BY_ROOT={
     {name:"Fsus2",full:"F suspended 2",frets:[-1,8,10,10,8,8]},
     {name:"Fsus4",full:"F suspended 4",frets:[-1,8,10,10,11,8]},
   ],
+  "F#":[
+    {name:"F#",full:"F# Major",frets:[2,4,4,3,2,2]},
+    {name:"F#m",full:"F# minor",frets:[2,4,4,2,2,2]},
+    {name:"F#7",full:"F# dominant 7",frets:[2,4,2,3,2,2]},
+    {name:"F#maj7",full:"F# major 7",frets:[2,4,3,3,2,2]},
+    {name:"F#m7",full:"F# minor 7",frets:[2,4,2,2,2,2]},
+    {name:"F#sus2",full:"F# suspended 2",frets:[-1,9,11,11,9,9]},
+    {name:"F#sus4",full:"F# suspended 4",frets:[-1,9,11,11,12,9]},
+  ],
   G:[
     {name:"G",full:"G Major",frets:[3,2,0,0,0,3]},
     {name:"Gm",full:"G minor",frets:[3,5,5,3,3,3]},
@@ -543,6 +570,15 @@ const CHORDS_BY_ROOT={
     {name:"Gsus4",full:"G suspended 4",frets:[3,3,0,0,1,3]},
     {name:"Gadd9",full:"G add 9",frets:[3,2,0,2,0,3]},
   ],
+  "G#":[
+    {name:"G#",full:"G# Major",frets:[4,6,6,5,4,4]},
+    {name:"G#m",full:"G# minor",frets:[4,6,6,4,4,4]},
+    {name:"G#7",full:"G# dominant 7",frets:[4,6,4,5,4,4]},
+    {name:"G#maj7",full:"G# major 7",frets:[4,6,5,5,4,4]},
+    {name:"G#m7",full:"G# minor 7",frets:[4,6,4,4,4,4]},
+    {name:"G#sus2",full:"G# suspended 2",frets:[-1,11,13,13,11,11]},
+    {name:"G#sus4",full:"G# suspended 4",frets:[-1,11,13,13,14,11]},
+  ],
   A:[
     {name:"A",full:"A Major",frets:[-1,0,2,2,2,0]},
     {name:"Am",full:"A minor",frets:[-1,0,2,2,1,0]},
@@ -552,6 +588,15 @@ const CHORDS_BY_ROOT={
     {name:"Asus2",full:"A suspended 2",frets:[-1,0,2,2,0,0]},
     {name:"Asus4",full:"A suspended 4",frets:[-1,0,2,2,3,0]},
     {name:"Aadd9",full:"A add 9",frets:[-1,0,2,4,2,0]},
+  ],
+  "A#":[
+    {name:"A#",full:"A# Major",frets:[-1,1,3,3,3,1]},
+    {name:"A#m",full:"A# minor",frets:[-1,1,3,3,2,1]},
+    {name:"A#7",full:"A# dominant 7",frets:[-1,1,3,1,3,1]},
+    {name:"A#maj7",full:"A# major 7",frets:[-1,1,3,2,3,1]},
+    {name:"A#m7",full:"A# minor 7",frets:[-1,1,3,1,2,1]},
+    {name:"A#sus2",full:"A# suspended 2",frets:[-1,1,3,3,1,1]},
+    {name:"A#sus4",full:"A# suspended 4",frets:[-1,1,3,3,4,1]},
   ],
   B:[
     {name:"B",full:"B Major",frets:[-1,2,4,4,4,2]},
@@ -603,19 +648,19 @@ function normalizeFrets(frets){
 /* 코드 다이어그램 SVG */
 function chordDiagramSVG(ch){
   const {base,rel}=normalizeFrets(ch.frets);
-  const W=96,H=104,padX=12,padTop=18,padBottom=14;
+  const W=102,H=104,padLeft=20,padRight=10,padTop=18,padBottom=14;
   const strings=6,frets=4;
-  const gridW=W-padX*2,gridH=H-padTop-padBottom;
+  const gridW=W-padLeft-padRight,gridH=H-padTop-padBottom;
   const colGap=gridW/(strings-1),rowGap=gridH/frets;
-  const x=i=>padX+i*colGap,y=f=>padTop+f*rowGap;
+  const x=i=>padLeft+i*colGap,y=f=>padTop+f*rowGap;
   let svg=`<svg class="chord-diagram" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
   if(base===1){
-    svg+=`<rect x="${padX-1}" y="${padTop-3}" width="${gridW+2}" height="3" rx="1.5" fill="#17211B"/>`;
+    svg+=`<rect x="${padLeft-1}" y="${padTop-3}" width="${gridW+2}" height="3" rx="1.5" fill="#17211B"/>`;
   }else{
-    svg+=`<line x1="${padX}" y1="${padTop}" x2="${padX+gridW}" y2="${padTop}" stroke="#D8DFD9" stroke-width="1.2"/>`;
-    svg+=`<text x="${padX-5}" y="${y(1)-rowGap/2+3.5}" text-anchor="end" font-size="10.5" font-weight="700" fill="#24503C" font-family="Pretendard Variable, sans-serif">${base}fr</text>`;
+    svg+=`<line x1="${padLeft}" y1="${padTop}" x2="${padLeft+gridW}" y2="${padTop}" stroke="#D8DFD9" stroke-width="1.2"/>`;
+    svg+=`<text x="${padLeft-2}" y="${y(1)-rowGap/2+3.5}" text-anchor="end" font-size="10" font-weight="700" fill="#24503C" font-family="Pretendard Variable, sans-serif">${base}fr</text>`;
   }
-  for(let f=1;f<=frets;f++) svg+=`<line x1="${padX}" y1="${y(f)}" x2="${padX+gridW}" y2="${y(f)}" stroke="#D8DFD9" stroke-width="1.2"/>`;
+  for(let f=1;f<=frets;f++) svg+=`<line x1="${padLeft}" y1="${y(f)}" x2="${padLeft+gridW}" y2="${y(f)}" stroke="#D8DFD9" stroke-width="1.2"/>`;
   for(let i=0;i<strings;i++) svg+=`<line x1="${x(i)}" y1="${padTop}" x2="${x(i)}" y2="${padTop+gridH}" stroke="#D8DFD9" stroke-width="1.2"/>`;
   rel.forEach((fr,i)=>{
     const cx=x(i);
@@ -1327,7 +1372,7 @@ document.addEventListener("click",e=>{
   if(a==="toggle-immersive"){State.immersive=!State.immersive;render();return;}
   if(a==="font-step"){
     const d=parseInt(t.dataset.dir,10)*0.1;
-    State.fontScale=Math.min(1.6,Math.max(0.8,Math.round((State.fontScale+d)*10)/10));
+    State.fontScale=Math.min(1.3,Math.max(0.8,Math.round((State.fontScale+d)*10)/10));
     updateSheetScale();showToast("가사 크기 "+Math.round(State.fontScale*100)+"%","info");return;
   }
 });
