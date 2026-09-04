@@ -135,7 +135,7 @@
   .plain-top{padding:calc(env(safe-area-inset-top,0px) + 32px) 24px 0}
   .plain-top h1{font-family:var(--brand);font-size:28px;line-height:1.25}
   .plain-top p{font-size:12.5px;line-height:1.7;color:var(--txt-lt);margin-top:12px}
-  .code-group-tabs{display:flex;gap:8px;padding:24px 24px 0;overflow-x:auto}
+  .code-group-tabs{display:flex;gap:8px;flex-wrap:wrap;padding:24px 24px 0}
   .chord-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:24px 24px 0}
   .chord-cell{background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative}
   .chord-cell-edit{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:6px;background:var(--sub);color:var(--main);display:flex;align-items:center;justify-content:center;z-index:2}
@@ -490,7 +490,7 @@ async function loadSongsFromServer(){
 /* ═══════════════════════════════════════════════════
    기타 코드 다이어그램 데이터
 ═══════════════════════════════════════════════════ */
-const ROOT_NOTES=["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+const ROOT_NOTES=["C","C#","D","D#","E","F","F#","G","G#","A","B"];
 const CHORDS_BY_ROOT={
   C:[
     {name:"C",full:"C Major",frets:[-1,3,2,0,1,0]},
@@ -586,15 +586,6 @@ const CHORDS_BY_ROOT={
     {name:"Asus2",full:"A suspended 2",frets:[-1,0,2,2,0,0]},
     {name:"Asus4",full:"A suspended 4",frets:[-1,0,2,2,3,0]},
     {name:"Aadd9",full:"A add 9",frets:[-1,0,2,4,2,0]},
-  ],
-  "A#":[
-    {name:"A#",full:"A# Major",frets:[-1,1,3,3,3,1]},
-    {name:"A#m",full:"A# minor",frets:[-1,1,3,3,2,1]},
-    {name:"A#7",full:"A# dominant 7",frets:[-1,1,3,1,3,1]},
-    {name:"A#maj7",full:"A# major 7",frets:[-1,1,3,2,3,1]},
-    {name:"A#m7",full:"A# minor 7",frets:[-1,1,3,1,2,1]},
-    {name:"A#sus2",full:"A# suspended 2",frets:[-1,1,3,3,1,1]},
-    {name:"A#sus4",full:"A# suspended 4",frets:[-1,1,3,3,4,1]},
   ],
   B:[
     {name:"B",full:"B Major",frets:[-1,2,4,4,4,2]},
